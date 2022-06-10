@@ -54,8 +54,7 @@ class QueryingTest {
 
 
     @Test
-    void test() {
-        assertEquals(em.find(Project.class, 1L).getId(), 1L);
+    void testSimpleFilter() {
 
         List<Issue> issues = Querying.of(Root_.issue())
                 .toList().on(em);
@@ -72,4 +71,6 @@ class QueryingTest {
                 .toList().on(em);
         assertEquals(2, issues.size());
     }
+
+
 }

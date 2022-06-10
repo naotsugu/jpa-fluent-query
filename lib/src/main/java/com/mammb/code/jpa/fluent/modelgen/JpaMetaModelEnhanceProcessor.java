@@ -15,6 +15,11 @@
  */
 package com.mammb.code.jpa.fluent.modelgen;
 
+import com.mammb.code.jpa.fluent.modelgen.classwriter.CriteriaModelClassWriter;
+import com.mammb.code.jpa.fluent.modelgen.classwriter.ModelClassWriter;
+import com.mammb.code.jpa.fluent.modelgen.classwriter.ApiClassWriter;
+import com.mammb.code.jpa.fluent.modelgen.classwriter.RootClassWriter;
+
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
@@ -99,7 +104,7 @@ public class JpaMetaModelEnhanceProcessor extends AbstractProcessor {
         }
         if (context.isAddCriteria()) {
             context.logDebug("Create criteria class");
-            CriteriaClassWriter.of(context).writeFile();
+            ApiClassWriter.of(context).writeCriteriaClass();
         }
 
         return false;
@@ -127,7 +132,11 @@ public class JpaMetaModelEnhanceProcessor extends AbstractProcessor {
             return;
         }
         context.logDebug("Create meta model : " + entity.getQualifiedName());
-        ClassWriter.of(context, entity).writeFile();
+        if (context.isAddCriteria()) {
+            CriteriaModelClassWriter.of(context, entity).writeFile();
+        } else {
+            ModelClassWriter.of(context, entity).writeFile();
+        }
         context.markGenerated(entity.getQualifiedName());
     }
 

@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mammb.code.jpa.fluent.modelgen;
+package com.mammb.code.jpa.fluent.modelgen.classwriter;
+
+import com.mammb.code.jpa.fluent.modelgen.Context;
+import com.mammb.code.jpa.fluent.modelgen.JpaMetaModelEnhanceProcessor;
 
 import javax.tools.FileObject;
 import java.io.PrintWriter;
@@ -149,12 +152,12 @@ public class RootClassWriter {
             context.logError("Problem opening file to write Root factory class : " + e.getMessage());
         }
 
-        writeApi();
+        writeRootSourceClass();
 
     }
 
 
-    public void writeApi() {
+    public void writeRootSourceClass() {
 
         if (Objects.nonNull(context.getElementUtils().getTypeElement("com.mammb.code.jpa.core.RootSource"))) {
             return;

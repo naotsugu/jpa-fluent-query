@@ -1,4 +1,4 @@
-package com.mammb.code.jpa.fluent.query;
+package com.mammb.code.jpa.core;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
@@ -7,22 +7,23 @@ import jakarta.persistence.criteria.Predicate;
 import java.util.Collection;
 import java.util.function.Supplier;
 
-public class Criteria_ {
+public class Criteria {
 
-    public static class AnyPath_<E> implements AnyExpression<E, Path<E>> {
+    public static class AnyPath<E> implements AnyExpression<E, Path<E>>, Builder {
         private final Supplier<Path<E>> path;
         private final CriteriaBuilder builder;
-        public AnyPath_(Supplier<Path<E>> path, CriteriaBuilder builder) {
+        public AnyPath(Supplier<Path<E>> path, CriteriaBuilder builder) {
             this.path = path;
             this.builder = builder;
         }
         @Override public Path<E> get() { return path.get(); }
         @Override public CriteriaBuilder builder() { return builder; }
     }
-    public static class AnyExpression_<E> implements AnyExpression<E, Expression<E>> {
+
+    public static class AnyExp<E> implements AnyExpression<E, Expression<E>>, Builder {
         private final Supplier<Expression<E>> expression;
         private final CriteriaBuilder builder;
-        public AnyExpression_(Supplier<Expression<E>> expression, CriteriaBuilder builder) {
+        public AnyExp(Supplier<Expression<E>> expression, CriteriaBuilder builder) {
             this.expression = expression;
             this.builder = builder;
         }
@@ -30,57 +31,60 @@ public class Criteria_ {
         @Override public CriteriaBuilder builder() { return builder; }
     }
 
-    public static class ComparablePath_<E extends Comparable<? super E>>
-            extends AnyPath_<E> implements ComparableExpression<E, Path<E>> {
-        public ComparablePath_(Supplier<Path<E>> path, CriteriaBuilder builder) {
+    public static class ComparablePath<E extends Comparable<? super E>>
+            extends AnyPath<E> implements ComparableExpression<E, Path<E>>, Builder {
+        public ComparablePath(Supplier<Path<E>> path, CriteriaBuilder builder) {
             super(path, builder);
         }
     }
-    public static class ComparableExpression_<E extends Comparable<? super E>>
-            extends AnyExpression_<E> implements ComparableExpression<E, Expression<E>> {
-        public ComparableExpression_(Supplier<Expression<E>> expression, CriteriaBuilder builder) {
+
+    public static class ComparableExp<E extends Comparable<? super E>>
+            extends AnyExp<E> implements ComparableExpression<E, Expression<E>>, Builder {
+        public ComparableExp(Supplier<Expression<E>> expression, CriteriaBuilder builder) {
             super(expression, builder);
         }
     }
 
-    public static class StringPath_ extends AnyPath_<String> implements StringExpression<Path<String>> {
-        public StringPath_(Supplier<Path<String>> path, CriteriaBuilder builder) {
+    public static class StringPath extends AnyPath<String> implements StringExpression<Path<String>>, Builder {
+        public StringPath(Supplier<Path<String>> path, CriteriaBuilder builder) {
             super(path, builder);
         }
     }
-    public static class StringExpression_ extends AnyExpression_<String> implements StringExpression<Expression<String>> {
-        public StringExpression_(Supplier<Expression<String>> expression, CriteriaBuilder builder) {
+
+    public static class StringExp extends AnyExp<String> implements StringExpression<Expression<String>>, Builder {
+        public StringExp(Supplier<Expression<String>> expression, CriteriaBuilder builder) {
             super(expression, builder);
         }
     }
 
-    public static class BooleanPath_ extends AnyPath_<Boolean> implements BooleanExpression<Path<Boolean>> {
-        public BooleanPath_(Supplier<Path<Boolean>> path, CriteriaBuilder builder) {
+    public static class BooleanPath extends AnyPath<Boolean> implements BooleanExpression<Path<Boolean>>, Builder {
+        public BooleanPath(Supplier<Path<Boolean>> path, CriteriaBuilder builder) {
             super(path, builder);
         }
     }
-    public static class BooleanExpression_ extends AnyExpression_<Boolean> implements BooleanExpression<Expression<Boolean>> {
-        public BooleanExpression_(Supplier<Expression<Boolean>> expression, CriteriaBuilder builder) {
+    public static class BooleanExp extends AnyExp<Boolean> implements BooleanExpression<Expression<Boolean>>, Builder {
+        public BooleanExp(Supplier<Expression<Boolean>> expression, CriteriaBuilder builder) {
             super(expression, builder);
         }
     }
 
-    public static class NumberPath_<T extends Number> extends AnyPath_<T> implements NumberExpression<T, Path<T>> {
-        public NumberPath_(Supplier<Path<T>> path, CriteriaBuilder builder) {
+    public static class NumberPath<T extends Number> extends AnyPath<T> implements NumberExpression<T, Path<T>>, Builder {
+        public NumberPath(Supplier<Path<T>> path, CriteriaBuilder builder) {
             super(path, builder);
         }
     }
-    public static class NumberExpression_<T extends Number> extends AnyExpression_<T> implements NumberExpression<T, Expression<T>> {
-        public NumberExpression_(Supplier<Expression<T>> expression, CriteriaBuilder builder) {
+
+    public static class NumberExp<T extends Number> extends AnyExp<T> implements NumberExpression<T, Expression<T>>, Builder {
+        public NumberExp(Supplier<Expression<T>> expression, CriteriaBuilder builder) {
             super(expression, builder);
         }
     }
 
 
-    public static class AnyCollectionExpression_<C extends Collection<?>, T extends Expression<C>> implements AnyCollectionExpression<C, T> {
+    public static class AnyCollectionExp<C extends Collection<?>, T extends Expression<C>> implements AnyCollectionExpression<C, T>, Builder {
         private final Supplier<T> expression;
         private final CriteriaBuilder builder;
-        public AnyCollectionExpression_(Supplier<T> expression, CriteriaBuilder builder) {
+        public AnyCollectionExp(Supplier<T> expression, CriteriaBuilder builder) {
             this.expression = expression;
             this.builder = builder;
         }
@@ -88,34 +92,33 @@ public class Criteria_ {
         @Override public CriteriaBuilder builder() { return builder; }
     }
 
-    public static class CollectionExpression_<E, C extends Collection<E>, T extends Expression<C>>
-            extends AnyCollectionExpression_<C, T> implements CollectionExpression<E, C, T> {
-        public CollectionExpression_(Supplier<T> expression, CriteriaBuilder builder) {
+    public static class CollectionExp<E, C extends Collection<E>, T extends Expression<C>>
+            extends AnyCollectionExp<C, T> implements CollectionExpression<E, C, T>, Builder {
+        public CollectionExp(Supplier<T> expression, CriteriaBuilder builder) {
             super(expression, builder);
         }
     }
 
     // ------------------------------------------------------------------------
 
-    public interface AnyExpression<E, T extends Expression<E>> extends Supplier<T> {
+    public interface AnyExpression<E, T extends Expression<E>> extends Supplier<T>, Builder {
         T get();
-        CriteriaBuilder builder();
-        default Predicate equal(Expression<?> y) {
+        default Predicate eq(Expression<?> y) {
             return builder().equal(get(), y);
         }
-        default Predicate equal(Object y) {
+        default Predicate eq(Object y) {
             return builder().equal(get(), y);
         }
-        default Predicate notEqual(Expression<?> y) {
+        default Predicate ne(Expression<?> y) {
             return builder().notEqual(get(), y);
         }
-        default Predicate notEqual(Object y) {
+        default Predicate ne(Object y) {
             return builder().notEqual(get(), y);
         }
         default Predicate isNull(Expression<?> x) {
             return builder().isNull(get());
         }
-        default Predicate isNotNull() {
+        default Predicate nonNull() {
             return builder().isNotNull(get());
         }
     }
@@ -123,7 +126,6 @@ public class Criteria_ {
     public interface ComparableExpression<E extends Comparable<? super E>, T extends Expression<E>>
             extends Supplier<T>, AnyExpression<E, T> {
         T get();
-        CriteriaBuilder builder();
         default Predicate gt(Expression<? extends E> y) { return builder().greaterThan(get(), y); }
         default Predicate gt(E y) { return builder().greaterThan(get(), y); }
         default Predicate ge(Expression<? extends E> y) { return builder().greaterThanOrEqualTo(get(), y); }
@@ -139,7 +141,6 @@ public class Criteria_ {
     public interface StringExpression<T extends Expression<String>>
             extends Supplier<T>, AnyExpression<String, T>, ComparableExpression<String, T> {
         T get();
-        CriteriaBuilder builder();
         default Predicate like(Expression<String> pattern) { return builder().like(get(), pattern); }
         default Predicate like(String pattern) { return builder().like(get(), pattern); }
         default Predicate like(Expression<String> pattern, char escapeChar) { return builder().like(get(), pattern, escapeChar); }
@@ -153,7 +154,6 @@ public class Criteria_ {
     public interface BooleanExpression<T extends Expression<Boolean>>
             extends Supplier<T>, AnyExpression<Boolean, T>, ComparableExpression<Boolean, T> {
         T get();
-        CriteriaBuilder builder();
         default Predicate isTrue() { return builder().isTrue(get()); }
         default Predicate isFalse() { return builder().isFalse(get()); }
     }
@@ -161,7 +161,6 @@ public class Criteria_ {
     public interface NumberExpression<E extends Number, T extends Expression<E>>
             extends Supplier<T>, AnyExpression<E, T> {
         T get();
-        CriteriaBuilder builder();
         default Predicate gt(Expression<? extends Number> y) { return builder().gt(get(), y); }
         default Predicate gt(Number y) { return builder().gt(get(), y); }
         default Predicate ge(Expression<? extends Number> y) { return builder().ge(get(), y); }
@@ -175,7 +174,6 @@ public class Criteria_ {
     public interface AnyCollectionExpression<C extends Collection<?>, T extends Expression<C>>
             extends Supplier<T>, AnyExpression<C, T> {
         T get();
-        CriteriaBuilder builder();
         default Predicate isEmpty() { return builder().isEmpty(get()); }
         default Predicate isNotEmpty() { return builder().isNotEmpty(get()); }
         default Expression<Integer> size(Expression<C> collection) { return builder().size(get()); }
@@ -184,7 +182,6 @@ public class Criteria_ {
     public interface CollectionExpression<E, C extends Collection<E>, T extends Expression<C>>
             extends Supplier<T>, AnyExpression<C, T>, AnyCollectionExpression<C, T> {
         T get();
-        CriteriaBuilder builder();
         default Predicate isMember(Expression<E> elem) { return builder().isMember(elem, get()); }
         default Predicate isMember(E elem) { return builder().isMember(elem, get()); }
         default Predicate isNotMember(Expression<E> elem) { return builder().isMember(elem, get()); }
