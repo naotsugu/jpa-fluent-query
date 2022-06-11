@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,6 +53,22 @@ class QueryingTest {
 
 
     @Test
+    void testCount() {
+        var count = Querying.of(Root_.issue()).count().on(em);
+        assertEquals(6L, count);
+    }
+
+
+    @Test
+    void testCountWithFilter() {
+        var count = Querying.of(Root_.issue())
+            .filter(issue -> issue.getTitle().eq("foo"))
+            .count().on(em);
+        assertEquals(3L, count);
+    }
+
+
+    @Test
     void testSimpleFilter() {
 
         List<Issue> issues = Querying.of(Root_.issue())
@@ -72,5 +87,15 @@ class QueryingTest {
         assertEquals(2, issues.size());
     }
 
+    @Test
+    void testOrderBy() {
+        List<Issue> issues = Querying.of(Root_.issue())
+            .filter(issue -> issue.getTitle().eq("foo"))
+            .sorted(issue -> issue.getProject().getName().desc())
+            .toList().on(em);
+        assertEquals("name2", issues.get(0).getProject().getName());
+        assertEquals("name1", issues.get(1).getProject().getName());
+        assertEquals("name1", issues.get(2).getProject().getName());
+    }
 
 }

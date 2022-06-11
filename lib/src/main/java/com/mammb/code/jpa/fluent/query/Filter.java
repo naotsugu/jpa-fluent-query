@@ -1,14 +1,10 @@
 package com.mammb.code.jpa.fluent.query;
 
-import com.mammb.code.jpa.core.Builder;
 import com.mammb.code.jpa.core.RootAware;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.function.Supplier;
 
 public interface Filter<E, R extends RootAware<E>> {
 
@@ -23,14 +19,14 @@ public interface Filter<E, R extends RootAware<E>> {
     }
 
 
-
     class Composition {
 
         interface Combiner extends Serializable {
             Predicate combine(CriteriaBuilder builder, Predicate lhs, Predicate rhs);
         }
 
-        static <E, R extends RootAware<E>> Filter<E, R> composed(Filter<E, R> lhs, Filter<E, R> rhs, Combiner combiner) {
+        static <E, R extends RootAware<E>> Filter<E, R> composed(
+            Filter<E, R> lhs, Filter<E, R> rhs, Combiner combiner) {
 
             return root -> {
 

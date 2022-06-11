@@ -2,6 +2,7 @@ package com.mammb.code.jpa.core;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import java.util.Collection;
@@ -121,6 +122,8 @@ public class Criteria {
         default Predicate nonNull() {
             return builder().isNotNull(get());
         }
+        default Order asc() { return builder().asc(get()); }
+        default Order desc() { return builder().desc(get()); }
     }
 
     public interface ComparableExpression<E extends Comparable<? super E>, T extends Expression<E>>
