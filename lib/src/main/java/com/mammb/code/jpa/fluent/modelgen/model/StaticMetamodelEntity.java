@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mammb.code.jpa.fluent.modelgen;
+package com.mammb.code.jpa.fluent.modelgen.model;
+
+import com.mammb.code.jpa.fluent.modelgen.Context;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
-import javax.lang.model.util.Types;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 

@@ -17,16 +17,14 @@ package com.mammb.code.jpa.fluent.query;
 
 import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSource;
-import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
+
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Create Query helper interface.
  * @param <E> the entity of root
  * @param <R> the root element
+ * @author Naotsugu Kobayashi
  */
 public interface CreateQuery<E, R extends RootAware<E>> {
 
@@ -38,83 +36,19 @@ public interface CreateQuery<E, R extends RootAware<E>> {
 
 
     default Query<Long> count() {
-        return em -> {
-            CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-            R root = rootSource().root(cq, cb);
-            cq.select(cq.isDistinct() ? cb.countDistinct(root.get()) : cb.count(root.get()));
-            Optional.ofNullable(filter().apply(root)).ifPresent(cq::where);
-            cq.orderBy(List.of());
-            TypedQuery<Long> typedQuery = em.createQuery(cq);
-            return typedQuery.getSingleResult();
-        };
+        return em -> QueryHelper.countQuery(em, rootSource(), filter()).getSingleResult();
     }
-
 
     default Query<List<E>> toList() {
-        return toList(-1);
-    }
-
-    default Query<List<E>> toList(int limit) {
-        return em -> {
-            CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<E> cq = cb.createQuery(rootSource().rootClass());
-            R root = rootSource().root(cq, cb);
-            cq.select(root.get());
-            Optional.ofNullable(filter().apply(root)).ifPresent(cq::where);
-            Optional.ofNullable(sorts().apply(root)).ifPresent(cq::orderBy);
-            TypedQuery<E> typedQuery = em.createQuery(cq);
-            if (limit > 0) {
-                typedQuery.setMaxResults(limit);
-            }
-            return typedQuery.getResultList();
-        };
+        return em -> QueryHelper.query(em, rootSource(), filter(), sorts()).getResultList();
     }
 
     default Query<Slice<E>> toSlice(SlicePoint slicePoint) {
-        return em -> {
-
-            CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<E> cq = cb.createQuery(rootSource().rootClass());
-            R root = rootSource().root(cq, cb);
-            cq.select(root.get());
-            Optional.ofNullable(filter().apply(root)).ifPresent(cq::where);
-            Optional.ofNullable(sorts().apply(root)).ifPresent(cq::orderBy);
-            TypedQuery<E> typedQuery = em.createQuery(cq);
-
-            typedQuery.setFirstResult(Math.toIntExact(slicePoint.getOffset()));
-            typedQuery.setMaxResults(slicePoint.getSize() + 1);
-
-            List<E> result = typedQuery.getResultList();
-            return (result.size() > slicePoint.getSize())
-                ? Slice.of(result.subList(0, slicePoint.getSize()), true, slicePoint)
-                : Slice.of(result, false, slicePoint);
-        };
+        return em -> QueryHelper.slice(em, rootSource(), filter(), sorts(), slicePoint);
     }
 
-
     default Query<Page<E>> toPage(SlicePoint slicePoint) {
-        return em -> {
-
-            Long count = count().on(em);
-            if (count <= slicePoint.getOffset()) {
-                return Page.of(List.of(), count, slicePoint);
-            }
-
-            CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<E> cq = cb.createQuery(rootSource().rootClass());
-            R root = rootSource().root(cq, cb);
-            cq.select(root.get());
-            Optional.ofNullable(filter().apply(root)).ifPresent(cq::where);
-            Optional.ofNullable(sorts().apply(root)).ifPresent(cq::orderBy);
-            TypedQuery<E> typedQuery = em.createQuery(cq);
-
-            typedQuery.setFirstResult(Math.toIntExact(slicePoint.getOffset()));
-            typedQuery.setMaxResults(slicePoint.getSize());
-
-            List<E> result = typedQuery.getResultList();
-            return Page.of(result, count, slicePoint);
-        };
+        return em -> QueryHelper.page(em, rootSource(), filter(), sorts(), slicePoint);
     }
 
 }

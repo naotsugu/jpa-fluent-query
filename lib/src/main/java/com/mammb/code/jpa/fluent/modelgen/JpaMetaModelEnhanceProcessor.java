@@ -19,6 +19,7 @@ import com.mammb.code.jpa.fluent.modelgen.classwriter.CriteriaModelClassWriter;
 import com.mammb.code.jpa.fluent.modelgen.classwriter.ModelClassWriter;
 import com.mammb.code.jpa.fluent.modelgen.classwriter.ApiClassWriter;
 import com.mammb.code.jpa.fluent.modelgen.classwriter.RootClassWriter;
+import com.mammb.code.jpa.fluent.modelgen.model.StaticMetamodelEntity;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;

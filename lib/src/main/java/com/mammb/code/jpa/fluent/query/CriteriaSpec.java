@@ -26,6 +26,7 @@ import java.util.Objects;
 /**
  * Criteria specification.
  * @param <T> the type of entity
+ * @author Naotsugu Kobayashi
  */
 public interface CriteriaSpec<T> extends Serializable {
 

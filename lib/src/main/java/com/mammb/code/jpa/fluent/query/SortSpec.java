@@ -25,6 +25,7 @@ import java.util.Objects;
 /**
  * Sort specification.
  * @param <T> the type of entity
+ * @author Naotsugu Kobayashi
  */
 public interface SortSpec<T> {
 

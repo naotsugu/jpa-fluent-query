@@ -17,8 +17,8 @@ package com.mammb.code.jpa.fluent.modelgen.classwriter;
 
 import com.mammb.code.jpa.fluent.modelgen.Context;
 import com.mammb.code.jpa.fluent.modelgen.JpaMetaModelEnhanceProcessor;
-import com.mammb.code.jpa.fluent.modelgen.StaticMetamodelAttribute;
-import com.mammb.code.jpa.fluent.modelgen.StaticMetamodelEntity;
+import com.mammb.code.jpa.fluent.modelgen.model.StaticMetamodelAttribute;
+import com.mammb.code.jpa.fluent.modelgen.model.StaticMetamodelEntity;
 
 import javax.annotation.processing.FilerException;
 import javax.tools.FileObject;

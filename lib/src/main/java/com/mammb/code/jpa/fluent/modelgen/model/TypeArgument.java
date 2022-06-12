@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mammb.code.jpa.fluent.modelgen;
+package com.mammb.code.jpa.fluent.modelgen.model;
+
+import com.mammb.code.jpa.fluent.modelgen.Context;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeMirror;
