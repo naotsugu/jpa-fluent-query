@@ -31,6 +31,9 @@ import java.util.Objects;
  */
 public class RootClassWriter {
 
+    /** the default package name. */
+    private static final String API_PACKAGE_NAME = "com.mammb.code.jpa.core";
+
     /** Context of processing. */
     private final Context context;
 
@@ -61,46 +64,38 @@ public class RootClassWriter {
     /**
      * Write a root class factory class file.
      */
-    public void writeFile() {
+    public void writeClass() {
         try {
 
             var packageName = createPackageName();
-            packageName = packageName.isBlank() ? "com.mammb.code.jpa.core" : packageName;
+            ImportBuilder imports = ImportBuilder.of(packageName.isBlank() ? API_PACKAGE_NAME : packageName);
 
-            FileObject fo = context.getFiler().createSourceFile(packageName + ".Root_");
+            FileObject fo = context.getFiler().createSourceFile(imports.getSelfPackage() + ".Root_");
 
             try (PrintWriter pw = new PrintWriter(fo.openOutputStream())) {
 
                 // write package
-                if (!packageName.isBlank()) {
+                if (!imports.getSelfPackage().isBlank()) {
                     pw.println("package " + packageName + ";");
                 }
                 pw.println();
 
                 // write import
-                pw.println("import javax.annotation.processing.Generated;");
-                pw.println("import java.util.function.BiFunction;");
-                pw.println("import java.util.function.Function;");
-                if (context.isJakarta()) {
-                    pw.println("import jakarta.persistence.criteria.CriteriaBuilder;");
-                    pw.println("import jakarta.persistence.criteria.CriteriaQuery;");
-                    pw.println("import jakarta.persistence.EntityManager;");
-                    pw.println("import jakarta.persistence.criteria.Root;");
-                } else {
-                    pw.println("import javax.persistence.criteria.CriteriaBuilder;");
-                    pw.println("import javax.persistence.criteria.CriteriaQuery;");
-                    pw.println("import javax.persistence.EntityManager;");
-                    pw.println("import javax.persistence.criteria.Root;");
-                }
+                imports.add("javax.annotation.processing.Generated");
+                imports.add("java.util.function.BiFunction");
+                imports.add("java.util.function.Function");
+                imports.add("jakarta.persistence.criteria.CriteriaBuilder");
+                imports.add("jakarta.persistence.criteria.CriteriaQuery");
+                imports.add("jakarta.persistence.EntityManager");
+                imports.add("jakarta.persistence.criteria.Root");
                 if (context.isAddCriteria()) {
-                    pw.println("import com.mammb.code.jpa.core.RootSource;");
+                    imports.add(API_PACKAGE_NAME + ".RootSource");
                 }
                 for (String metaName : modelClasses) {
-                    if (!metaName.substring(0, metaName.lastIndexOf('.')).equals(packageName)) {
-                        pw.println("import %s;".formatted(metaName.substring(0, metaName.lastIndexOf('_'))));
-                        pw.println("import %sRoot_;".formatted(metaName));
-                    }
+                    imports.add(metaName.substring(0, metaName.lastIndexOf('_')));
+                    imports.add(metaName + "Root_");
                 }
+                pw.println(imports.generateImports(context.isJakarta()));
                 pw.println();
 
                 // write class
@@ -151,61 +146,6 @@ public class RootClassWriter {
         } catch (Exception e) {
             context.logError("Problem opening file to write Root factory class : " + e.getMessage());
         }
-
-        writeRootSourceClass();
-
-    }
-
-
-    public void writeRootSourceClass() {
-
-        if (Objects.nonNull(context.getElementUtils().getTypeElement("com.mammb.code.jpa.core.RootSource"))) {
-            return;
-        }
-
-        try {
-
-            var packageName = "com.mammb.code.jpa.core";
-
-            FileObject fo = context.getFiler().createSourceFile(packageName + ".RootSource");
-
-            try (PrintWriter pw = new PrintWriter(fo.openOutputStream())) {
-
-                // write package
-                if (!packageName.isBlank()) {
-                    pw.println("package " + packageName + ";");
-                }
-                pw.println();
-
-                // write import
-                pw.println("import javax.annotation.processing.Generated;");
-                if (context.isJakarta()) {
-                    pw.println("import jakarta.persistence.criteria.CriteriaBuilder;");
-                    pw.println("import jakarta.persistence.criteria.CriteriaQuery;");
-                    pw.println("import jakarta.persistence.criteria.Root;");
-                } else {
-                    pw.println("import javax.persistence.criteria.CriteriaBuilder;");
-                    pw.println("import javax.persistence.criteria.CriteriaQuery;");
-                    pw.println("import javax.persistence.criteria.Root;");
-                }
-                pw.println();
-
-                // write class
-                pw.println("@Generated(value = \"%s\")".formatted(JpaMetaModelEnhanceProcessor.class.getName()));
-                pw.println("""
-                public interface RootSource<E, T extends java.util.function.Supplier<Root<E>>> {
-                    T root(CriteriaQuery<?> query, CriteriaBuilder builder);
-                    Class<E> rootClass();
-                }
-                """);
-
-                pw.flush();
-            }
-
-        } catch (Exception e) {
-            context.logError("Problem opening file to write api class : " + e.getMessage());
-        }
-
     }
 
 

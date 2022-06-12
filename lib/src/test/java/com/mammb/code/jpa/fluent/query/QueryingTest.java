@@ -19,16 +19,18 @@ class QueryingTest {
     static EntityManagerFactory emf;
     static EntityManager em;
 
+
     @BeforeAll
     static void initAll() {
+
         emf = Persistence.createEntityManagerFactory("testUnit");
         em = emf.createEntityManager();
 
         em.getTransaction().begin();
+
         var project1 = new Project(); project1.setName("name1");
         var project2 = new Project(); project2.setName("name2");
-        em.persist(project1);
-        em.persist(project2);
+        em.persist(project1); em.persist(project2);
 
         var issue1 = new Issue(); issue1.setTitle("foo"); issue1.setProject(project1);
         var issue2 = new Issue(); issue2.setTitle("foo"); issue2.setProject(project2);
@@ -36,14 +38,13 @@ class QueryingTest {
         var issue4 = new Issue(); issue4.setTitle("bar"); issue4.setProject(project2);
         var issue5 = new Issue(); issue5.setTitle("bar"); issue5.setProject(project1);
         var issue6 = new Issue(); issue6.setTitle("bar"); issue6.setProject(project2);
-        em.persist(issue1);
-        em.persist(issue2);
-        em.persist(issue3);
-        em.persist(issue4);
-        em.persist(issue5);
-        em.persist(issue6);
+        em.persist(issue1); em.persist(issue2); em.persist(issue3);
+        em.persist(issue4); em.persist(issue5); em.persist(issue6);
+
         em.getTransaction().commit();
+
     }
+
 
     @AfterAll
     static void tearDownAll() {
@@ -87,11 +88,13 @@ class QueryingTest {
         assertEquals(2, issues.size());
     }
 
+
     @Test
     void testOrderBy() {
         List<Issue> issues = Querying.of(Root_.issue())
             .filter(issue -> issue.getTitle().eq("foo"))
             .sorted(issue -> issue.getProject().getName().desc())
+            .sorted(issue -> issue.getId().asc())
             .toList().on(em);
         assertEquals("name2", issues.get(0).getProject().getName());
         assertEquals("name1", issues.get(1).getProject().getName());

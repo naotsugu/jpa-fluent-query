@@ -16,6 +16,7 @@
 package com.mammb.code.jpa.fluent.modelgen.classwriter;
 
 import com.mammb.code.jpa.fluent.modelgen.Context;
+import com.mammb.code.jpa.fluent.modelgen.JpaMetaModelEnhanceProcessor;
 
 import javax.tools.FileObject;
 import java.io.PrintWriter;
@@ -29,11 +30,12 @@ import java.util.Objects;
  */
 public class ApiClassWriter {
 
-    /** Name of criteria class. */
-    public static String PACKAGE = "com.mammb.code.jpa.core";
+    /** The name of package. */
+    public static final String PACKAGE_NAME = "com.mammb.code.jpa.core";
 
     /** Context of processing. */
     private final Context context;
+
 
     /**
      * Constructor.
@@ -55,31 +57,93 @@ public class ApiClassWriter {
 
 
     /**
-     * Write a criteria class file.
+     * Write api classes.
      */
-    public void writeCriteriaClass() {
+    public void writeClasses() {
+        writeRootSourceClass();
+        writeCriteriaClass();
+        writeBuilderClass();
+        writeRootAwareClass();
+    }
 
-        if (Objects.nonNull(context.getElementUtils().getTypeElement(PACKAGE + ".Criteria"))) {
+
+    private void writeRootSourceClass() {
+
+        if (Objects.nonNull(context.getElementUtils().getTypeElement(PACKAGE_NAME + ".RootSource"))) {
             return;
         }
 
         try {
-            FileObject fo = context.getFiler().createSourceFile(PACKAGE + ".Criteria");
 
-            // TODO jakarta
+            ImportBuilder imports = ImportBuilder.of(PACKAGE_NAME);
+            FileObject fo = context.getFiler().createSourceFile(imports.getSelfPackage() + ".RootSource");
 
             try (PrintWriter pw = new PrintWriter(fo.openOutputStream())) {
+
+                // write package
+                pw.println("package " + imports.getSelfPackage() + ";");
+                pw.println();
+
+                // write import
+                imports.add("javax.annotation.processing.Generated");
+                imports.add("jakarta.persistence.criteria.CriteriaBuilder");
+                imports.add("jakarta.persistence.criteria.CriteriaQuery");
+                imports.add("jakarta.persistence.criteria.Root");
+                pw.println(imports.generateImports(context.isJakarta()));
+                pw.println();
+
+                // write class
+                pw.println("@Generated(value = \"%s\")".formatted(JpaMetaModelEnhanceProcessor.class.getName()));
                 pw.println("""
-                package com.mammb.code.jpa.core;
+                public interface RootSource<E, T extends java.util.function.Supplier<Root<E>>> {
+                    T root(CriteriaQuery<?> query, CriteriaBuilder builder);
+                    Class<E> rootClass();
+                }
+                """);
 
-                import jakarta.persistence.criteria.CriteriaBuilder;
-                import jakarta.persistence.criteria.Expression;
-                import jakarta.persistence.criteria.Order;
-                import jakarta.persistence.criteria.Path;
-                import jakarta.persistence.criteria.Predicate;
-                import java.util.Collection;
-                import java.util.function.Supplier;
+                pw.flush();
+            }
 
+        } catch (Exception e) {
+            context.logError("Problem opening file to write api class : " + e.getMessage());
+        }
+
+    }
+
+
+    /**
+     * Write a criteria class file.
+     */
+    private void writeCriteriaClass() {
+
+        if (Objects.nonNull(context.getElementUtils().getTypeElement(PACKAGE_NAME + ".Criteria"))) {
+            return;
+        }
+
+        try {
+
+            ImportBuilder imports = ImportBuilder.of(PACKAGE_NAME);
+            FileObject fo = context.getFiler().createSourceFile(imports.getSelfPackage() + ".Criteria");
+
+            try (PrintWriter pw = new PrintWriter(fo.openOutputStream())) {
+
+                // write package
+                pw.println("package " + imports.getSelfPackage() + ";");
+                pw.println();
+
+                // write import
+                imports.add("javax.annotation.processing.Generated");
+                imports.add("jakarta.persistence.criteria.Expression");
+                imports.add("jakarta.persistence.criteria.Order");
+                imports.add("jakarta.persistence.criteria.Path");
+                imports.add("jakarta.persistence.criteria.Predicate");
+                imports.add("java.util.Collection");
+                imports.add("java.util.function.Supplier");
+                pw.println(imports.generateImports(context.isJakarta()));
+                pw.println();
+
+                pw.println("@Generated(value = \"%s\")".formatted(JpaMetaModelEnhanceProcessor.class.getName()));
+                pw.println("""
                 public class Criteria {
 
                     public static class AnyPath<E> implements AnyExpression<E, Path<E>>, Builder {
@@ -285,23 +349,32 @@ public class ApiClassWriter {
     /**
      * Write a criteria class file.
      */
-    public void writeBuilderClass() {
+    private void writeBuilderClass() {
 
-        if (Objects.nonNull(context.getElementUtils().getTypeElement(PACKAGE + ".Builder"))) {
+        if (Objects.nonNull(context.getElementUtils().getTypeElement(PACKAGE_NAME + ".Builder"))) {
             return;
         }
 
-        // TODO jakarta
 
         try {
-            FileObject fo = context.getFiler().createSourceFile(PACKAGE + ".Builder");
+
+            ImportBuilder imports = ImportBuilder.of(PACKAGE_NAME);
+            FileObject fo = context.getFiler().createSourceFile(PACKAGE_NAME + ".Builder");
 
             try (PrintWriter pw = new PrintWriter(fo.openOutputStream())) {
+
+                // write package
+                pw.println("package " + imports.getSelfPackage() + ";");
+                pw.println();
+
+                // write import
+                imports.add("javax.annotation.processing.Generated");
+                imports.add("jakarta.persistence.criteria.CriteriaBuilder");
+                pw.println(imports.generateImports(context.isJakarta()));
+                pw.println();
+
+                pw.println("@Generated(value = \"%s\")".formatted(JpaMetaModelEnhanceProcessor.class.getName()));
                 pw.println("""
-                package com.mammb.code.jpa.core;
-
-                import jakarta.persistence.criteria.CriteriaBuilder;
-
                 public interface Builder {
                     CriteriaBuilder builder();
                 }
@@ -315,27 +388,36 @@ public class ApiClassWriter {
 
     }
 
+
     /**
      * Write a criteria class file.
      */
-    public void writeRootAwareClass() {
+    private void writeRootAwareClass() {
 
-        if (Objects.nonNull(context.getElementUtils().getTypeElement(PACKAGE + ".RootAware"))) {
+        if (Objects.nonNull(context.getElementUtils().getTypeElement(PACKAGE_NAME + ".RootAware"))) {
             return;
         }
 
-        // TODO jakarta
 
         try {
-            FileObject fo = context.getFiler().createSourceFile(PACKAGE + ".RootAware");
+
+            ImportBuilder imports = ImportBuilder.of(PACKAGE_NAME);
+            FileObject fo = context.getFiler().createSourceFile(imports.getSelfPackage() + ".RootAware");
 
             try (PrintWriter pw = new PrintWriter(fo.openOutputStream())) {
+                // write package
+                pw.println("package " + imports.getSelfPackage() + ";");
+                pw.println();
+
+                // write import
+                imports.add("javax.annotation.processing.Generated");
+                imports.add("jakarta.persistence.criteria.Root");
+                imports.add("java.util.function.Supplier");
+                pw.println(imports.generateImports(context.isJakarta()));
+                pw.println();
+
+                pw.println("@Generated(value = \"%s\")".formatted(JpaMetaModelEnhanceProcessor.class.getName()));
                 pw.println("""
-                    package com.mammb.code.jpa.core;
-
-                    import jakarta.persistence.criteria.Root;
-                    import java.util.function.Supplier;
-
                     public interface RootAware<E> extends Supplier<Root<E>>, Builder {
                     }
                     """);

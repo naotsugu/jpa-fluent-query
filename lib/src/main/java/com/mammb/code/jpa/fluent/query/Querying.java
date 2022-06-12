@@ -27,7 +27,7 @@ public interface Querying<E, R extends RootAware<E>> extends CreateQuery<E, R> {
 
 
     static <E, R extends RootAware<E>> Querying<E, R> of(RootSource<E, R> rootSource) {
-        return Querying.of(rootSource, r -> null, Sorts.empty());
+        return Querying.of(rootSource, Filter.empty(), Sorts.empty());
     }
 
 

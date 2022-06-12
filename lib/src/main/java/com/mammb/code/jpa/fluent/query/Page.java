@@ -64,27 +64,21 @@ public interface Page<T> extends Slice<T> {
 
         return new Page<>() {
 
-            private final List<T> list = Objects.isNull(content) ? List.of() : List.copyOf(content);
+            private final List<T> list = Objects.isNull(content)
+                ? List.of()
+                : List.copyOf(content);
 
             @Override
-            public long getTotalElements() {
-                return totalElements;
-            }
+            public long getTotalElements() { return totalElements; }
 
             @Override
-            public List<T> getContent() {
-                return list;
-            }
+            public List<T> getContent() { return list; }
 
             @Override
-            public int getNumber() {
-                return slicePoint.getNumber();
-            }
+            public int getNumber() { return slicePoint.getNumber(); }
 
             @Override
-            public int getSize() {
-                return slicePoint.getSize();
-            }
+            public int getSize() { return slicePoint.getSize(); }
 
         };
     }

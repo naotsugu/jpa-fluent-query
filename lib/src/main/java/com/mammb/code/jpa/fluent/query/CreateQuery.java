@@ -17,7 +17,6 @@ package com.mammb.code.jpa.fluent.query;
 
 import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSource;
-import jakarta.persistence.OrderBy;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;

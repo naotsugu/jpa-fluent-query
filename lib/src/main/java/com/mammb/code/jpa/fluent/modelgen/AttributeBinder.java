@@ -15,7 +15,7 @@
  */
 package com.mammb.code.jpa.fluent.modelgen;
 
-import com.mammb.code.jpa.fluent.modelgen.classwriter.ImportSentences;
+import com.mammb.code.jpa.fluent.modelgen.classwriter.ImportBuilder;
 
 import java.util.Objects;
 
@@ -31,15 +31,15 @@ public interface AttributeBinder extends MetamodelAttribute {
      * @param template template
      * @return binded template
      */
-    default String bindTo(String template, ImportSentences imports) {
+    default String bindTo(String template, ImportBuilder imports) {
 
         return template.formatted(
-            imports.apply(getEnclosingType().getName()),      // %1$s
+            imports.add(getEnclosingType().getName()),      // %1$s
             getAttributeType().isMap()
-                ? imports.apply(getKeyType().getName()) : "", // %2$s
-            imports.apply(getValueType().getName()),          // %3$s
-            capitalize(getName()),                            // %4$s
-            getName()                                         // %5$s
+                ? imports.add(getKeyType().getName()) : "", // %2$s
+            imports.add(getValueType().getName()),          // %3$s
+            capitalize(getName()),                          // %4$s
+            getName()                                       // %5$s
         );
     }
 

@@ -100,11 +100,11 @@ public class JpaMetaModelEnhanceProcessor extends AbstractProcessor {
 
         if (context.isAddRoot()) {
             context.logDebug("Create root factory class");
-            RootClassWriter.of(context).writeFile();
+            RootClassWriter.of(context).writeClass();
         }
         if (context.isAddCriteria()) {
-            context.logDebug("Create criteria class");
-            ApiClassWriter.of(context).writeCriteriaClass();
+            context.logDebug("Create api class");
+            ApiClassWriter.of(context).writeClasses();
         }
 
         return false;

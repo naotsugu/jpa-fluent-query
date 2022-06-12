@@ -40,7 +40,7 @@ public class CriteriaModelClassWriter {
     private final StaticMetamodelEntity entity;
 
     /** Import sentences. */
-    private final ImportSentences imports;
+    private final ImportBuilder imports;
 
 
     /**
@@ -51,7 +51,7 @@ public class CriteriaModelClassWriter {
     protected CriteriaModelClassWriter(Context context, StaticMetamodelEntity entity) {
         this.context = context;
         this.entity = entity;
-        this.imports = ImportSentences.of(entity.getPackageName());
+        this.imports = ImportBuilder.of(entity.getPackageName());
     }
 
 
@@ -78,12 +78,31 @@ public class CriteriaModelClassWriter {
                 entity.getQualifiedName() + "Root_", entity.getElement());
 
             try (PrintWriter pw = new PrintWriter(fo.openOutputStream())) {
-                if (!entity.getPackageName().isEmpty()) {
-                    pw.println("package " + entity.getPackageName() + ";");
+
+                if (!imports.getSelfPackage().isEmpty()) {
+                    pw.println("package " + imports.getSelfPackage() + ";");
                     pw.println();
                 }
+
+                imports.add("jakarta.persistence.criteria.CriteriaBuilder");
+                imports.add("jakarta.persistence.criteria.CriteriaQuery");
+                imports.add("jakarta.persistence.criteria.Expression");
+                imports.add("jakarta.persistence.criteria.Predicate");
+                imports.add("jakarta.persistence.criteria.Root");
+                imports.add("jakarta.persistence.criteria.Join");
+                imports.add("jakarta.persistence.criteria.Path");
+                imports.add("jakarta.persistence.criteria.ListJoin");
+                imports.add("jakarta.persistence.criteria.SetJoin");
+                imports.add("jakarta.persistence.criteria.MapJoin");
+                imports.add("jakarta.persistence.criteria.CollectionJoin");
+                imports.add("java.util.List");
+                imports.add("java.util.Map");
+                imports.add("java.util.Set");
+                imports.add("java.util.Collection");
+                imports.add("java.util.function.Supplier");
+                imports.add("javax.annotation.processing.Generated");
+                imports.add(ApiClassWriter.PACKAGE_NAME + ".*;");
                 pw.println(imports.generateImports(context.isJakarta()));
-                pw.println("import " + ApiClassWriter.PACKAGE + ".*;");
                 pw.println();
 
                 pw.println(body);
@@ -682,9 +701,9 @@ public class CriteriaModelClassWriter {
         } else if (attribute.getValueType().isNumber()) {
             return "Criteria.NumberPath";
         } else if (attribute.getValueType().isComparable()) {
-            return "Criteria.ComparablePath<" + imports.apply(attribute.getValueType().getName()) + ">";
+            return "Criteria.ComparablePath<" + imports.add(attribute.getValueType().getName()) + ">";
         } else {
-            return "Criteria.AnyPath<" + imports.apply(attribute.getValueType().getName()) + ">";
+            return "Criteria.AnyPath<" + imports.add(attribute.getValueType().getName()) + ">";
         }
     }
 
