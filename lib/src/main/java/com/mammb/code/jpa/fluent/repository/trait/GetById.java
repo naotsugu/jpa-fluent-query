@@ -13,24 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mammb.code.jpa.fluent.repository;
+package com.mammb.code.jpa.fluent.repository.trait;
 
+import com.mammb.code.jpa.core.EntityManagerAware;
 import com.mammb.code.jpa.core.RootAware;
-import com.mammb.code.jpa.core.RootSource;
-import com.mammb.code.jpa.fluent.query.Filter;
-import com.mammb.code.jpa.fluent.query.QueryHelper;
-import com.mammb.code.jpa.fluent.query.Sorts;
-import jakarta.persistence.EntityManager;
+import com.mammb.code.jpa.core.RootSourceAware;
+
 import java.io.Serializable;
-import java.util.List;
+import java.util.Optional;
 
-public interface FindAll<PK extends Serializable, E, R extends RootAware<E>> {
+public interface GetById<PK extends Serializable, E, R extends RootAware<E>> extends EntityManagerAware, RootSourceAware<E, R> {
 
-    EntityManager getEm();
-    RootSource<E, R> rootSource();
+    default Optional<E> getReference(PK id) {
+        return Optional.ofNullable(em().getReference(rootSource().rootClass(), id));
+    }
 
-    default List<E> findAll(Filter<E, R> filter, Sorts<E, R> sorts) {
-        return QueryHelper.query(getEm(), rootSource(), filter, sorts).getResultList();
+    default Optional<E> get(PK id) {
+        return Optional.ofNullable(em().find(rootSource().rootClass(), id));
     }
 
 }

@@ -13,25 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mammb.code.jpa.fluent.repository;
+package com.mammb.code.jpa.fluent.repository.trait;
 
+import com.mammb.code.jpa.core.EntityManagerAware;
 import com.mammb.code.jpa.core.RootAware;
-import com.mammb.code.jpa.core.RootSource;
+import com.mammb.code.jpa.core.RootSourceAware;
 import com.mammb.code.jpa.fluent.query.Filter;
 import com.mammb.code.jpa.fluent.query.QueryHelper;
 import com.mammb.code.jpa.fluent.query.Slice;
 import com.mammb.code.jpa.fluent.query.SlicePoint;
 import com.mammb.code.jpa.fluent.query.Sorts;
-import jakarta.persistence.EntityManager;
-import java.io.Serializable;
 
-public interface FindSlice<PK extends Serializable, E, R extends RootAware<E>> {
 
-    EntityManager getEm();
-    RootSource<E, R> rootSource();
+public interface FindSlice<E, R extends RootAware<E>> extends EntityManagerAware, RootSourceAware<E, R> {
 
     default Slice<E> findSlice(Filter<E, R> filter, Sorts<E, R> sorts, SlicePoint slicePoint) {
-        return QueryHelper.slice(getEm(), rootSource(), filter, sorts, slicePoint);
+        return QueryHelper.slice(em(), rootSource(), filter, sorts, slicePoint);
     }
 
 }
