@@ -20,15 +20,13 @@ import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSourceAware;
 import com.mammb.code.jpa.fluent.query.Filter;
 import com.mammb.code.jpa.fluent.query.QueryHelper;
-import com.mammb.code.jpa.fluent.query.Slice;
-import com.mammb.code.jpa.fluent.query.SlicePoint;
 import com.mammb.code.jpa.fluent.query.Sorts;
+import java.util.List;
 
+public interface FindAllTrait<E, R extends RootAware<E>> extends EntityManagerAware, RootSourceAware<E, R> {
 
-public interface FindSlice<E, R extends RootAware<E>> extends EntityManagerAware, RootSourceAware<E, R> {
-
-    default Slice<E> findSlice(Filter<E, R> filter, Sorts<E, R> sorts, SlicePoint slicePoint) {
-        return QueryHelper.slice(em(), rootSource(), filter, sorts, slicePoint);
+    default List<E> findAll(Filter<E, R> filter, Sorts<E, R> sorts) {
+        return QueryHelper.query(em(), rootSource(), filter, sorts).getResultList();
     }
 
 }

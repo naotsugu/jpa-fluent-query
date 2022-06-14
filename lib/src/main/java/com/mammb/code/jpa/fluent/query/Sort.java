@@ -18,10 +18,26 @@ package com.mammb.code.jpa.fluent.query;
 import com.mammb.code.jpa.core.RootAware;
 import jakarta.persistence.criteria.Order;
 
+/**
+ * Sort for ORDER BY clause.
+ * @param <E> the type of entity
+ * @param <R> the type of root
+ */
 public interface Sort<E, R extends RootAware<E>> {
 
+    /**
+     * Creates a {@link Order} for the given {@link RootAware}.
+     * @param root a {@link RootAware}
+     * @return a {@link Order}
+     */
     Order apply(R root);
 
+
+    /**
+     * ANDs the given {@link Sort} to the current one.
+     * @param other a {@link Sort} for AND target
+     * @return a {@link Sorts}
+     */
     default Sorts<E, R> and(Sort<E, R> other) {
         return Sorts.of(this, other);
     }

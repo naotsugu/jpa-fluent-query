@@ -20,15 +20,16 @@ import java.util.Objects;
 
 /**
  * A slice of data elements.
+ * @param <E> the type of entry
  * @author Naotsugu Kobayashi
  */
-public interface Slice<T> extends SlicePoint {
+public interface Slice<E> extends SlicePoint {
 
     /**
      * Get the content of {@link Slice} as {@link List}.
      * @return the content of {@link Slice}
      */
-    List<T> getContent();
+    List<E> getContent();
 
 
     /**
@@ -61,14 +62,14 @@ public interface Slice<T> extends SlicePoint {
      * @param content the content of {@link Slice}.
      * @param hasNext whether the next slice exists
      * @param slicePoint the current point of slice
-     * @param <T> the type of content
+     * @param <E> the type of content
      * @return the created {@link Slice}
      */
-    static <T> Slice<T> of(List<T> content, boolean hasNext, SlicePoint slicePoint) {
+    static <E> Slice<E> of(List<E> content, boolean hasNext, SlicePoint slicePoint) {
 
         return new Slice<>() {
 
-            private final List<T> list = Objects.isNull(content) ? List.of() : List.copyOf(content);
+            private final List<E> list = Objects.isNull(content) ? List.of() : List.copyOf(content);
 
             @Override
             public int getNumber() {
@@ -81,7 +82,7 @@ public interface Slice<T> extends SlicePoint {
             }
 
             @Override
-            public List<T> getContent() {
+            public List<E> getContent() {
                 return list;
             }
 

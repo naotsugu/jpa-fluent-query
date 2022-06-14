@@ -3,10 +3,11 @@ package com.mammb.code.jpa.fluent.repository.trait;
 import com.mammb.code.jpa.core.EntityManagerAware;
 import java.util.Objects;
 
-public interface Save<E> extends EntityManagerAware {
+public interface SaveTrait<E> extends EntityManagerAware {
 
     default E save(E entity) {
-        if (Objects.isNull(em().getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(entity))) {
+        if (Objects.isNull(em().getEntityManagerFactory()
+            .getPersistenceUnitUtil().getIdentifier(entity))) {
             em().persist(entity);
         } else {
             em().merge(entity);

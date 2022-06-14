@@ -21,23 +21,57 @@ import jakarta.persistence.criteria.Predicate;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * The filter for WHERE clause.
+ *
+ * @param <E> the type of entity
+ * @param <R> the type of root
+ * @author Naotsugu Kobayashi
+ */
 public interface Filter<E, R extends RootAware<E>> {
 
+    /**
+     * Creates a {@link Predicate} for the given {@link RootAware}.
+     * @param root a {@link RootAware}
+     * @return a {@link Predicate}
+     */
     Predicate apply(R root);
 
+
+    /**
+     * ANDs the given {@link Filter} to the current one.
+     * @param other a {@link Filter} for AND target
+     * @return a {@link Filter}
+     */
     default Filter<E, R> and(Filter<E, R> other) {
         return Composition.composed(this, other, CriteriaBuilder::and);
     }
 
+
+    /**
+     * ORs the given {@link Filter} to the current one.
+     * @param other a {@link Filter} for OR target
+     * @return a {@link Filter}
+     */
     default Filter<E, R> or(Filter<E, R> other) {
         return Composition.composed(this, other, CriteriaBuilder::or);
     }
 
 
+    /**
+     * Get the empty {@link Filter}.
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @return a empty {@link Filter}
+     */
     static <E, R extends RootAware<E>> Filter<E, R> empty() {
         return root -> null;
     }
 
+
+    /**
+     * The {@link Filter} composition helper.
+     */
     class Composition {
 
         interface Combiner extends Serializable {

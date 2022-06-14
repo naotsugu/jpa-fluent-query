@@ -15,7 +15,12 @@
  */
 package com.mammb.code.jpa.fluent.repository;
 
-import java.io.Serializable;
-
-public interface Repository<PK extends Serializable, E> {
+/**
+ * Repository marker interface.
+ *
+ * @param <PK> the type of the id of the entity the repository manages
+ * @param <E> the entity type the repository manages
+ * @author Naotsugu Kobayashi
+ */
+public interface Repository<PK, E> {
 }

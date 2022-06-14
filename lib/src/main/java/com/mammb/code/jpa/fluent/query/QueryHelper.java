@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Helper for Query.
+ * Helper for building query.
  *
  * @author Naotsugu Kobayashi
  */

@@ -18,15 +18,23 @@ package com.mammb.code.jpa.fluent.repository.trait;
 import com.mammb.code.jpa.core.EntityManagerAware;
 import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSourceAware;
-import com.mammb.code.jpa.fluent.query.Filter;
-import com.mammb.code.jpa.fluent.query.QueryHelper;
-import com.mammb.code.jpa.fluent.query.Sorts;
-import java.util.List;
 
-public interface FindAll<E, R extends RootAware<E>> extends EntityManagerAware, RootSourceAware<E, R> {
+import java.io.Serializable;
+import java.util.Optional;
 
-    default List<E> findAll(Filter<E, R> filter, Sorts<E, R> sorts) {
-        return QueryHelper.query(em(), rootSource(), filter, sorts).getResultList();
+public interface GetTrait<PK extends Serializable, E, R extends RootAware<E>> extends EntityManagerAware, RootSourceAware<E, R> {
+
+    default Optional<E> getReference(PK id) {
+        return Optional.ofNullable(em().getReference(rootSource().rootClass(), id));
+    }
+
+    default Optional<E> get(PK id) {
+        return Optional.ofNullable(em().find(rootSource().rootClass(), id));
+    }
+
+    default E get(E entity) {
+        return em().find(rootSource().rootClass(),
+            em().getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(entity));
     }
 
 }

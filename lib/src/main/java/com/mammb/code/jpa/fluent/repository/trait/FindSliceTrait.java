@@ -18,18 +18,17 @@ package com.mammb.code.jpa.fluent.repository.trait;
 import com.mammb.code.jpa.core.EntityManagerAware;
 import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSourceAware;
+import com.mammb.code.jpa.fluent.query.Filter;
+import com.mammb.code.jpa.fluent.query.QueryHelper;
+import com.mammb.code.jpa.fluent.query.Slice;
+import com.mammb.code.jpa.fluent.query.SlicePoint;
+import com.mammb.code.jpa.fluent.query.Sorts;
 
-import java.io.Serializable;
-import java.util.Optional;
 
-public interface GetById<PK extends Serializable, E, R extends RootAware<E>> extends EntityManagerAware, RootSourceAware<E, R> {
+public interface FindSliceTrait<E, R extends RootAware<E>> extends EntityManagerAware, RootSourceAware<E, R> {
 
-    default Optional<E> getReference(PK id) {
-        return Optional.ofNullable(em().getReference(rootSource().rootClass(), id));
-    }
-
-    default Optional<E> get(PK id) {
-        return Optional.ofNullable(em().find(rootSource().rootClass(), id));
+    default Slice<E> findSlice(Filter<E, R> filter, Sorts<E, R> sorts, SlicePoint slicePoint) {
+        return QueryHelper.slice(em(), rootSource(), filter, sorts, slicePoint);
     }
 
 }
