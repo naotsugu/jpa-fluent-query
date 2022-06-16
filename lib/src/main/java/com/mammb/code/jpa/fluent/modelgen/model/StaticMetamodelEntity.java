@@ -19,8 +19,10 @@ import com.mammb.code.jpa.fluent.modelgen.Context;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import java.util.List;
@@ -156,6 +158,9 @@ public class StaticMetamodelEntity {
 
     /**
      * Get the annotation types of target element.
+     * e.g. {@code jakarta.persistence.metamodel.StaticMetamodel}
+     * or {@code javax.persistence.metamodel.StaticMetamodel}
+     *
      * @param element the target element
      * @return the annotation types
      */
@@ -172,10 +177,18 @@ public class StaticMetamodelEntity {
      * @return the metamodel target entity
      */
     public TypeArgument getTargetEntity() {
+        return TypeArgument.of(context, getTargetEntityTypeElement().asType());
+    }
+
+
+    /**
+     * Get the metamodel target entity {@link TypeElement}.
+     * @return the metamodel target entity {@link TypeElement}
+     */
+    private TypeElement getTargetEntityTypeElement() {
         var metamodelName = element.getQualifiedName().toString();
         var entityName = metamodelName.substring(0, metamodelName.length() - 1);
-        return TypeArgument.of(context,
-                context.getElementUtils().getTypeElement(entityName).asType());
+        return context.getElementUtils().getTypeElement(entityName);
     }
 
 
@@ -191,6 +204,54 @@ public class StaticMetamodelEntity {
                       || e.asType().toString().startsWith(AttributeType.PACKAGE_NAME_LEGACY))
             .map(e -> StaticMetamodelAttribute.of(context, e))
             .toList();
+    }
+
+
+    /**
+     * Get whether this static metamodel is for Entity.
+     * @return {@code true} if this static metamodel is for Entity
+     */
+    private boolean isEntityMetamodel() {
+        return getTargetEntityTypeElement().getAnnotationMirrors().stream()
+            .map(am -> am.getAnnotationType().toString())
+            .map(PersistenceType::of)
+            .anyMatch(type -> type == PersistenceType.ENTITY);
+    }
+
+
+    /**
+     * Get the entity id type.
+     * e.g. {@code java.lang.Long)
+     * @return the entity id type
+     */
+    private Optional<TypeMirror> getIdType() {
+
+        if (!isEntityMetamodel()) {
+            return Optional.empty();
+        }
+        return findIdField(getTargetEntityTypeElement()).map(VariableElement::asType);
+
+    }
+
+
+    /**
+     * Find id field.
+     * @param element {@link TypeElement}
+     * @return the VariableElement of id
+     */
+    private Optional<VariableElement> findIdField(TypeElement element) {
+
+        var id = ElementFilter.fieldsIn(element.getEnclosedElements()).stream()
+            .filter(e -> e.getAnnotationMirrors().stream()
+                .map(AnnotationMirror::getAnnotationType)
+                .map(Object::toString)
+                .anyMatch(ann -> ann.equals("jakarta.persistence.Id") || ann.equals("javax.persistence.Id")))
+            .findFirst();
+
+        if (id.isPresent()) {
+            return id;
+        }
+        return findIdField(context.getElementUtils().getTypeElement(element.getSuperclass().toString()));
     }
 
 }

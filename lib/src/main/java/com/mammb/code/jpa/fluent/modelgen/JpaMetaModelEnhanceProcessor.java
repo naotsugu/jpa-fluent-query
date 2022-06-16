@@ -18,6 +18,7 @@ package com.mammb.code.jpa.fluent.modelgen;
 import com.mammb.code.jpa.fluent.modelgen.classwriter.CriteriaModelClassWriter;
 import com.mammb.code.jpa.fluent.modelgen.classwriter.ModelClassWriter;
 import com.mammb.code.jpa.fluent.modelgen.classwriter.ApiClassWriter;
+import com.mammb.code.jpa.fluent.modelgen.classwriter.RepositoryTraitType;
 import com.mammb.code.jpa.fluent.modelgen.classwriter.RootClassWriter;
 import com.mammb.code.jpa.fluent.modelgen.model.StaticMetamodelEntity;
 
@@ -40,12 +41,14 @@ import java.util.Set;
  */
 @SupportedAnnotationTypes({
     StaticMetamodelEntity.ANNOTATION_TYPE,
-    StaticMetamodelEntity.ANNOTATION_TYPE_LEGACY
+    StaticMetamodelEntity.ANNOTATION_TYPE_LEGACY,
+    RepositoryTraitType.ANNOTATION_TYPE,
 })
 @SupportedOptions({
     JpaMetaModelEnhanceProcessor.DEBUG_OPTION,
     JpaMetaModelEnhanceProcessor.ADD_ROOT_FACTORY,
     JpaMetaModelEnhanceProcessor.ADD_ROOT_CRITERIA,
+    JpaMetaModelEnhanceProcessor.ADD_REPOSITORY,
 })
 public class JpaMetaModelEnhanceProcessor extends AbstractProcessor {
 
@@ -58,6 +61,9 @@ public class JpaMetaModelEnhanceProcessor extends AbstractProcessor {
     /** Add criteria option. */
     public static final String ADD_ROOT_CRITERIA = "addCriteria";
 
+    /** Add criteria option. */
+    public static final String ADD_REPOSITORY = "addRepository";
+
     /** Context of processing. */
     private Context context;
 
@@ -69,7 +75,8 @@ public class JpaMetaModelEnhanceProcessor extends AbstractProcessor {
         this.context = Context.of(env,
             Boolean.parseBoolean(env.getOptions().getOrDefault(JpaMetaModelEnhanceProcessor.DEBUG_OPTION, "false")),
             Boolean.parseBoolean(env.getOptions().getOrDefault(JpaMetaModelEnhanceProcessor.ADD_ROOT_FACTORY, "true")),
-            Boolean.parseBoolean(env.getOptions().getOrDefault(JpaMetaModelEnhanceProcessor.ADD_ROOT_CRITERIA, "true")));
+            Boolean.parseBoolean(env.getOptions().getOrDefault(JpaMetaModelEnhanceProcessor.ADD_ROOT_CRITERIA, "true")),
+            Boolean.parseBoolean(env.getOptions().getOrDefault(JpaMetaModelEnhanceProcessor.ADD_REPOSITORY, "true")));
 
         var version = getClass().getPackage().getImplementationVersion();
         context.logInfo("JPA Static-Metamodel Enhance Generator " + (Objects.isNull(version) ? "" : version));
@@ -91,10 +98,17 @@ public class JpaMetaModelEnhanceProcessor extends AbstractProcessor {
         }
 
         try {
+
+            roundEnv.getRootElements().stream()
+                .map(this::asRepositoryRootType)
+                .flatMap(Optional::stream)
+                .forEach(context::addRepositoryRootType);
+
             roundEnv.getRootElements().stream()
                 .map(this::asStaticMetamodelEntity)
                 .flatMap(Optional::stream)
                 .forEach(this::createMetaModelClasses);
+
         } catch (Exception e) {
             context.logError("Exception : " + e.getMessage());
         }
@@ -120,6 +134,16 @@ public class JpaMetaModelEnhanceProcessor extends AbstractProcessor {
      */
     protected Optional<StaticMetamodelEntity> asStaticMetamodelEntity(final Element element) {
         return StaticMetamodelEntity.of(context, element);
+    }
+
+
+    /**
+     * Create the {@link RepositoryTraitType}.
+     * @param element source
+     * @return the {@link RepositoryTraitType}
+     */
+    protected Optional<RepositoryTraitType> asRepositoryRootType(final Element element) {
+        return RepositoryTraitType.of(context, element);
     }
 
 

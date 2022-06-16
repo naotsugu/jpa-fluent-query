@@ -15,6 +15,8 @@
  */
 package com.mammb.code.jpa.fluent.modelgen;
 
+import com.mammb.code.jpa.fluent.modelgen.classwriter.RepositoryTraitType;
+
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.util.Elements;
@@ -37,6 +39,9 @@ public class Context {
     /** Generated model classes holder. */
     private final Collection<String> generatedModelClasses;
 
+    /** RepositoryRootTypes. */
+    private final Collection<RepositoryTraitType> repositoryRootTypes;
+
     /** Mode of debug. */
     private final boolean debug;
 
@@ -45,6 +50,9 @@ public class Context {
 
     /** Add criteria option. */
     private final boolean addCriteria;
+
+    /** Add repository option. */
+    private final boolean addRepository;
 
     /** Mode of jakarta or javax. */
     private boolean jakarta;
@@ -56,13 +64,16 @@ public class Context {
      * @param debug the mode of debug
      * @param addRoot the mode of add root factory
      * @param addCriteria the mode of add criteria
+     * @param addRepository the mode of add repository
      */
-    protected Context(ProcessingEnvironment pe, boolean debug, boolean addRoot, boolean addCriteria) {
+    protected Context(ProcessingEnvironment pe, boolean debug, boolean addRoot, boolean addCriteria, boolean addRepository) {
         this.pe = pe;
         this.generatedModelClasses = new HashSet<>();
+        this.repositoryRootTypes = new HashSet<>();
         this.debug = debug;
         this.addRoot = addRoot;
         this.addCriteria = addCriteria;
+        this.addRepository = addRepository;
         this.jakarta = true;
     }
 
@@ -73,10 +84,21 @@ public class Context {
      * @param debug the mode of debug
      * @param addRoot the mode of add root factory
      * @param addCriteria the mode of add criteria
+     * @param addRepository the mode of add repository
      * @return the context
      */
-    public static Context of(ProcessingEnvironment pe, boolean debug, boolean addRoot, boolean addCriteria) {
-        return new Context(pe, debug, addRoot, addCriteria);
+    public static Context of(ProcessingEnvironment pe,
+            boolean debug, boolean addRoot, boolean addCriteria, boolean addRepository) {
+        return new Context(pe, debug, addRoot, addCriteria, addRepository);
+    }
+
+
+    /**
+     * Add a repositoryRootType.
+     * @param repositoryRootType {@link RepositoryTraitType}
+     */
+    public void addRepositoryRootType(RepositoryTraitType repositoryRootType) {
+        repositoryRootTypes.add(repositoryRootType);
     }
 
 
