@@ -15,7 +15,8 @@
  */
 package com.mammb.code.jpa.fluent.modelgen;
 
-import com.mammb.code.jpa.fluent.modelgen.classwriter.RepositoryTraitType;
+import com.mammb.code.jpa.fluent.modelgen.model.RepositoryTraitType;
+import com.mammb.code.jpa.fluent.modelgen.model.StaticMetamodelEntity;
 
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.ProcessingEnvironment;
@@ -37,16 +38,13 @@ public class Context {
     private final ProcessingEnvironment pe;
 
     /** Generated model classes holder. */
-    private final Collection<String> generatedModelClasses;
+    private final Collection<StaticMetamodelEntity> generatedModelClasses;
 
     /** RepositoryRootTypes. */
-    private final Collection<RepositoryTraitType> repositoryRootTypes;
+    private final Collection<RepositoryTraitType> repositoryTraits;
 
     /** Mode of debug. */
     private final boolean debug;
-
-    /** Add root factory option. */
-    private final boolean addRoot;
 
     /** Add criteria option. */
     private final boolean addCriteria;
@@ -62,16 +60,14 @@ public class Context {
      * Private constructor.
      * @param pe the annotation processing environment
      * @param debug the mode of debug
-     * @param addRoot the mode of add root factory
      * @param addCriteria the mode of add criteria
      * @param addRepository the mode of add repository
      */
-    protected Context(ProcessingEnvironment pe, boolean debug, boolean addRoot, boolean addCriteria, boolean addRepository) {
+    protected Context(ProcessingEnvironment pe, boolean debug, boolean addCriteria, boolean addRepository) {
         this.pe = pe;
         this.generatedModelClasses = new HashSet<>();
-        this.repositoryRootTypes = new HashSet<>();
+        this.repositoryTraits = new HashSet<>();
         this.debug = debug;
-        this.addRoot = addRoot;
         this.addCriteria = addCriteria;
         this.addRepository = addRepository;
         this.jakarta = true;
@@ -82,14 +78,13 @@ public class Context {
      * Create the context instance.
      * @param pe processing environment
      * @param debug the mode of debug
-     * @param addRoot the mode of add root factory
      * @param addCriteria the mode of add criteria
      * @param addRepository the mode of add repository
      * @return the context
      */
     public static Context of(ProcessingEnvironment pe,
-            boolean debug, boolean addRoot, boolean addCriteria, boolean addRepository) {
-        return new Context(pe, debug, addRoot, addCriteria, addRepository);
+            boolean debug, boolean addCriteria, boolean addRepository) {
+        return new Context(pe, debug, addCriteria, addRepository);
     }
 
 
@@ -97,8 +92,8 @@ public class Context {
      * Add a repositoryRootType.
      * @param repositoryRootType {@link RepositoryTraitType}
      */
-    public void addRepositoryRootType(RepositoryTraitType repositoryRootType) {
-        repositoryRootTypes.add(repositoryRootType);
+    public void addRepositoryTraitType(RepositoryTraitType repositoryRootType) {
+        repositoryTraits.add(repositoryRootType);
     }
 
 
@@ -130,11 +125,20 @@ public class Context {
 
 
     /**
-     * Mark the given metamodel as generated.
-     * @param name the qualified name of metamodel
+     * Add the given metamodel as generated.
+     * @param entity the {@link StaticMetamodelEntity}
      */
-    void markGenerated(String name) {
-        generatedModelClasses.add(name);
+    void addGenerated(StaticMetamodelEntity entity) {
+        generatedModelClasses.add(entity);
+    }
+
+
+    /**
+     * Gets whether generatedModelClasses are present.
+     * @return {@code true} if generated model classes are present.
+     */
+    boolean hasGeneratedModel() {
+        return !generatedModelClasses.isEmpty();
     }
 
 
@@ -144,7 +148,7 @@ public class Context {
      * @return {@code true} if already generated
      */
     boolean isAlreadyGenerated(String name) {
-        return generatedModelClasses.contains(name);
+        return generatedModelClasses.stream().anyMatch(entity -> entity.getQualifiedName().equals(name));
     }
 
 
@@ -177,20 +181,20 @@ public class Context {
 
 
     /**
-     * Get the option fo add root factory.
-     * @return the mode of add root factory
-     */
-    public boolean isAddRoot() {
-        return addRoot;
-    }
-
-
-    /**
      * Get the option fo add criteria.
      * @return the option fo add criteria
      */
     public boolean isAddCriteria() {
         return addCriteria;
+    }
+
+
+    /**
+     * Get the option fo add repository.
+     * @return the option fo add repository
+     */
+    public boolean isAddRepository() {
+        return addRepository;
     }
 
 
@@ -216,7 +220,7 @@ public class Context {
      * Get the generated model classes.
      * @return the generated model classes
      */
-    public Collection<String> getGeneratedModelClasses() {
+    public Collection<StaticMetamodelEntity> getGeneratedModelClasses() {
         return List.copyOf(generatedModelClasses);
     }
 

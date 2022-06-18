@@ -15,11 +15,12 @@
  */
 package com.mammb.code.jpa.fluent.modelgen;
 
-import com.mammb.code.jpa.fluent.modelgen.classwriter.CriteriaModelClassWriter;
-import com.mammb.code.jpa.fluent.modelgen.classwriter.ModelClassWriter;
-import com.mammb.code.jpa.fluent.modelgen.classwriter.ApiClassWriter;
-import com.mammb.code.jpa.fluent.modelgen.classwriter.RepositoryTraitType;
-import com.mammb.code.jpa.fluent.modelgen.classwriter.RootClassWriter;
+import com.mammb.code.jpa.fluent.modelgen.writer.CriteriaModelClassWriter;
+import com.mammb.code.jpa.fluent.modelgen.writer.ModelClassWriter;
+import com.mammb.code.jpa.fluent.modelgen.writer.ApiClassWriter;
+import com.mammb.code.jpa.fluent.modelgen.writer.RepositoryClassWriter;
+import com.mammb.code.jpa.fluent.modelgen.model.RepositoryTraitType;
+import com.mammb.code.jpa.fluent.modelgen.writer.RootClassWriter;
 import com.mammb.code.jpa.fluent.modelgen.model.StaticMetamodelEntity;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -31,7 +32,6 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -42,7 +42,7 @@ import java.util.Set;
 @SupportedAnnotationTypes({
     StaticMetamodelEntity.ANNOTATION_TYPE,
     StaticMetamodelEntity.ANNOTATION_TYPE_LEGACY,
-    RepositoryTraitType.ANNOTATION_TYPE,
+    RepositoryTraitType.ANNOTATION_TYPE
 })
 @SupportedOptions({
     JpaMetaModelEnhanceProcessor.DEBUG_OPTION,
@@ -74,7 +74,6 @@ public class JpaMetaModelEnhanceProcessor extends AbstractProcessor {
         super.init(env);
         this.context = Context.of(env,
             Boolean.parseBoolean(env.getOptions().getOrDefault(JpaMetaModelEnhanceProcessor.DEBUG_OPTION, "false")),
-            Boolean.parseBoolean(env.getOptions().getOrDefault(JpaMetaModelEnhanceProcessor.ADD_ROOT_FACTORY, "true")),
             Boolean.parseBoolean(env.getOptions().getOrDefault(JpaMetaModelEnhanceProcessor.ADD_ROOT_CRITERIA, "true")),
             Boolean.parseBoolean(env.getOptions().getOrDefault(JpaMetaModelEnhanceProcessor.ADD_REPOSITORY, "true")));
 
@@ -99,27 +98,27 @@ public class JpaMetaModelEnhanceProcessor extends AbstractProcessor {
 
         try {
 
-            roundEnv.getRootElements().stream()
-                .map(this::asRepositoryRootType)
-                .flatMap(Optional::stream)
-                .forEach(context::addRepositoryRootType);
+            for (Element element : roundEnv.getRootElements()) {
+                RepositoryTraitType.of(context, element)
+                    .ifPresent(context::addRepositoryTraitType);
+                StaticMetamodelEntity.of(context, element)
+                    .ifPresent(this::createMetaModelClasses);
+            }
 
-            roundEnv.getRootElements().stream()
-                .map(this::asStaticMetamodelEntity)
-                .flatMap(Optional::stream)
-                .forEach(this::createMetaModelClasses);
+            if (context.hasGeneratedModel()) {
+                RootClassWriter.of(context).writeClass();
+                if (context.isAddCriteria()) {
+                    ApiClassWriter.of(context).writeClasses();
+                }
+                if (context.isAddRepository()) {
+                    context.getGeneratedModelClasses().stream()
+                        .filter(StaticMetamodelEntity::isEntityMetamodel)
+                        .forEach(model -> RepositoryClassWriter.of(context, model).writeFile());
+                }
+            }
 
         } catch (Exception e) {
             context.logError("Exception : " + e.getMessage());
-        }
-
-        if (context.isAddRoot()) {
-            context.logDebug("Create root factory class");
-            RootClassWriter.of(context).writeClass();
-        }
-        if (context.isAddCriteria()) {
-            context.logDebug("Create api class");
-            ApiClassWriter.of(context).writeClasses();
         }
 
         return false;
@@ -128,41 +127,23 @@ public class JpaMetaModelEnhanceProcessor extends AbstractProcessor {
 
 
     /**
-     * Create the {@link StaticMetamodelEntity}.
-     * @param element source
-     * @return the {@link StaticMetamodelEntity}
-     */
-    protected Optional<StaticMetamodelEntity> asStaticMetamodelEntity(final Element element) {
-        return StaticMetamodelEntity.of(context, element);
-    }
-
-
-    /**
-     * Create the {@link RepositoryTraitType}.
-     * @param element source
-     * @return the {@link RepositoryTraitType}
-     */
-    protected Optional<RepositoryTraitType> asRepositoryRootType(final Element element) {
-        return RepositoryTraitType.of(context, element);
-    }
-
-
-    /**
      * Create the source class
      * @param entity {@link StaticMetamodelEntity}
      */
     protected void createMetaModelClasses(final StaticMetamodelEntity entity) {
+
         if (context.isAlreadyGenerated(entity.getQualifiedName())) {
             context.logDebug("Skip meta model generation : " + entity.getQualifiedName());
             return;
         }
-        context.logDebug("Create meta model : " + entity.getQualifiedName());
+
         if (context.isAddCriteria()) {
             CriteriaModelClassWriter.of(context, entity).writeFile();
         } else {
             ModelClassWriter.of(context, entity).writeFile();
         }
-        context.markGenerated(entity.getQualifiedName());
+        context.addGenerated(entity);
+
     }
 
 }

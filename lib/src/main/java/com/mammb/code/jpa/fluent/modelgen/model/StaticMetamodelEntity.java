@@ -128,11 +128,21 @@ public class StaticMetamodelEntity {
 
     /**
      * Get the entity class name.
-     * Static metamodel class with _ removed from the end of the name.
+     * Static metamodel class with {@code _} removed from the end of the name.
      * @return the entity class name
      */
     public String getTargetEntityName() {
         return getSimpleName().substring(0, getSimpleName().length() - 1);
+    }
+
+
+    /**
+     * Get the entity class qualified name.
+     * Static metamodel class with {@code _} removed from the end of the name.
+     * @return the entity class name
+     */
+    public String getTargetEntityQualifiedName() {
+        return getQualifiedName().substring(0, getQualifiedName().length() - 1);
     }
 
 
@@ -182,8 +192,8 @@ public class StaticMetamodelEntity {
 
 
     /**
-     * Get the metamodel target entity {@link TypeElement}.
-     * @return the metamodel target entity {@link TypeElement}
+     * Get the metamodel target entity as {@link TypeElement}.
+     * @return the metamodel target entity as {@link TypeElement}
      */
     private TypeElement getTargetEntityTypeElement() {
         var metamodelName = element.getQualifiedName().toString();
@@ -211,7 +221,7 @@ public class StaticMetamodelEntity {
      * Get whether this static metamodel is for Entity.
      * @return {@code true} if this static metamodel is for Entity
      */
-    private boolean isEntityMetamodel() {
+    public boolean isEntityMetamodel() {
         return getTargetEntityTypeElement().getAnnotationMirrors().stream()
             .map(am -> am.getAnnotationType().toString())
             .map(PersistenceType::of)
@@ -221,16 +231,13 @@ public class StaticMetamodelEntity {
 
     /**
      * Get the entity id type.
-     * e.g. {@code java.lang.Long)
+     * e.g. {@code java.lang.Long}
      * @return the entity id type
      */
-    private Optional<TypeMirror> getIdType() {
-
-        if (!isEntityMetamodel()) {
-            return Optional.empty();
-        }
-        return findIdField(getTargetEntityTypeElement()).map(VariableElement::asType);
-
+    public Optional<TypeMirror> getEntityIdType() {
+        return isEntityMetamodel()
+            ? findIdField(getTargetEntityTypeElement()).map(VariableElement::asType)
+            : Optional.empty();
     }
 
 
@@ -241,17 +248,14 @@ public class StaticMetamodelEntity {
      */
     private Optional<VariableElement> findIdField(TypeElement element) {
 
-        var id = ElementFilter.fieldsIn(element.getEnclosedElements()).stream()
+        return ElementFilter.fieldsIn(element.getEnclosedElements()).stream()
             .filter(e -> e.getAnnotationMirrors().stream()
                 .map(AnnotationMirror::getAnnotationType)
                 .map(Object::toString)
                 .anyMatch(ann -> ann.equals("jakarta.persistence.Id") || ann.equals("javax.persistence.Id")))
-            .findFirst();
+            .findFirst()
+            .or(() -> findIdField(context.getElementUtils().getTypeElement(element.getSuperclass().toString())));
 
-        if (id.isPresent()) {
-            return id;
-        }
-        return findIdField(context.getElementUtils().getTypeElement(element.getSuperclass().toString()));
     }
 
 }

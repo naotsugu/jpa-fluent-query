@@ -15,7 +15,7 @@
  */
 package com.mammb.code.jpa.fluent.modelgen.model;
 
-import com.mammb.code.jpa.fluent.modelgen.classwriter.ImportBuilder;
+import com.mammb.code.jpa.fluent.modelgen.writer.ImportBuilder;
 import java.util.Objects;
 
 /**
@@ -28,6 +28,7 @@ public interface AttributeBinder extends MetamodelAttribute {
     /**
      * Bind attribute to template.
      * @param template template
+     * @param imports importBuilder
      * @return binded template
      */
     default String bindTo(String template, ImportBuilder imports) {

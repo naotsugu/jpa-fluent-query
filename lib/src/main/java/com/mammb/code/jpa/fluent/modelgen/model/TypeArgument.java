@@ -156,7 +156,8 @@ public class TypeArgument {
 
 
     private boolean isAssignable(Class<?> clazz) {
-        return typeMirrorElement.getKind().isClass() && context.getTypeUtils().isAssignable(
+        return typeMirrorElement.getKind().isClass() &&
+            context.getTypeUtils().isAssignable(
                 typeMirrorElement.asType(),
                 context.getElementUtils().getTypeElement(clazz.getCanonicalName()).asType());
     }

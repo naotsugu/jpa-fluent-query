@@ -17,4 +17,4 @@
 /**
  * The package of class writer.
  */
-package com.mammb.code.jpa.fluent.modelgen.classwriter;
+package com.mammb.code.jpa.fluent.modelgen.writer;

@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mammb.code.jpa.fluent.modelgen.classwriter;
+package com.mammb.code.jpa.fluent.modelgen.model;
 
 import com.mammb.code.jpa.fluent.modelgen.Context;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,8 +36,11 @@ public class RepositoryTraitType {
     /** Context of processing. */
     private final Context context;
 
-    /** Static metamodel type element. */
+    /** The type element of repository trait. */
     private final TypeElement element;
+
+    /** The type arguments. */
+    private final List<TypeArgument> typeArguments;
 
 
     /**
@@ -47,6 +51,7 @@ public class RepositoryTraitType {
     protected RepositoryTraitType(Context context, TypeElement element) {
         this.context = context;
         this.element = element;
+        this.typeArguments = typeArgumentsOf(context, element);
     }
 
 
@@ -64,7 +69,8 @@ public class RepositoryTraitType {
 
 
     private static boolean isRepositoryTraitType(Element element) {
-        return element.getKind().isClass() && annotationTypes(element).stream().anyMatch(ANNOTATION_TYPE::equals);
+        return element.getKind().isClass() &&
+            annotationTypes(element).stream().anyMatch(ANNOTATION_TYPE::equals);
     }
 
 
@@ -78,6 +84,12 @@ public class RepositoryTraitType {
             .map(AnnotationMirror::getAnnotationType)
             .map(Object::toString)
             .toList();
+    }
+
+
+    private static List<TypeArgument> typeArgumentsOf(Context context, TypeElement element) {
+        element.getTypeParameters().stream().forEach(e -> context.logInfo(e.toString()));
+        return new ArrayList<>();
     }
 
 }

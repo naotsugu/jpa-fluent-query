@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mammb.code.jpa.fluent.modelgen.classwriter;
+package com.mammb.code.jpa.fluent.modelgen.writer;
 
 import com.mammb.code.jpa.fluent.modelgen.Context;
 import com.mammb.code.jpa.fluent.modelgen.JpaMetaModelEnhanceProcessor;
+import com.mammb.code.jpa.fluent.modelgen.model.StaticMetamodelEntity;
 
 import javax.tools.FileObject;
 import java.io.PrintWriter;
@@ -47,7 +48,8 @@ public class RootClassWriter {
      */
     protected RootClassWriter(Context context) {
         this.context = context;
-        this.modelClasses = context.getGeneratedModelClasses().stream().sorted().toList();
+        this.modelClasses = context.getGeneratedModelClasses().stream()
+            .map(StaticMetamodelEntity::getQualifiedName).sorted().toList();
     }
 
 
@@ -65,19 +67,20 @@ public class RootClassWriter {
      * Write a root class factory class file.
      */
     public void writeClass() {
+
+        context.logDebug("Create root factory class");
+
         try {
 
-            var packageName = createPackageName();
-            ImportBuilder imports = ImportBuilder.of(packageName.isBlank() ? API_PACKAGE_NAME : packageName);
+            var packageName = PackageNames.createCommonPackageName(modelClasses);
+            ImportBuilder imports = ImportBuilder.of(packageName);
 
             FileObject fo = context.getFiler().createSourceFile(imports.getSelfPackage() + ".Root_");
 
             try (PrintWriter pw = new PrintWriter(fo.openOutputStream())) {
 
                 // write package
-                if (!imports.getSelfPackage().isBlank()) {
-                    pw.println("package " + packageName + ";");
-                }
+                pw.println("package " + packageName + ";");
                 pw.println();
 
                 // write import
@@ -146,43 +149,6 @@ public class RootClassWriter {
         } catch (Exception e) {
             context.logError("Problem opening file to write Root factory class : " + e.getMessage());
         }
-    }
-
-
-    /**
-     * Get the generated package name.
-     * @return the generated package name
-     */
-    private String createPackageName() {
-        var name = modelClasses.stream()
-            .reduce(modelClasses.get(0), RootClassWriter::getCommonPrefix);
-        if (name.isBlank()) {
-            name = modelClasses.stream().reduce("", (s1, s2) -> {
-                if (s1.isBlank()) {
-                    return s2;
-                } else {
-                    return (s1.split("\\.").length > s2.split("\\.").length) ? s2 : s1;
-                }
-            });
-        }
-        return name.substring(0, name.lastIndexOf('.'));
-    }
-
-
-    /**
-     * Get the common prefix string for a given string.
-     * @param s1 the string to be compared
-     * @param s2 the string to be compared
-     * @return the common prefix string
-     */
-    private static String getCommonPrefix(String s1, String s2) {
-        var minLength = Math.min(s1.length(), s2.length());
-        for (int i = 0; i < minLength; i++) {
-            if (s1.charAt(i) != s2.charAt(i)) {
-                return s1.substring(0, i);
-            }
-        }
-        return s1.substring(0, minLength);
     }
 
 

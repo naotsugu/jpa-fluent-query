@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mammb.code.jpa.fluent.modelgen.classwriter;
+package com.mammb.code.jpa.fluent.modelgen.writer;
 
 import com.mammb.code.jpa.fluent.modelgen.Context;
 import com.mammb.code.jpa.fluent.modelgen.JpaMetaModelEnhanceProcessor;
@@ -70,6 +70,9 @@ public class ModelClassWriter {
      * Write a generated class file.
      */
     public void writeFile() {
+
+        context.logInfo("Create meta model : " + entity.getQualifiedName());
+
         try {
 
             String body = generateBody().toString();
