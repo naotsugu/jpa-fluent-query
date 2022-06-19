@@ -25,8 +25,24 @@ import java.util.List;
 
 public interface FindAllTrait<E, R extends RootAware<E>> extends EntityManagerAware, RootSourceAware<E, R> {
 
+    default List<E> findAll() {
+        return QueryHelper.query(em(), rootSource(), Filter.empty(), Sorts.empty()).getResultList();
+    }
+
+    default List<E> findAll(Filter<E, R> filter) {
+        return QueryHelper.query(em(), rootSource(), filter, Sorts.empty()).getResultList();
+    }
+
     default List<E> findAll(Filter<E, R> filter, Sorts<E, R> sorts) {
         return QueryHelper.query(em(), rootSource(), filter, sorts).getResultList();
+    }
+
+    default long count() {
+        return QueryHelper.countQuery(em(), rootSource(), Filter.empty()).getSingleResult();
+    }
+
+    default long count(Filter<E, R> filter) {
+        return QueryHelper.countQuery(em(), rootSource(), filter).getSingleResult();
     }
 
 }

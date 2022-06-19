@@ -76,11 +76,9 @@ public class RootClassWriter {
 
             try (PrintWriter pw = new PrintWriter(fo.openOutputStream())) {
 
-                // write package
                 pw.println("package " + packageName + ";");
                 pw.println();
 
-                // write import
                 imports.add("javax.annotation.processing.Generated");
                 imports.add("java.util.function.BiFunction");
                 imports.add("java.util.function.Function");

@@ -19,13 +19,17 @@ import com.mammb.code.jpa.fluent.modelgen.Context;
 import com.mammb.code.jpa.fluent.modelgen.writer.ImportBuilder;
 
 import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -86,10 +90,16 @@ public class RepositoryTraitType {
      * Create the extends clause.
      * @return the extends clause
      */
-    public String createExtendsClause(ImportBuilder imports) {
+    public String createExtendsClause(StaticMetamodelEntity entity, ImportBuilder imports) {
         if (typeParameters.isEmpty()) {
             return "";
         }
+
+        var names = targetEntityQualifiedNames(element);
+        if (!names.isEmpty() && !names.contains(entity.getTargetEntityQualifiedName())) {
+            return "";
+        }
+
         var name = imports.add(element.toString());
         return name + typeParametersString()
             .replace("PK", "%1$s")
@@ -127,6 +137,30 @@ public class RepositoryTraitType {
             return declaredType.toString().replace(element.toString(), "");
         }
         return "";
+    }
+
+
+    /**
+     * RepositoryTrait annotation value class name.
+     * FIXME use AnnotationValueVisitor
+     * @param element The type element of repository trait
+     * @return the target class names
+     */
+    private static List<String> targetEntityQualifiedNames(Element element) {
+        // FIXME use AnnotationValueVisitor
+        return element.getAnnotationMirrors().stream()
+            .filter(annotationMirror -> ANNOTATION_TYPE.equals(annotationMirror.getAnnotationType().toString()))
+            .map(annotationMirror -> annotationMirror.getElementValues().entrySet())
+            .flatMap(Collection::stream)
+            .filter(e -> e.getKey().getSimpleName().toString().equals("value"))
+            .map(Map.Entry::getValue)
+            .map(AnnotationValue::getValue)
+            .map(List.class::cast)
+            .map(Object::toString)
+            .map(s -> List.of(s.split(",")))
+            .flatMap(Collection::stream)
+            .map(s -> s.substring(0, s.lastIndexOf(".")))
+            .toList();
     }
 
 }

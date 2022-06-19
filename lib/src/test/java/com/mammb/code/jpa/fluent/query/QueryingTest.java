@@ -94,8 +94,8 @@ class QueryingTest {
     void testOrderBy() {
         List<Issue> issues = Querying.of(Root_.issue())
             .filter(issue -> issue.getTitle().eq("foo"))
-            .sorted(issue -> issue.getProject().getName().desc())
-            .sorted(issue -> issue.getId().asc())
+            .sorted(issue -> issue.getProject().getName().desc(),
+                    issue -> issue.getId().asc())
             .toList().on(em);
         assertEquals("name2", issues.get(0).getProject().getName());
         assertEquals("name1", issues.get(1).getProject().getName());

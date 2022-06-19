@@ -80,7 +80,7 @@ public class RepositoryClassWriter {
             try (PrintWriter pw = new PrintWriter(fo.openOutputStream())) {
 
                 var extendsClause = String.join(", ", context.getRepositoryTraitTypes().stream()
-                    .map(trait -> trait.createExtendsClause(imports)).toArray(String[]::new));
+                    .map(trait -> trait.createExtendsClause(entity, imports)).toArray(String[]::new));
 
                 var body = """
                     public interface %2$sRepository_ extends Repository<%1$s, %2$s, %2$sRoot_<%2$s>>{extends} {

@@ -25,6 +25,8 @@ public interface Querying<E, R extends RootAware<E>> extends CreateQuery<E, R> {
 
     Querying<E, R> sorted(Sort<E, R> sort);
 
+    Querying<E, R> sorted(Sort<E, R> sort1, Sort<E, R> sort2);
+
 
     static <E, R extends RootAware<E>> Querying<E, R> of(RootSource<E, R> rootSource) {
         return Querying.of(rootSource, Filter.empty(), Sorts.empty());
@@ -39,6 +41,8 @@ public interface Querying<E, R extends RootAware<E>> extends CreateQuery<E, R> {
             public Querying<E, R> filter(Filter<E, R> f) { return Querying.of(rootSource, filter.and(f), sorts); }
             @Override
             public Querying<E, R> sorted(Sort<E, R> sort) { return Querying.of(rootSource, filter, sorts.and(sort)); }
+            @Override
+            public Querying<E, R> sorted(Sort<E, R> sort1, Sort<E, R> sort2) { return Querying.of(rootSource, filter, sorts.and(sort1).and(sort2)); }
             @Override
             public RootSource<E, R> rootSource() { return rootSource; }
             @Override
