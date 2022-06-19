@@ -16,6 +16,7 @@
 package com.mammb.code.jpa.fluent.modelgen.model;
 
 import com.mammb.code.jpa.fluent.modelgen.writer.ImportBuilder;
+
 import java.util.Objects;
 
 /**

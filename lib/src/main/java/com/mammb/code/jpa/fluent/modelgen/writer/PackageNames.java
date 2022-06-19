@@ -16,6 +16,7 @@
 package com.mammb.code.jpa.fluent.modelgen.writer;
 
 import com.mammb.code.jpa.fluent.modelgen.model.StaticMetamodelEntity;
+
 import java.util.Collection;
 import java.util.List;
 

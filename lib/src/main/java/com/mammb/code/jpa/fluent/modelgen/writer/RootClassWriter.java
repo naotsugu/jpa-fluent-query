@@ -92,7 +92,7 @@ public class RootClassWriter {
                 imports.add("jakarta.persistence.EntityManager");
                 imports.add("jakarta.persistence.criteria.Root");
                 if (context.isAddCriteria()) {
-                    imports.add(API_PACKAGE_NAME + ".RootSource");
+                    imports.add(ApiClassWriter.PACKAGE_NAME + "." + ApiClassWriter.ROOT_SOURCE);
                 }
                 for (String metaName : modelClasses) {
                     imports.add(metaName.substring(0, metaName.lastIndexOf('_')));
@@ -147,7 +147,7 @@ public class RootClassWriter {
             }
 
         } catch (Exception e) {
-            context.logError("Problem opening file to write Root factory class : " + e.getMessage());
+            context.logError("Problem opening file to write Root factory class : {}", e.getMessage());
         }
     }
 

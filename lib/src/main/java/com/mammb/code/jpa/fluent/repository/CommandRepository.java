@@ -5,7 +5,5 @@ import com.mammb.code.jpa.fluent.repository.trait.SaveTrait;
 import java.io.Serializable;
 
 public interface CommandRepository<PK extends Serializable, E>
-    extends Repository<PK, E>,
-            SaveTrait<E>,
-            DeleteTrait<E> {
+    extends SaveTrait<E>, DeleteTrait<E> {
 }

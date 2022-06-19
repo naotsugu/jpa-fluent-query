@@ -33,6 +33,13 @@ public class ApiClassWriter {
     /** The name of package. */
     public static final String PACKAGE_NAME = "com.mammb.code.jpa.core";
 
+    public static final String ROOT_SOURCE = "RootSource";
+    public static final String CRITERIA = "Criteria";
+    public static final String BUILDER_AWARE = "BuilderAware";
+    public static final String ROOT_AWARE = "RootAware";
+    public static final String REPOSITORY = "Repository";
+
+
     /** Context of processing. */
     private final Context context;
 
@@ -62,31 +69,29 @@ public class ApiClassWriter {
     public void writeClasses() {
         context.logDebug("Create api class");
         writeRootSourceClass();
-        writeCriteriaClass();
         writeBuilderClass();
         writeRootAwareClass();
+        writeCriteriaClass();
         writeRepositoryClass();
     }
 
 
     private void writeRootSourceClass() {
 
-        if (Objects.nonNull(context.getElementUtils().getTypeElement(PACKAGE_NAME + ".RootSource"))) {
+        if (Objects.nonNull(context.getElementUtils().getTypeElement(PACKAGE_NAME + "." + ROOT_SOURCE))) {
             return;
         }
 
         try {
 
             ImportBuilder imports = ImportBuilder.of(PACKAGE_NAME);
-            FileObject fo = context.getFiler().createSourceFile(imports.getSelfPackage() + ".RootSource");
+            FileObject fo = context.getFiler().createSourceFile(imports.getSelfPackage() + "." + ROOT_SOURCE);
 
             try (PrintWriter pw = new PrintWriter(fo.openOutputStream())) {
 
-                // write package
                 pw.println("package " + imports.getSelfPackage() + ";");
                 pw.println();
 
-                // write import
                 imports.add("javax.annotation.processing.Generated");
                 imports.add("jakarta.persistence.criteria.CriteriaBuilder");
                 imports.add("jakarta.persistence.criteria.CriteriaQuery");
@@ -94,20 +99,99 @@ public class ApiClassWriter {
                 pw.println(imports.generateImports(context.isJakarta()));
                 pw.println();
 
-                // write class
                 pw.println("@Generated(value = \"%s\")".formatted(JpaMetaModelEnhanceProcessor.class.getName()));
                 pw.println("""
-                public interface RootSource<E, T extends java.util.function.Supplier<Root<E>>> {
+                public interface %1$s<E, T extends java.util.function.Supplier<Root<E>>> {
                     T root(CriteriaQuery<?> query, CriteriaBuilder builder);
                     Class<E> rootClass();
                 }
-                """);
+                """.formatted(ROOT_SOURCE));
 
                 pw.flush();
             }
 
         } catch (Exception e) {
-            context.logError("Problem opening file to write api class : " + e.getMessage());
+            context.logError("Problem opening file to write {} class : {}", ROOT_SOURCE, e.getMessage());
+        }
+
+    }
+
+
+    /**
+     * Write a criteria class file.
+     */
+    private void writeBuilderClass() {
+
+        if (Objects.nonNull(context.getElementUtils().getTypeElement(PACKAGE_NAME + "." + BUILDER_AWARE))) {
+            return;
+        }
+
+        try {
+
+            ImportBuilder imports = ImportBuilder.of(PACKAGE_NAME);
+            FileObject fo = context.getFiler().createSourceFile(PACKAGE_NAME + "." + BUILDER_AWARE);
+
+            try (PrintWriter pw = new PrintWriter(fo.openOutputStream())) {
+
+                pw.println("package " + imports.getSelfPackage() + ";");
+                pw.println();
+
+                imports.add("javax.annotation.processing.Generated");
+                imports.add("jakarta.persistence.criteria.CriteriaBuilder");
+                pw.println(imports.generateImports(context.isJakarta()));
+                pw.println();
+
+                pw.println("@Generated(value = \"%s\")".formatted(JpaMetaModelEnhanceProcessor.class.getName()));
+                pw.println("""
+                public interface %1$s {
+                    CriteriaBuilder builder();
+                }
+                """.formatted(BUILDER_AWARE));
+                pw.flush();
+            }
+
+        } catch (Exception e) {
+            context.logError("Problem opening file to write {} class : {}", BUILDER_AWARE, e.getMessage());
+        }
+
+    }
+
+
+    /**
+     * Write a criteria class file.
+     */
+    private void writeRootAwareClass() {
+
+        if (Objects.nonNull(context.getElementUtils().getTypeElement(PACKAGE_NAME + "." + ROOT_AWARE))) {
+            return;
+        }
+
+        try {
+
+            ImportBuilder imports = ImportBuilder.of(PACKAGE_NAME);
+            FileObject fo = context.getFiler().createSourceFile(imports.getSelfPackage() + "." + ROOT_AWARE);
+
+            try (PrintWriter pw = new PrintWriter(fo.openOutputStream())) {
+
+                pw.println("package " + imports.getSelfPackage() + ";");
+                pw.println();
+
+                imports.add("javax.annotation.processing.Generated");
+                imports.add("jakarta.persistence.criteria.Root");
+                imports.add("java.util.function.Supplier");
+                pw.println(imports.generateImports(context.isJakarta()));
+                pw.println();
+
+                pw.println("@Generated(value = \"%s\")".formatted(JpaMetaModelEnhanceProcessor.class.getName()));
+                pw.println("""
+                    public interface %1$s<E> extends Supplier<Root<E>>, %2$s {
+                    }
+                    """.formatted(ROOT_AWARE, BUILDER_AWARE));
+                pw.flush();
+            }
+
+        } catch (Exception e) {
+            context.logError("Problem opening file to write {} class : {}", ROOT_AWARE, e.getMessage());
         }
 
     }
@@ -118,23 +202,22 @@ public class ApiClassWriter {
      */
     private void writeCriteriaClass() {
 
-        if (Objects.nonNull(context.getElementUtils().getTypeElement(PACKAGE_NAME + ".Criteria"))) {
+        if (Objects.nonNull(context.getElementUtils().getTypeElement(PACKAGE_NAME + "." + CRITERIA))) {
             return;
         }
 
         try {
 
             ImportBuilder imports = ImportBuilder.of(PACKAGE_NAME);
-            FileObject fo = context.getFiler().createSourceFile(imports.getSelfPackage() + ".Criteria");
+            FileObject fo = context.getFiler().createSourceFile(imports.getSelfPackage() + "." + CRITERIA);
 
             try (PrintWriter pw = new PrintWriter(fo.openOutputStream())) {
 
-                // write package
                 pw.println("package " + imports.getSelfPackage() + ";");
                 pw.println();
 
-                // write import
                 imports.add("javax.annotation.processing.Generated");
+                imports.add("jakarta.persistence.criteria.CriteriaBuilder");
                 imports.add("jakarta.persistence.criteria.Expression");
                 imports.add("jakarta.persistence.criteria.Order");
                 imports.add("jakarta.persistence.criteria.Path");
@@ -146,9 +229,9 @@ public class ApiClassWriter {
 
                 pw.println("@Generated(value = \"%s\")".formatted(JpaMetaModelEnhanceProcessor.class.getName()));
                 pw.println("""
-                    public class Criteria {
+                    public class %1$s {
 
-                        public static class AnyPath<E> implements AnyExpression<E, Path<E>>, Builder {
+                        public static class AnyPath<E> implements AnyExpression<E, Path<E>>, %2$s {
                             private final Supplier<Path<E>> path;
                             private final CriteriaBuilder builder;
                             public AnyPath(Supplier<Path<E>> path, CriteriaBuilder builder) {
@@ -159,7 +242,7 @@ public class ApiClassWriter {
                             @Override public CriteriaBuilder builder() { return builder; }
                         }
 
-                        public static class AnyExp<E> implements AnyExpression<E, Expression<E>>, Builder {
+                        public static class AnyExp<E> implements AnyExpression<E, Expression<E>>, %2$s {
                             private final Supplier<Expression<E>> expression;
                             private final CriteriaBuilder builder;
                             public AnyExp(Supplier<Expression<E>> expression, CriteriaBuilder builder) {
@@ -171,56 +254,56 @@ public class ApiClassWriter {
                         }
 
                         public static class ComparablePath<E extends Comparable<? super E>>
-                                extends AnyPath<E> implements ComparableExpression<E, Path<E>>, Builder {
+                                extends AnyPath<E> implements ComparableExpression<E, Path<E>>, %2$s {
                             public ComparablePath(Supplier<Path<E>> path, CriteriaBuilder builder) {
                                 super(path, builder);
                             }
                         }
 
                         public static class ComparableExp<E extends Comparable<? super E>>
-                                extends AnyExp<E> implements ComparableExpression<E, Expression<E>>, Builder {
+                                extends AnyExp<E> implements ComparableExpression<E, Expression<E>>, %2$s {
                             public ComparableExp(Supplier<Expression<E>> expression, CriteriaBuilder builder) {
                                 super(expression, builder);
                             }
                         }
 
-                        public static class StringPath extends AnyPath<String> implements StringExpression<Path<String>>, Builder {
+                        public static class StringPath extends AnyPath<String> implements StringExpression<Path<String>>, %2$s {
                             public StringPath(Supplier<Path<String>> path, CriteriaBuilder builder) {
                                 super(path, builder);
                             }
                         }
 
-                        public static class StringExp extends AnyExp<String> implements StringExpression<Expression<String>>, Builder {
+                        public static class StringExp extends AnyExp<String> implements StringExpression<Expression<String>>, %2$s {
                             public StringExp(Supplier<Expression<String>> expression, CriteriaBuilder builder) {
                                 super(expression, builder);
                             }
                         }
 
-                        public static class BooleanPath extends AnyPath<Boolean> implements BooleanExpression<Path<Boolean>>, Builder {
+                        public static class BooleanPath extends AnyPath<Boolean> implements BooleanExpression<Path<Boolean>>, %2$s {
                             public BooleanPath(Supplier<Path<Boolean>> path, CriteriaBuilder builder) {
                                 super(path, builder);
                             }
                         }
-                        public static class BooleanExp extends AnyExp<Boolean> implements BooleanExpression<Expression<Boolean>>, Builder {
+                        public static class BooleanExp extends AnyExp<Boolean> implements BooleanExpression<Expression<Boolean>>, %2$s {
                             public BooleanExp(Supplier<Expression<Boolean>> expression, CriteriaBuilder builder) {
                                 super(expression, builder);
                             }
                         }
 
-                        public static class NumberPath<T extends Number> extends AnyPath<T> implements NumberExpression<T, Path<T>>, Builder {
+                        public static class NumberPath<T extends Number> extends AnyPath<T> implements NumberExpression<T, Path<T>>, %2$s {
                             public NumberPath(Supplier<Path<T>> path, CriteriaBuilder builder) {
                                 super(path, builder);
                             }
                         }
 
-                        public static class NumberExp<T extends Number> extends AnyExp<T> implements NumberExpression<T, Expression<T>>, Builder {
+                        public static class NumberExp<T extends Number> extends AnyExp<T> implements NumberExpression<T, Expression<T>>, %2$s {
                             public NumberExp(Supplier<Expression<T>> expression, CriteriaBuilder builder) {
                                 super(expression, builder);
                             }
                         }
 
 
-                        public static class AnyCollectionExp<C extends Collection<?>, T extends Expression<C>> implements AnyCollectionExpression<C, T>, Builder {
+                        public static class AnyCollectionExp<C extends Collection<?>, T extends Expression<C>> implements AnyCollectionExpression<C, T>, %2$s {
                             private final Supplier<T> expression;
                             private final CriteriaBuilder builder;
                             public AnyCollectionExp(Supplier<T> expression, CriteriaBuilder builder) {
@@ -232,7 +315,7 @@ public class ApiClassWriter {
                         }
 
                         public static class CollectionExp<E, C extends Collection<E>, T extends Expression<C>>
-                                extends AnyCollectionExp<C, T> implements CollectionExpression<E, C, T>, Builder {
+                                extends AnyCollectionExp<C, T> implements CollectionExpression<E, C, T>, %2$s {
                             public CollectionExp(Supplier<T> expression, CriteriaBuilder builder) {
                                 super(expression, builder);
                             }
@@ -240,7 +323,7 @@ public class ApiClassWriter {
 
                         // ------------------------------------------------------------------------
 
-                        public interface AnyExpression<E, T extends Expression<E>> extends Supplier<T>, Builder {
+                        public interface AnyExpression<E, T extends Expression<E>> extends Supplier<T>, %2$s {
                             T get();
                             default Predicate eq(Expression<?> y) {
                                 return builder().equal(get(), y);
@@ -337,136 +420,52 @@ public class ApiClassWriter {
                         }
 
                     }
-                    """);
+                    """.formatted(CRITERIA));
                 pw.flush();
             }
 
         } catch (Exception e) {
-            context.logError("Problem opening file to write criteria class : " + e.getMessage());
+            context.logError("Problem opening file to write {} class : {}", CRITERIA, e.getMessage());
         }
 
     }
 
-
-    /**
-     * Write a criteria class file.
-     */
-    private void writeBuilderClass() {
-
-        if (Objects.nonNull(context.getElementUtils().getTypeElement(PACKAGE_NAME + ".Builder"))) {
-            return;
-        }
-
-
-        try {
-
-            ImportBuilder imports = ImportBuilder.of(PACKAGE_NAME);
-            FileObject fo = context.getFiler().createSourceFile(PACKAGE_NAME + ".Builder");
-
-            try (PrintWriter pw = new PrintWriter(fo.openOutputStream())) {
-
-                // write package
-                pw.println("package " + imports.getSelfPackage() + ";");
-                pw.println();
-
-                // write import
-                imports.add("javax.annotation.processing.Generated");
-                imports.add("jakarta.persistence.criteria.CriteriaBuilder");
-                pw.println(imports.generateImports(context.isJakarta()));
-                pw.println();
-
-                pw.println("@Generated(value = \"%s\")".formatted(JpaMetaModelEnhanceProcessor.class.getName()));
-                pw.println("""
-                public interface Builder {
-                    CriteriaBuilder builder();
-                }
-                """);
-                pw.flush();
-            }
-
-        } catch (Exception e) {
-            context.logError("Problem opening file to write criteria class : " + e.getMessage());
-        }
-
-    }
-
-
-    /**
-     * Write a criteria class file.
-     */
-    private void writeRootAwareClass() {
-
-        if (Objects.nonNull(context.getElementUtils().getTypeElement(PACKAGE_NAME + ".RootAware"))) {
-            return;
-        }
-
-
-        try {
-
-            ImportBuilder imports = ImportBuilder.of(PACKAGE_NAME);
-            FileObject fo = context.getFiler().createSourceFile(imports.getSelfPackage() + ".RootAware");
-
-            try (PrintWriter pw = new PrintWriter(fo.openOutputStream())) {
-                // write package
-                pw.println("package " + imports.getSelfPackage() + ";");
-                pw.println();
-
-                // write import
-                imports.add("javax.annotation.processing.Generated");
-                imports.add("jakarta.persistence.criteria.Root");
-                imports.add("java.util.function.Supplier");
-                pw.println(imports.generateImports(context.isJakarta()));
-                pw.println();
-
-                pw.println("@Generated(value = \"%s\")".formatted(JpaMetaModelEnhanceProcessor.class.getName()));
-                pw.println("""
-                    public interface RootAware<E> extends Supplier<Root<E>>, Builder {
-                    }
-                    """);
-                pw.flush();
-            }
-
-        } catch (Exception e) {
-            context.logError("Problem opening file to write criteria class : " + e.getMessage());
-        }
-
-    }
 
     /**
      * Write a repository class file.
      */
     private void writeRepositoryClass() {
 
-        if (Objects.nonNull(context.getElementUtils().getTypeElement(PACKAGE_NAME + ".BaseRepository"))) {
+        if (Objects.nonNull(context.getElementUtils().getTypeElement(PACKAGE_NAME + "." + REPOSITORY))) {
             return;
         }
 
         try {
 
             ImportBuilder imports = ImportBuilder.of(PACKAGE_NAME);
-            FileObject fo = context.getFiler().createSourceFile(imports.getSelfPackage() + ".BaseRepository");
+            FileObject fo = context.getFiler().createSourceFile(imports.getSelfPackage() + "." + REPOSITORY);
 
             try (PrintWriter pw = new PrintWriter(fo.openOutputStream())) {
-                // write package
+
                 pw.println("package " + imports.getSelfPackage() + ";");
                 pw.println();
 
-                // write import
+                imports.add("javax.annotation.processing.Generated");
                 imports.add("java.io.Serializable");
                 pw.println(imports.generateImports(context.isJakarta()));
                 pw.println();
 
                 pw.println("@Generated(value = \"%s\")".formatted(JpaMetaModelEnhanceProcessor.class.getName()));
                 pw.println("""
-                    public interface BaseRepository<PK extends Serializable, E, R extends RootAware<E>> {
-                        RootSource<E, R> rootSource();
+                    public interface %1$s<PK extends Serializable, E, R extends %2$s<E>> {
+                        %3$s<E, R> rootSource();
                     }
-                    """);
+                    """.formatted(REPOSITORY, ROOT_AWARE, ROOT_SOURCE));
                 pw.flush();
             }
 
         } catch (Exception e) {
-            context.logError("Problem opening file to write BaseRepository class : " + e.getMessage());
+            context.logError("Problem opening file to write {} class : {}", REPOSITORY, e.getMessage());
         }
 
     }

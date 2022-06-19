@@ -25,7 +25,7 @@ import java.util.function.Supplier;
 
 public class Criteria {
 
-    public static class AnyPath<E> implements AnyExpression<E, Path<E>>, Builder {
+    public static class AnyPath<E> implements AnyExpression<E, Path<E>>, BuilderAware {
         private final Supplier<Path<E>> path;
         private final CriteriaBuilder builder;
         public AnyPath(Supplier<Path<E>> path, CriteriaBuilder builder) {
@@ -36,7 +36,7 @@ public class Criteria {
         @Override public CriteriaBuilder builder() { return builder; }
     }
 
-    public static class AnyExp<E> implements AnyExpression<E, Expression<E>>, Builder {
+    public static class AnyExp<E> implements AnyExpression<E, Expression<E>>, BuilderAware {
         private final Supplier<Expression<E>> expression;
         private final CriteriaBuilder builder;
         public AnyExp(Supplier<Expression<E>> expression, CriteriaBuilder builder) {
@@ -48,56 +48,56 @@ public class Criteria {
     }
 
     public static class ComparablePath<E extends Comparable<? super E>>
-            extends AnyPath<E> implements ComparableExpression<E, Path<E>>, Builder {
+            extends AnyPath<E> implements ComparableExpression<E, Path<E>>, BuilderAware {
         public ComparablePath(Supplier<Path<E>> path, CriteriaBuilder builder) {
             super(path, builder);
         }
     }
 
     public static class ComparableExp<E extends Comparable<? super E>>
-            extends AnyExp<E> implements ComparableExpression<E, Expression<E>>, Builder {
+            extends AnyExp<E> implements ComparableExpression<E, Expression<E>>, BuilderAware {
         public ComparableExp(Supplier<Expression<E>> expression, CriteriaBuilder builder) {
             super(expression, builder);
         }
     }
 
-    public static class StringPath extends AnyPath<String> implements StringExpression<Path<String>>, Builder {
+    public static class StringPath extends AnyPath<String> implements StringExpression<Path<String>>, BuilderAware {
         public StringPath(Supplier<Path<String>> path, CriteriaBuilder builder) {
             super(path, builder);
         }
     }
 
-    public static class StringExp extends AnyExp<String> implements StringExpression<Expression<String>>, Builder {
+    public static class StringExp extends AnyExp<String> implements StringExpression<Expression<String>>, BuilderAware {
         public StringExp(Supplier<Expression<String>> expression, CriteriaBuilder builder) {
             super(expression, builder);
         }
     }
 
-    public static class BooleanPath extends AnyPath<Boolean> implements BooleanExpression<Path<Boolean>>, Builder {
+    public static class BooleanPath extends AnyPath<Boolean> implements BooleanExpression<Path<Boolean>>, BuilderAware {
         public BooleanPath(Supplier<Path<Boolean>> path, CriteriaBuilder builder) {
             super(path, builder);
         }
     }
-    public static class BooleanExp extends AnyExp<Boolean> implements BooleanExpression<Expression<Boolean>>, Builder {
+    public static class BooleanExp extends AnyExp<Boolean> implements BooleanExpression<Expression<Boolean>>, BuilderAware {
         public BooleanExp(Supplier<Expression<Boolean>> expression, CriteriaBuilder builder) {
             super(expression, builder);
         }
     }
 
-    public static class NumberPath<T extends Number> extends AnyPath<T> implements NumberExpression<T, Path<T>>, Builder {
+    public static class NumberPath<T extends Number> extends AnyPath<T> implements NumberExpression<T, Path<T>>, BuilderAware {
         public NumberPath(Supplier<Path<T>> path, CriteriaBuilder builder) {
             super(path, builder);
         }
     }
 
-    public static class NumberExp<T extends Number> extends AnyExp<T> implements NumberExpression<T, Expression<T>>, Builder {
+    public static class NumberExp<T extends Number> extends AnyExp<T> implements NumberExpression<T, Expression<T>>, BuilderAware {
         public NumberExp(Supplier<Expression<T>> expression, CriteriaBuilder builder) {
             super(expression, builder);
         }
     }
 
 
-    public static class AnyCollectionExp<C extends Collection<?>, T extends Expression<C>> implements AnyCollectionExpression<C, T>, Builder {
+    public static class AnyCollectionExp<C extends Collection<?>, T extends Expression<C>> implements AnyCollectionExpression<C, T>, BuilderAware {
         private final Supplier<T> expression;
         private final CriteriaBuilder builder;
         public AnyCollectionExp(Supplier<T> expression, CriteriaBuilder builder) {
@@ -109,7 +109,7 @@ public class Criteria {
     }
 
     public static class CollectionExp<E, C extends Collection<E>, T extends Expression<C>>
-            extends AnyCollectionExp<C, T> implements CollectionExpression<E, C, T>, Builder {
+            extends AnyCollectionExp<C, T> implements CollectionExpression<E, C, T>, BuilderAware {
         public CollectionExp(Supplier<T> expression, CriteriaBuilder builder) {
             super(expression, builder);
         }
@@ -117,7 +117,7 @@ public class Criteria {
 
     // ------------------------------------------------------------------------
 
-    public interface AnyExpression<E, T extends Expression<E>> extends Supplier<T>, Builder {
+    public interface AnyExpression<E, T extends Expression<E>> extends Supplier<T>, BuilderAware {
         T get();
         default Predicate eq(Expression<?> y) {
             return builder().equal(get(), y);

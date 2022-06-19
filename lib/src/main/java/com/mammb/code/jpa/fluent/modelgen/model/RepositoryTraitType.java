@@ -16,9 +16,14 @@
 package com.mammb.code.jpa.fluent.modelgen.model;
 
 import com.mammb.code.jpa.fluent.modelgen.Context;
+import com.mammb.code.jpa.fluent.modelgen.writer.ImportBuilder;
+
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.TypeParameterElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeMirror;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,7 +45,7 @@ public class RepositoryTraitType {
     private final TypeElement element;
 
     /** The type arguments. */
-    private final List<TypeArgument> typeArguments;
+    private final List<TypeParameterElement> typeParameters;
 
 
     /**
@@ -51,7 +56,7 @@ public class RepositoryTraitType {
     protected RepositoryTraitType(Context context, TypeElement element) {
         this.context = context;
         this.element = element;
-        this.typeArguments = typeArgumentsOf(context, element);
+        this.typeParameters = List.copyOf(element.getTypeParameters());
     }
 
 
@@ -68,8 +73,33 @@ public class RepositoryTraitType {
     }
 
 
+    /**
+     * Get the qualified name.
+     * @return the qualified name
+     */
+    public String getQualifiedName() {
+        return element.toString();
+    }
+
+
+    /**
+     * Create the extends clause.
+     * @return the extends clause
+     */
+    public String createExtendsClause(ImportBuilder imports) {
+        if (typeParameters.isEmpty()) {
+            return "";
+        }
+        var name = imports.add(element.toString());
+        return name + typeParametersString()
+            .replace("PK", "%1$s")
+            .replace("E", "%2$s")
+            .replace("R", "%2$s_Root_<%2$s>");
+    }
+
+
     private static boolean isRepositoryTraitType(Element element) {
-        return element.getKind().isClass() &&
+        return element.getKind().isInterface() &&
             annotationTypes(element).stream().anyMatch(ANNOTATION_TYPE::equals);
     }
 
@@ -87,9 +117,16 @@ public class RepositoryTraitType {
     }
 
 
-    private static List<TypeArgument> typeArgumentsOf(Context context, TypeElement element) {
-        element.getTypeParameters().stream().forEach(e -> context.logInfo(e.toString()));
-        return new ArrayList<>();
+    /**
+     * Get the type parameters as string.
+     * e.g. {@code <PK, E, R>}.
+     * @return the type parameters as string
+     */
+    private String typeParametersString() {
+        if (element.asType() instanceof DeclaredType declaredType) {
+            return declaredType.toString().replace(element.toString(), "");
+        }
+        return "";
     }
 
 }

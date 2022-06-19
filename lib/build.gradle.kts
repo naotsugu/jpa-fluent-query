@@ -13,6 +13,7 @@ dependencies {
     testImplementation("jakarta.persistence:jakarta.persistence-api:3.0.0")
     testAnnotationProcessor("org.hibernate:hibernate-jpamodelgen:6.0.0.Final")
     testAnnotationProcessor(project(":lib", "archives"))
+    //testAnnotationProcessor(fileTree("libs") { include("*.jar") })
     testImplementation("com.h2database:h2:2.1.212")
     testImplementation("org.hibernate:hibernate-core:6.1.0.Final")
     testImplementation("org.glassfish.jaxb:jaxb-runtime:3.0.0")

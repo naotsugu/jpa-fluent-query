@@ -13,14 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mammb.code.jpa.fluent.repository;
+package com.mammb.code.jpa.core;
 
-/**
- * Repository marker interface.
- *
- * @param <PK> the type of the id of the entity the repository manages
- * @param <E> the entity type the repository manages
- * @author Naotsugu Kobayashi
- */
-public interface Repository<PK, E> {
+import jakarta.persistence.criteria.CriteriaBuilder;
+
+public interface BuilderAware {
+    CriteriaBuilder builder();
 }
