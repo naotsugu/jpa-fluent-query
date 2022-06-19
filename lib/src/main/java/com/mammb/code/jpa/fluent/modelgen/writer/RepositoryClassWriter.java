@@ -83,8 +83,8 @@ public class RepositoryClassWriter {
                     .map(trait -> trait.createExtendsClause(imports)).toArray(String[]::new));
 
                 var body = """
-                    public interface %2$sRepository_ extends Repository<%1$s, %2$s, %2$s_Root_<%2$s>>{extends} {
-                        default RootSource<%2$s, %2$s_Root_<%2$s>> rootSource() {
+                    public interface %2$sRepository_ extends Repository<%1$s, %2$s, %2$sRoot_<%2$s>>{extends} {
+                        default RootSource<%2$s, %2$sRoot_<%2$s>> rootSource() {
                             return Root_.%3$s();
                         }
                     }
@@ -101,7 +101,7 @@ public class RepositoryClassWriter {
 
                 imports.add("javax.annotation.processing.Generated");
                 imports.add(ApiClassWriter.PACKAGE_NAME + ".*");
-                imports.add(entity.getQualifiedName() + "Root_");
+                imports.add(entity.getTargetEntityQualifiedName() + "Root_");
                 imports.add(PackageNames.createCommonPackageName(context.getGeneratedModelClasses()) + ".Root_");
                 pw.println(imports.generateImports(context.isJakarta()));
                 pw.println();

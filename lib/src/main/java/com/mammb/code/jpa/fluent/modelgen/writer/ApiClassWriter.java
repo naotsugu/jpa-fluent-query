@@ -33,12 +33,16 @@ public class ApiClassWriter {
     /** The name of package. */
     public static final String PACKAGE_NAME = "com.mammb.code.jpa.core";
 
+    /** The name of RootSource class. */
     public static final String ROOT_SOURCE = "RootSource";
-    public static final String CRITERIA = "Criteria";
+    /** The name of BuilderAware class. */
     public static final String BUILDER_AWARE = "BuilderAware";
+    /** The name of RootAware class. */
     public static final String ROOT_AWARE = "RootAware";
+    /** The name of Criteria class. */
+    public static final String CRITERIA = "Criteria";
+    /** The name of Repository class. */
     public static final String REPOSITORY = "Repository";
-
 
     /** Context of processing. */
     private final Context context;
@@ -76,6 +80,9 @@ public class ApiClassWriter {
     }
 
 
+    /**
+     * Write a RootSource class file.
+     */
     private void writeRootSourceClass() {
 
         if (Objects.nonNull(context.getElementUtils().getTypeElement(PACKAGE_NAME + "." + ROOT_SOURCE))) {

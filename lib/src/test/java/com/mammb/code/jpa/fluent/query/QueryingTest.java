@@ -1,7 +1,6 @@
 package com.mammb.code.jpa.fluent.query;
 
 import com.mammb.code.jpa.fluent.test.Issue;
-import com.mammb.code.jpa.fluent.test.Issue_Root_;
 import com.mammb.code.jpa.fluent.test.Project;
 import com.mammb.code.jpa.fluent.test.Root_;
 import jakarta.persistence.EntityManager;
