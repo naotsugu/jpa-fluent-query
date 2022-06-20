@@ -20,13 +20,36 @@ import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSourceAware;
 import com.mammb.code.jpa.fluent.query.Filter;
 import com.mammb.code.jpa.fluent.query.QueryHelper;
+import com.mammb.code.jpa.fluent.query.Request;
 import com.mammb.code.jpa.fluent.query.Slice;
 import com.mammb.code.jpa.fluent.query.SlicePoint;
 import com.mammb.code.jpa.fluent.query.Sorts;
 
-
+/**
+ * FindSliceTrait.
+ * @param <E> the type of entity
+ * @param <R> the type of root
+ * @author Naotsugu Kobayashi
+ */
 public interface FindSliceTrait<E, R extends RootAware<E>> extends EntityManagerAware, RootSourceAware<E, R> {
 
+    /**
+     * Find slice.
+     * @param request the slice request
+     * @return the {@link Slice}
+     */
+    default Slice<E> findSlice(Request<E, R> request) {
+        return findSlice(request.getFilter(), request.getSorts(), request.getSlicePoint());
+    }
+
+
+    /**
+     * Find slice.
+     * @param filter a {@link Filter}
+     * @param sorts a {@link Sorts}
+     * @param slicePoint a {@link SlicePoint}
+     * @return the {@link Slice}
+     */
     default Slice<E> findSlice(Filter<E, R> filter, Sorts<E, R> sorts, SlicePoint slicePoint) {
         return QueryHelper.slice(em(), rootSource(), filter, sorts, slicePoint);
     }

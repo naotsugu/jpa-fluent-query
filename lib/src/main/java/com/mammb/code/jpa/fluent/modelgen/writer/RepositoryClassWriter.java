@@ -70,7 +70,7 @@ public class RepositoryClassWriter {
      */
     public void writeFile() {
 
-        context.logDebug("Create repository : " + entity.getQualifiedName());
+        context.logDebug("Create repository : {}", entity.getQualifiedName());
 
         try {
 
@@ -106,17 +106,15 @@ public class RepositoryClassWriter {
                 pw.println(imports.generateImports(context.isJakarta()));
                 pw.println();
 
-                // write class
                 pw.println("@Generated(value = \"%s\")".formatted(JpaMetaModelEnhanceProcessor.class.getName()));
                 pw.println(body);
                 pw.flush();
             }
 
         } catch (FilerException e) {
-            context.logError("Problem with Filer : " + e.getMessage());
+            context.logError("Problem with Filer : {}", e.getMessage());
         } catch (Exception e) {
-            context.logError("Problem opening file to write Repository for " +
-                entity.getSimpleName() + " : " + e.getMessage());
+            context.logError("Problem opening file to write Repository for {} : {}", entity.getSimpleName(), e.getMessage());
         }
     }
 

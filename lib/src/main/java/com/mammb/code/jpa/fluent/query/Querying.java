@@ -18,7 +18,12 @@ package com.mammb.code.jpa.fluent.query;
 import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSource;
 
-
+/**
+ * Querying.
+ * @param <E> the type of entity
+ * @param <R> the type of root
+ * @author Naotsugu Kobayashi
+ */
 public interface Querying<E, R extends RootAware<E>> extends CreateQuery<E, R> {
 
     Querying<E, R> filter(Filter<E, R> filter);

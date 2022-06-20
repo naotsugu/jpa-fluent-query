@@ -22,6 +22,7 @@ import jakarta.persistence.criteria.Order;
  * Sort for ORDER BY clause.
  * @param <E> the type of entity
  * @param <R> the type of root
+ * @author Naotsugu Kobayashi
  */
 public interface Sort<E, R extends RootAware<E>> {
 

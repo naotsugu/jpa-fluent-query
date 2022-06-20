@@ -20,17 +20,29 @@ import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSourceAware;
 import com.mammb.code.jpa.fluent.query.Filter;
 import com.mammb.code.jpa.fluent.query.QueryHelper;
+import com.mammb.code.jpa.fluent.query.Request;
+import com.mammb.code.jpa.fluent.query.Sort;
 import com.mammb.code.jpa.fluent.query.Sorts;
 import java.util.List;
 
+/**
+ * FindAllTrait.
+ * @param <E> the type of entity
+ * @param <R> the type of root
+ * @author Naotsugu Kobayashi
+ */
 public interface FindAllTrait<E, R extends RootAware<E>> extends EntityManagerAware, RootSourceAware<E, R> {
 
     default List<E> findAll() {
-        return QueryHelper.query(em(), rootSource(), Filter.empty(), Sorts.empty()).getResultList();
+        return findAll(Filter.empty(), Sorts.empty());
+    }
+
+    default List<E> findAll(Request<E, R> request) {
+        return findAll(request.getFilter(), request.getSorts());
     }
 
     default List<E> findAll(Filter<E, R> filter) {
-        return QueryHelper.query(em(), rootSource(), filter, Sorts.empty()).getResultList();
+        return findAll(filter, Sorts.empty());
     }
 
     default List<E> findAll(Filter<E, R> filter, Sorts<E, R> sorts) {
@@ -38,7 +50,7 @@ public interface FindAllTrait<E, R extends RootAware<E>> extends EntityManagerAw
     }
 
     default long count() {
-        return QueryHelper.countQuery(em(), rootSource(), Filter.empty()).getSingleResult();
+        return count(Filter.empty());
     }
 
     default long count(Filter<E, R> filter) {

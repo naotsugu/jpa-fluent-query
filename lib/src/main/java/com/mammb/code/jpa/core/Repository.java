@@ -24,9 +24,15 @@ import java.io.Serializable;
  * @param <PK> the type of the id of the entity the repository manages
  * @param <E> the entity type the repository manages
  * @param <R> the entity type as root aware
-* @author Naotsugu Kobayashi
+ * @author Naotsugu Kobayashi
  */
 public interface Repository<PK extends Serializable, E, R extends RootAware<E>>
         extends QueryRepository<PK, E, R> {
+
+    /**
+     * Get the {@link RootSource}.
+     * @return the {@link RootSource}
+     */
     RootSource<E, R> rootSource();
+
 }

@@ -21,6 +21,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.metamodel.SingularAttribute;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -51,7 +53,11 @@ public interface QueryHelper {
         R root = rootSource.root(cq, cb);
         cq.select(root.get());
         Optional.ofNullable(filter.apply(root)).ifPresent(cq::where);
-        Optional.ofNullable(sorts.apply(root)).ifPresent(cq::orderBy);
+        cq.orderBy(Optional.ofNullable(sorts.apply(root))
+            .orElseGet(() -> root.get().getModel().getIdClassAttributes().stream()
+                .map(SingularAttribute::getName)
+                .map(name -> cb.asc(root.get().get(name)))
+                .toList()));
         return em.createQuery(cq);
     }
 

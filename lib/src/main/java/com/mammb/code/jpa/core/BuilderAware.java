@@ -17,6 +17,16 @@ package com.mammb.code.jpa.core;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 
+/**
+ * The builder aware.
+ * @author Naotsugu Kobayashi
+ */
 public interface BuilderAware {
+
+    /**
+     * Get the {@link CriteriaBuilder}.
+     * @return the {@link CriteriaBuilder}
+     */
     CriteriaBuilder builder();
+
 }

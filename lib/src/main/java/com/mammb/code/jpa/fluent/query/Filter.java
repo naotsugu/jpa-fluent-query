@@ -59,6 +59,16 @@ public interface Filter<E, R extends RootAware<E>> {
 
 
     /**
+     * Create filter by the given {@link Filter}.
+     * @param filter the {@link Filter}
+     * @return a {@link Filter}
+     */
+    static <E, R extends RootAware<E>> Filter<E, R> of(Filter<E, R> filter) {
+        return Composition.composed(empty(), filter, CriteriaBuilder::and);
+    }
+
+
+    /**
      * Get the empty {@link Filter}.
      * @param <E> the type of entity
      * @param <R> the type of root

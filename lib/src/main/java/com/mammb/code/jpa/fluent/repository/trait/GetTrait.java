@@ -22,6 +22,13 @@ import com.mammb.code.jpa.core.RootSourceAware;
 import java.io.Serializable;
 import java.util.Optional;
 
+/**
+ * GetTrait.
+ * @param <PK> the type of primary key
+ * @param <E> the type of entity
+ * @param <R> the type of root
+ * @author Naotsugu Kobayashi
+ */
 public interface GetTrait<PK extends Serializable, E, R extends RootAware<E>> extends EntityManagerAware, RootSourceAware<E, R> {
 
     default Optional<E> getReference(PK id) {

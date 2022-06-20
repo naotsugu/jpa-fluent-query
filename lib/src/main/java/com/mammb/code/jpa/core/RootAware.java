@@ -18,5 +18,10 @@ package com.mammb.code.jpa.core;
 import jakarta.persistence.criteria.Root;
 import java.util.function.Supplier;
 
+/**
+ * Root aware.
+ * @param <E> the type of entity
+ * @author Naotsugu Kobayashi
+ */
 public interface RootAware<E> extends Supplier<Root<E>>, BuilderAware {
 }

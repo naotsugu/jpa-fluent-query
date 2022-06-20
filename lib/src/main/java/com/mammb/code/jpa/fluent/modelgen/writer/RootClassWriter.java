@@ -121,7 +121,7 @@ public class RootClassWriter {
                                     }
                                 """.formatted(
                                 entitySimpleName,
-                                uncapitalize(entitySimpleName)
+                                unCapitalize(entitySimpleName)
                         ));
                     } else {
                         pw.println("""
@@ -133,7 +133,7 @@ public class RootClassWriter {
                                 }
                             """.formatted(
                                 entitySimpleName,
-                                uncapitalize(entitySimpleName)
+                                unCapitalize(entitySimpleName)
                         ));
                     }
                 }
@@ -149,11 +149,11 @@ public class RootClassWriter {
 
 
     /**
-     * Uncapitalize the given string.
+     * Un Capitalize the given string.
      * @param str the given string
      * @return Capitalized string
      */
-    protected static String uncapitalize(String str) {
+    protected static String unCapitalize(String str) {
         return (Objects.isNull(str) || str.isEmpty())
             ? str
             : str.substring(0, 1).toLowerCase() + str.substring(1);

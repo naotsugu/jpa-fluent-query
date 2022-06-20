@@ -44,4 +44,63 @@ public interface SlicePoint {
         return (long) getNumber() * (long) getSize();
     }
 
+
+    /**
+     * Create the next {@link SlicePoint}.
+     * @return the next {@link SlicePoint}
+     */
+    default SlicePoint next() {
+        return of(getNumber() + 1, getSize());
+    }
+
+
+    /**
+     * Create the {@link SlicePoint} with given number.
+     * @param number the number of the current {@link SlicePoint}
+     * @return the {@link SlicePoint} with given number
+     */
+    default SlicePoint withNumber(int number) {
+        return of(number, getSize());
+    }
+
+
+    /**
+     * Create the {@link SlicePoint} with given size.
+     * @param size the size of slice
+     * @return the {@link SlicePoint} with given size
+     */
+    default SlicePoint withSize(int size) {
+        return of(getNumber(), size);
+    }
+
+
+    /**
+     * Create a {@link SlicePoint}.
+     * @return a {@link SlicePoint}
+     */
+    static SlicePoint of() {
+        return of(0, 15);
+    }
+
+
+    /**
+     * Create a {@link SlicePoint}.
+     * @param number the number of the current {@link SlicePoint}
+     * @param size the size of slice
+     * @return a {@link SlicePoint}
+     */
+    static SlicePoint of(int number, int size) {
+        return new SlicePoint() {
+            @Override
+            public int getNumber() {
+                return number;
+            }
+
+            @Override
+            public int getSize() {
+                return size;
+            }
+        };
+    }
+
 }

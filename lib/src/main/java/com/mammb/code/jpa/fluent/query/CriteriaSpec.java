@@ -25,25 +25,25 @@ import java.util.Objects;
 
 /**
  * Criteria specification.
- * @param <T> the type of entity
+ * @param <E> the type of entity
  * @author Naotsugu Kobayashi
  */
-public interface CriteriaSpec<T> extends Serializable {
+public interface CriteriaSpec<E> extends Serializable {
 
-    Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder);
+    Predicate toPredicate(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder builder);
 
 
-    default CriteriaSpec<T> and(CriteriaSpec<T> other) {
+    default CriteriaSpec<E> and(CriteriaSpec<E> other) {
         return SpecComposition.composed(this, other, CriteriaBuilder::and);
     }
 
 
-    default CriteriaSpec<T> or(CriteriaSpec<T> other) {
+    default CriteriaSpec<E> or(CriteriaSpec<E> other) {
         return SpecComposition.composed(this, other, CriteriaBuilder::or);
     }
 
 
-    static <T> CriteriaSpec<T> not(CriteriaSpec<T> spec) {
+    static <E> CriteriaSpec<E> not(CriteriaSpec<E> spec) {
         return Objects.isNull(spec)
                 ? (root, query, builder) -> null
                 : (root, query, builder) -> builder.not(spec.toPredicate(root, query, builder));
@@ -55,7 +55,7 @@ public interface CriteriaSpec<T> extends Serializable {
             Predicate combine(CriteriaBuilder builder, Predicate lhs, Predicate rhs);
         }
 
-        static <T> CriteriaSpec<T> composed(CriteriaSpec<T> lhs, CriteriaSpec<T> rhs, Combiner combiner) {
+        static <E> CriteriaSpec<E> composed(CriteriaSpec<E> lhs, CriteriaSpec<E> rhs, Combiner combiner) {
 
             return (root, query, builder) -> {
 
@@ -72,8 +72,8 @@ public interface CriteriaSpec<T> extends Serializable {
             };
         }
 
-        private static <T> Predicate toPredicate(
-                CriteriaSpec<T> specification, Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+        private static <E> Predicate toPredicate(
+            CriteriaSpec<E> specification, Root<E> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
             return Objects.isNull(specification) ? null : specification.toPredicate(root, query, builder);
         }
     }

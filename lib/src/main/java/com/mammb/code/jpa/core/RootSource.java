@@ -18,10 +18,26 @@ package com.mammb.code.jpa.core;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 
-public interface RootSource<E, T extends RootAware<E>> {
+/**
+ * Root source.
+ * @param <E> the type of entity
+ * @param <R> the type of root
+ * @author Naotsugu Kobayashi
+ */
+public interface RootSource<E, R extends RootAware<E>> {
 
-    T root(CriteriaQuery<?> query, CriteriaBuilder builder);
+    /**
+     * Create the root from the given query.
+     * @param query {@link CriteriaQuery}
+     * @param builder {@link CriteriaBuilder}
+     * @return the {@link RootAware}
+     */
+    R root(CriteriaQuery<?> query, CriteriaBuilder builder);
 
+    /**
+     * Get the root entity class.
+     * @return the root entity class
+     */
     Class<E> rootClass();
 
 }

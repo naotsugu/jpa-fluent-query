@@ -21,6 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Sorts.
+ * @param <E> the type of entity
+ * @param <R> the type of root
+ * @author Naotsugu Kobayashi
+ */
 public interface Sorts<E, R extends RootAware<E>> {
 
     List<Order> apply(R root);
@@ -32,6 +38,11 @@ public interface Sorts<E, R extends RootAware<E>> {
 
     static <E, R extends RootAware<E>> Sorts<E, R> empty() {
         return root -> List.of();
+    }
+
+
+    static <E, R extends RootAware<E>> Sorts<E, R> of(Sort<E, R> sort) {
+        return root -> List.of(sort.apply(root));
     }
 
     static <E, R extends RootAware<E>> Sorts<E, R> of(Sort<E, R> lhs, Sort<E, R> rhs) {

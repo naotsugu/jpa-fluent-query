@@ -23,6 +23,10 @@ import jakarta.persistence.criteria.Predicate;
 import java.util.Collection;
 import java.util.function.Supplier;
 
+/**
+ * The criteria utilities.
+ * @author Naotsugu Kobayashi
+ */
 public class Criteria {
 
     public static class AnyPath<E> implements AnyExpression<E, Path<E>>, BuilderAware {

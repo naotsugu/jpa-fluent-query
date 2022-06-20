@@ -21,9 +21,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * RepositoryTrait.
+ * @author Naotsugu Kobayashi
+ */
 @Documented
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RepositoryTrait {
+
+    /**
+     * The trait target entity classes.
+     * @return the trait target entity classes
+     */
     Class<?>[] value() default {};
 }

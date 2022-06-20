@@ -71,7 +71,7 @@ public class CriteriaModelClassWriter {
      */
     public void writeFile() {
 
-        context.logDebug("Create meta model : " + entity.getQualifiedName());
+        context.logDebug("Create meta model : {}", entity.getQualifiedName());
 
         try {
 

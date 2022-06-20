@@ -67,7 +67,9 @@ public class JpaMetaModelEnhanceProcessor extends AbstractProcessor {
     /** Context of processing. */
     private Context context;
 
+    /** Annotation processing round. */
     private int round = 0;
+
 
     @Override
     public void init(ProcessingEnvironment env) {
@@ -79,7 +81,7 @@ public class JpaMetaModelEnhanceProcessor extends AbstractProcessor {
             Boolean.parseBoolean(env.getOptions().getOrDefault(JpaMetaModelEnhanceProcessor.ADD_REPOSITORY, "true")));
 
         var version = getClass().getPackage().getImplementationVersion();
-        context.logInfo("JPA Static-Metamodel Enhance Generator " + (Objects.isNull(version) ? "" : version));
+        context.logInfo("JPA Static-Metamodel Enhance Generator {}", (Objects.isNull(version) ? "" : version));
 
     }
 
@@ -93,7 +95,7 @@ public class JpaMetaModelEnhanceProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 
-        context.logDebug("### Round : " + ++round);
+        context.logDebug("### Round : {}", ++round);
 
         if (roundEnv.errorRaised() || roundEnv.processingOver() || annotations.isEmpty()) {
             return false;
@@ -121,7 +123,7 @@ public class JpaMetaModelEnhanceProcessor extends AbstractProcessor {
             }
 
         } catch (Exception e) {
-            context.logError("Exception : " + e.getMessage());
+            context.logError("Exception : {}", e.getMessage());
         }
 
         return false;
@@ -136,7 +138,7 @@ public class JpaMetaModelEnhanceProcessor extends AbstractProcessor {
     protected void createMetaModelClasses(final StaticMetamodelEntity entity) {
 
         if (context.isAlreadyGenerated(entity.getQualifiedName())) {
-            context.logDebug("Skip meta model generation : " + entity.getQualifiedName());
+            context.logDebug("Skip meta model generation : {}", entity.getQualifiedName());
             return;
         }
 
