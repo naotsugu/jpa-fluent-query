@@ -21,8 +21,11 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Order;
+import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.SingularAttribute;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,11 +56,13 @@ public interface QueryHelper {
         R root = rootSource.root(cq, cb);
         cq.select(root.get());
         Optional.ofNullable(filter.apply(root)).ifPresent(cq::where);
-        cq.orderBy(Optional.ofNullable(sorts.apply(root))
-            .orElseGet(() -> root.get().getModel().getIdClassAttributes().stream()
-                .map(SingularAttribute::getName)
-                .map(name -> cb.asc(root.get().get(name)))
-                .toList()));
+
+        List<Order> orders = new ArrayList<>();
+        Optional.ofNullable(sorts.apply(root)).ifPresent(orders::addAll);
+        orders.addAll(getIdentifierName(root.get().getModel()).stream()
+            .map(name -> cb.asc(root.get().get(name))).toList());
+        cq.orderBy(orders);
+
         return em.createQuery(cq);
     }
 
@@ -87,6 +92,15 @@ public interface QueryHelper {
         query.setMaxResults(slicePoint.getSize());
         List<E> result = query.getResultList();
         return Page.of(result, count, slicePoint);
+    }
+
+
+    private static List<String> getIdentifierName(EntityType<?> entityType) {
+        return entityType.hasSingleIdAttribute()
+            ? List.of(entityType.getId(entityType.getIdType().getJavaType()).getName())
+            : entityType.getIdClassAttributes().stream()
+                .map(SingularAttribute::getName)
+                .toList();
     }
 
 }
