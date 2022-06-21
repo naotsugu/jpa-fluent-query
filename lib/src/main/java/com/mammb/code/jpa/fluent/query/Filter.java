@@ -19,6 +19,7 @@ import com.mammb.code.jpa.core.RootAware;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -64,7 +65,30 @@ public interface Filter<E, R extends RootAware<E>> {
      * @return a {@link Filter}
      */
     static <E, R extends RootAware<E>> Filter<E, R> of(Filter<E, R> filter) {
-        return Composition.composed(empty(), filter, CriteriaBuilder::and);
+        return filter;
+    }
+
+
+    /**
+     * Create filter by the given {@link Filter}.
+     * @param filter1 the {@link Filter}
+     * @param filter2 the {@link Filter}
+     * @return a {@link Filter}
+     */
+    static <E, R extends RootAware<E>> Filter<E, R> of(Filter<E, R> filter1, Filter<E, R> filter2) {
+        return of(filter1).and(filter2);
+    }
+
+
+    /**
+     * Create filter by the given {@link Filter}.
+     * @param filter1 the {@link Filter}
+     * @param filters the {@link Filter}s
+     * @return a {@link Filter}
+     */
+    @SafeVarargs
+    static <E, R extends RootAware<E>> Filter<E, R> of(Filter<E, R> filter1, Filter<E, R>... filters) {
+        return Arrays.stream(filters).reduce(filter1, Filter::and);
     }
 
 

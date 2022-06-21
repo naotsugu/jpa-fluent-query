@@ -21,7 +21,9 @@ import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 /**
  * The criteria utilities.
@@ -127,13 +129,13 @@ public class Criteria {
             return builder().equal(get(), y);
         }
         default Predicate eq(Object y) {
-            return builder().equal(get(), y);
+            return isEmpty(y) ? null : builder().equal(get(), y);
         }
         default Predicate ne(Expression<?> y) {
             return builder().notEqual(get(), y);
         }
         default Predicate ne(Object y) {
-            return builder().notEqual(get(), y);
+            return isEmpty(y) ? null : builder().notEqual(get(), y);
         }
         default Predicate isNull(Expression<?> x) {
             return builder().isNull(get());
@@ -149,28 +151,44 @@ public class Criteria {
             extends Supplier<T>, AnyExpression<E, T> {
         T get();
         default Predicate gt(Expression<? extends E> y) { return builder().greaterThan(get(), y); }
-        default Predicate gt(E y) { return builder().greaterThan(get(), y); }
+        default Predicate gt(E y) { return isEmpty(y) ? null : builder().greaterThan(get(), y); }
         default Predicate ge(Expression<? extends E> y) { return builder().greaterThanOrEqualTo(get(), y); }
-        default Predicate ge(E y) { return builder().greaterThanOrEqualTo(get(), y); }
+        default Predicate ge(E y) { return isEmpty(y) ? null : builder().greaterThanOrEqualTo(get(), y); }
         default Predicate lt(Expression<? extends E> y) { return builder().lessThan(get(), y); }
-        default Predicate lt(E y) { return builder().lessThan(get(), y); }
+        default Predicate lt(E y) { return isEmpty(y) ? null : builder().lessThan(get(), y); }
         default Predicate le(Expression<? extends E> y) { return builder().lessThanOrEqualTo(get(), y); }
-        default Predicate le(E y) { return builder().lessThanOrEqualTo(get(), y); }
+        default Predicate le(E y) { return isEmpty(y) ? null : builder().lessThanOrEqualTo(get(), y); }
         default Predicate between(Expression<? extends E> x, Expression<? extends E> y) { return builder().between(get(), x, y); }
-        default Predicate between(E x, E y) { return builder().between(get(), x, y); }
+        default Predicate between(E x, E y) {
+            if (isEmpty(x) && isEmpty(y)) {
+                return null;
+            } else if (isEmpty(y)) {
+                return ge(x);
+            } else if (isEmpty(x)) {
+                return le(y);
+            } else {
+                return builder().between(get(), x, y);
+            }
+        }
     }
 
     public interface StringExpression<T extends Expression<String>>
             extends Supplier<T>, AnyExpression<String, T>, ComparableExpression<String, T> {
         T get();
-        default Predicate like(Expression<String> pattern) { return builder().like(get(), pattern); }
-        default Predicate like(String pattern) { return builder().like(get(), pattern); }
-        default Predicate like(Expression<String> pattern, char escapeChar) { return builder().like(get(), pattern, escapeChar); }
-        default Predicate like(String pattern, char escapeChar) { return builder().like(get(), pattern, escapeChar); }
+        default Predicate like(Expression<String> pattern) { return builder().like(get(), pattern, '\\'); }
+        default Predicate like(String pattern) { return isEmpty(pattern) ? null : builder().like(get(), escaped(pattern), '\\'); }
+        default Predicate likePartial(String pattern) { return isEmpty(pattern) ? null : builder().like(get(), escapedPartial(pattern), '\\'); }
         default Predicate notLike(Expression<String> pattern) { return builder().notLike(get(), pattern); }
-        default Predicate notLike(String pattern) { return builder().notLike(get(), pattern); }
-        default Predicate notLike(Expression<String> pattern, char escapeChar) { return builder().notLike(get(), pattern, escapeChar); }
-        default Predicate notLike(String pattern, char escapeChar) { return builder().notLike(get(), pattern, escapeChar); }
+        default Predicate notLike(String pattern) { return isEmpty(pattern) ? null : builder().notLike(get(), escaped(pattern), '\\'); }
+        default Predicate notLikePartial(String pattern) { return isEmpty(pattern) ? null : builder().notLike(get(), escapedPartial(pattern), '\\'); }
+
+        Pattern ESCAPE_PATTERN = Pattern.compile("([%_\\\\])");
+        private static String escaped(String str) {
+            return ESCAPE_PATTERN.matcher(str).replaceAll("\\\\$1") + "%";
+        }
+        private static String escapedPartial(String str) {
+            return "%" + ESCAPE_PATTERN.matcher(str).replaceAll("\\\\$1") + "%";
+        }
     }
 
     public interface BooleanExpression<T extends Expression<Boolean>>
@@ -184,13 +202,13 @@ public class Criteria {
             extends Supplier<T>, AnyExpression<E, T> {
         T get();
         default Predicate gt(Expression<? extends Number> y) { return builder().gt(get(), y); }
-        default Predicate gt(Number y) { return builder().gt(get(), y); }
+        default Predicate gt(Number y) { return Objects.isNull(y) ? null : builder().gt(get(), y); }
         default Predicate ge(Expression<? extends Number> y) { return builder().ge(get(), y); }
-        default Predicate ge(Number y) { return builder().ge(get(), y); }
+        default Predicate ge(Number y) { return Objects.isNull(y) ? null : builder().ge(get(), y); }
         default Predicate lt(Expression<? extends Number> y) { return builder().lt(get(), y); }
-        default Predicate lt(Number y) { return builder().lt(get(), y); }
+        default Predicate lt(Number y) { return Objects.isNull(y) ? null : builder().lt(get(), y); }
         default Predicate le(Expression<? extends Number> y) { return builder().le(get(), y); }
-        default Predicate le(Number y) { return builder().le(get(), y); }
+        default Predicate le(Number y) { return Objects.isNull(y) ? null : builder().le(get(), y); }
     }
 
     public interface AnyCollectionExpression<C extends Collection<?>, T extends Expression<C>>
@@ -205,9 +223,9 @@ public class Criteria {
             extends Supplier<T>, AnyExpression<C, T>, AnyCollectionExpression<C, T> {
         T get();
         default Predicate isMember(Expression<E> elem) { return builder().isMember(elem, get()); }
-        default Predicate isMember(E elem) { return builder().isMember(elem, get()); }
+        default Predicate isMember(E elem) { return Objects.isNull(elem) ? null : builder().isMember(elem, get()); }
         default Predicate isNotMember(Expression<E> elem) { return builder().isMember(elem, get()); }
-        default Predicate isNotMember(E elem) { return builder().isMember(elem, get()); }
+        default Predicate isNotMember(E elem) { return Objects.isNull(elem) ? null : builder().isMember(elem, get()); }
     }
 
     public interface MapKeyPath<K> extends Supplier<Path<K>> {
@@ -215,6 +233,16 @@ public class Criteria {
     }
     public interface MapValuePath<V> extends Supplier<Path<V>> {
         Path<V> key();
+    }
+
+    private static boolean isEmpty(Object obj) {
+        if (Objects.isNull(obj)) {
+            return true;
+        }
+        if (obj instanceof String str) {
+            return str.isEmpty();
+        }
+        return false;
     }
 
 }

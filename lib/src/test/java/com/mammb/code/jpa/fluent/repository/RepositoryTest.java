@@ -1,14 +1,13 @@
 package com.mammb.code.jpa.fluent.repository;
 
-import com.mammb.code.jpa.fluent.query.Querying;
 import com.mammb.code.jpa.fluent.test.Issue;
-import com.mammb.code.jpa.fluent.test.Project;
-import com.mammb.code.jpa.fluent.test.Root_;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,11 +33,44 @@ public class RepositoryTest {
         emf.close();
     }
 
+    @BeforeEach
+    void init() {
+        em.getTransaction().begin();
+    }
+
+    @AfterEach
+    void tearDown() {
+        em.getTransaction().rollback();
+    }
+
 
     @Test
     void testRepository() {
-        var list = repository.findAll();
-        assertEquals(6L, list.size());
+
+        Issue issue = new Issue();
+        issue.setTitle("issueTitle");
+        issue.setDescription("description");
+        repository.saveAndFlash(issue);
+
+        var list = repository.findAll(r -> r.getTitle().eq("issueTitle"));
+        assertEquals(1L, list.size());
+    }
+
+
+    @Test
+    void testRequestRepository() {
+        Issue issue1 = new Issue();
+        issue1.setTitle("testRequestRepository1");
+        Issue issue2 = new Issue();
+        issue2.setTitle("testRequestRepository2");
+        repository.save(issue1);
+        repository.save(issue2);
+
+        IssueRequest req = new IssueRequest();
+        req.titleLike = "testRequestRepository";
+
+        var list = repository.findAll(req);
+        assertEquals(2L, list.size());
     }
 
 }

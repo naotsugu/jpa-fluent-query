@@ -79,6 +79,26 @@ public interface Request<E, R extends RootAware<E>> {
 
 
     /**
+     * Create the {@link Request} with given slice number.
+     * @param number a {@link SlicePoint} number
+     * @return {@link SlicePoint}
+     */
+    default Request<E, R> withNumber(int number) {
+        return of(getFilter(), getSorts(), getSlicePoint().withNumber(number));
+    }
+
+
+    /**
+     * Create the {@link Request} with given slice size.
+     * @param size a {@link SlicePoint} size
+     * @return {@link SlicePoint}
+     */
+    default Request<E, R> withSize(int size) {
+        return of(getFilter(), getSorts(), getSlicePoint().withSize(size));
+    }
+
+
+    /**
      * Create a {@link Request}
      * @param filter a {@link Filter}
      * @param sorts a {@link Sorts}

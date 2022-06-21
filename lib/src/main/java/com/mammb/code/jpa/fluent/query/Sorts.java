@@ -18,6 +18,7 @@ package com.mammb.code.jpa.fluent.query;
 import com.mammb.code.jpa.core.RootAware;
 import jakarta.persistence.criteria.Order;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,7 +33,7 @@ public interface Sorts<E, R extends RootAware<E>> {
     List<Order> apply(R root);
 
     default Sorts<E, R> and(Sort<E, R> other) {
-        return Sorts.of(this, other);
+        return Sorts.add(this, other);
     }
 
 
@@ -49,10 +50,25 @@ public interface Sorts<E, R extends RootAware<E>> {
         return root -> List.of(lhs.apply(root), rhs.apply(root));
     }
 
-    static <E, R extends RootAware<E>> Sorts<E, R> of(Sorts<E, R> lhs, Sort<E, R> rhs) {
+    @SafeVarargs
+    static <E, R extends RootAware<E>> Sorts<E, R> of(Sort<E, R> sort, Sort<E, R>... sorts) {
+        return root -> Arrays.stream(sorts).reduce(Sorts.of(sort), Sorts::and, Sorts::plus).apply(root);
+    }
+
+    private static <E, R extends RootAware<E>> Sorts<E, R> add(Sorts<E, R> lhs, Sort<E, R> rhs) {
         return root -> {
             List<Order> orders = new ArrayList<>(lhs.apply(root));
             orders.add(rhs.apply(root));
+            orders.removeIf(Objects::isNull);
+            return orders;
+        };
+    }
+
+    private static <E, R extends RootAware<E>> Sorts<E, R> plus(Sorts<E, R> lhs, Sorts<E, R> rhs) {
+        return root -> {
+            List<Order> orders = new ArrayList<>(lhs.apply(root));
+            List<Order> rh = new ArrayList<>(rhs.apply(root));
+            orders.addAll(rh);
             orders.removeIf(Objects::isNull);
             return orders;
         };

@@ -36,7 +36,15 @@ import java.util.Optional;
  */
 public interface QueryHelper {
 
-
+    /**
+     * Create a count query.
+     * @param em {@link EntityManager}
+     * @param rootSource {@link RootSource}
+     * @param filter {@link Filter}
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @return a count query
+     */
     static <E, R extends RootAware<E>> TypedQuery<Long> countQuery(
             EntityManager em, RootSource<E, R> rootSource, Filter<E, R> filter) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -49,6 +57,16 @@ public interface QueryHelper {
     }
 
 
+    /**
+     * Create a query.
+     * @param em {@link EntityManager}
+     * @param rootSource {@link RootSource}
+     * @param filter {@link Filter}
+     * @param sorts {@link Sorts}
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @return a query
+     */
     static <E, R extends RootAware<E>> TypedQuery<E> query(
             EntityManager em, RootSource<E, R> rootSource, Filter<E, R> filter, Sorts<E, R> sorts) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -67,6 +85,17 @@ public interface QueryHelper {
     }
 
 
+    /**
+     * Get the slice of entity.
+     * @param em {@link EntityManager}
+     * @param rootSource {@link RootSource}
+     * @param filter {@link Filter}
+     * @param sorts {@link Sorts}
+     * @param slicePoint  {@link SlicePoint}
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @return a slice
+     */
     static <E, R extends RootAware<E>> Slice<E> slice(
             EntityManager em, RootSource<E, R> rootSource, Filter<E, R> filter, Sorts<E, R> sorts, SlicePoint slicePoint) {
         var query = QueryHelper.query(em, rootSource, filter, sorts);
@@ -79,6 +108,17 @@ public interface QueryHelper {
     }
 
 
+    /**
+     * Get the page of entity.
+     * @param em {@link EntityManager}
+     * @param rootSource {@link RootSource}
+     * @param filter {@link Filter}
+     * @param sorts {@link Sorts}
+     * @param slicePoint  {@link SlicePoint}
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @return a page
+     */
     static <E, R extends RootAware<E>> Page<E> page(
             EntityManager em, RootSource<E, R> rootSource, Filter<E, R> filter, Sorts<E, R> sorts, SlicePoint slicePoint) {
 
@@ -95,6 +135,11 @@ public interface QueryHelper {
     }
 
 
+    /**
+     * Get the entity id property names.
+     * @param entityType the entity type
+     * @return the entity id property names
+     */
     private static List<String> getIdentifierName(EntityType<?> entityType) {
         return entityType.hasSingleIdAttribute()
             ? List.of(entityType.getId(entityType.getIdType().getJavaType()).getName())
