@@ -18,7 +18,6 @@ public class IssueRequest implements Request<Issue, IssueRoot_<Issue>> {
         return Filter.of(
             issue -> issue.getTitle().like(titleLike),
             issue -> issue.getDescription().eq(description));
-
     }
 
     @Override
