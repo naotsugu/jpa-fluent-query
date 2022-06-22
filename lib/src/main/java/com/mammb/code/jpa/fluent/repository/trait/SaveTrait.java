@@ -30,7 +30,6 @@ public interface SaveTrait<E> extends EntityManagerAware {
             .getPersistenceUnitUtil().getIdentifier(entity))) {
             em().persist(entity);
         } else {
-            em().persist(entity);
             em().merge(entity);
         }
         return entity;

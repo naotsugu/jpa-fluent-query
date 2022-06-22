@@ -230,7 +230,9 @@ public class ApiClassWriter {
                 imports.add("jakarta.persistence.criteria.Path");
                 imports.add("jakarta.persistence.criteria.Predicate");
                 imports.add("java.util.Collection");
+                imports.add("java.util.Objects");
                 imports.add("java.util.function.Supplier");
+                imports.add("java.util.regex.Pattern");
                 pw.println(imports.generateImports(context.isJakarta()));
                 pw.println();
 
@@ -389,14 +391,14 @@ public class ApiClassWriter {
                             default Predicate notLike(String pattern) { return isEmpty(pattern) ? null : builder().notLike(get(), escaped(pattern), '\\\\'); }
                             default Predicate notLikePartial(String pattern) { return isEmpty(pattern) ? null : builder().notLike(get(), escapedPartial(pattern), '\\\\'); }
 
-                            Pattern ESCAPE_PATTERN = Pattern.compile("([%_\\\\])");
+                            Pattern ESCAPE_PATTERN = Pattern.compile("([%%_\\\\\\\\])");
                             private static String escaped(String str) {
-                                return ESCAPE_PATTERN.matcher(str).replaceAll("\\\\$1") + "%";
+                                return ESCAPE_PATTERN.matcher(str).replaceAll("\\\\\\\\$1") + "%%";
                             }
                             private static String escapedPartial(String str) {
-                                return "%" + ESCAPE_PATTERN.matcher(str).replaceAll("\\\\$1") + "%";
+                                return "%%" + ESCAPE_PATTERN.matcher(str).replaceAll("\\\\\\\\$1") + "%%";
                             }
-                                    }
+                        }
 
                         public interface BooleanExpression<T extends Expression<Boolean>>
                                 extends Supplier<T>, AnyExpression<Boolean, T>, ComparableExpression<Boolean, T> {
@@ -452,7 +454,7 @@ public class ApiClassWriter {
                         }
 
                     }
-                    """.formatted(CRITERIA));
+                    """.formatted(CRITERIA, BUILDER_AWARE));
                 pw.flush();
             }
 

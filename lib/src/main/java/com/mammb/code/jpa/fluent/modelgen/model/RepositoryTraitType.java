@@ -88,6 +88,8 @@ public class RepositoryTraitType {
 
     /**
      * Create the extends clause.
+     * @param entity {@link StaticMetamodelEntity}
+     * @param imports {@link ImportBuilder}
      * @return the extends clause
      */
     public String createExtendsClause(StaticMetamodelEntity entity, ImportBuilder imports) {
