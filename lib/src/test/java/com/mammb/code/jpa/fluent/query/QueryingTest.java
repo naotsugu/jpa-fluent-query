@@ -1,13 +1,16 @@
 package com.mammb.code.jpa.fluent.query;
 
 import com.mammb.code.jpa.fluent.test.Issue;
+import com.mammb.code.jpa.fluent.test.IssueModel;
 import com.mammb.code.jpa.fluent.test.Project;
 import com.mammb.code.jpa.fluent.test.Root_;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -25,8 +28,85 @@ class QueryingTest {
 
         emf = Persistence.createEntityManagerFactory("testUnit");
         em = emf.createEntityManager();
+    }
 
+
+    @AfterAll
+    static void tearDownAll() {
+        em.close();
+        emf.close();
+    }
+
+    @BeforeEach
+    void init() {
         em.getTransaction().begin();
+    }
+
+    @AfterEach
+    void tearDown() {
+        em.getTransaction().rollback();
+    }
+
+    @Test
+    void testCount() {
+
+        createIssues();
+        var count = Querying.of(IssueModel.root()).count().on(em);
+        assertEquals(6L, count);
+    }
+
+
+    @Test
+    void testCountWithFilter() {
+        createIssues();
+        var count = Querying.of(IssueModel.root())
+            .filter(issue -> issue.getTitle().eq("foo"))
+            .count().on(em);
+        assertEquals(3L, count);
+    }
+
+
+    @Test
+    void testSimpleFilter() {
+
+        createIssues();
+
+        List<Issue> issues = Querying.of(IssueModel.root())
+                .toList().on(em);
+        assertEquals(6, issues.size());
+
+        issues = Querying.of(IssueModel.root())
+                .filter(issue -> issue.getTitle().eq("foo"))
+                .toList().on(em);
+        assertEquals(3, issues.size());
+
+        issues = Querying.of(IssueModel.root())
+                .filter(issue -> issue.getProject().getName().eq("name1"))
+                .filter(issue -> issue.getTitle().eq("foo"))
+                .toList().on(em);
+        assertEquals(2, issues.size());
+
+    }
+
+
+    @Test
+    void testOrderBy() {
+
+        createIssues();
+
+        List<Issue> issues = Querying.of(IssueModel.root())
+            .filter(issue -> issue.getTitle().eq("foo"))
+            .sorted(issue -> issue.getProject().getName().desc(),
+                    issue -> issue.getId().asc())
+            .toList().on(em);
+
+        assertEquals("name2", issues.get(0).getProject().getName());
+        assertEquals("name1", issues.get(1).getProject().getName());
+        assertEquals("name1", issues.get(2).getProject().getName());
+    }
+
+
+    private void createIssues() {
 
         var project1 = new Project(); project1.setName("name1");
         var project2 = new Project(); project2.setName("name2");
@@ -40,66 +120,6 @@ class QueryingTest {
         var issue6 = new Issue(); issue6.setTitle("bar"); issue6.setProject(project2);
         em.persist(issue1); em.persist(issue2); em.persist(issue3);
         em.persist(issue4); em.persist(issue5); em.persist(issue6);
-
-        em.getTransaction().commit();
-
-    }
-
-
-    @AfterAll
-    static void tearDownAll() {
-        em.close();
-        emf.close();
-    }
-
-
-    @Test
-    void testCount() {
-        var count = Querying.of(Root_.issue()).count().on(em);
-        assertEquals(6L, count);
-    }
-
-
-    @Test
-    void testCountWithFilter() {
-        var count = Querying.of(Root_.issue())
-            .filter(issue -> issue.getTitle().eq("foo"))
-            .count().on(em);
-        assertEquals(3L, count);
-    }
-
-
-    @Test
-    void testSimpleFilter() {
-
-        List<Issue> issues = Querying.of(Root_.issue())
-                .toList().on(em);
-        assertEquals(6, issues.size());
-
-        issues = Querying.of(Root_.issue())
-                .filter(issue -> issue.getTitle().eq("foo"))
-                .toList().on(em);
-        assertEquals(3, issues.size());
-
-        issues = Querying.of(Root_.issue())
-                .filter(issue -> issue.getProject().getName().eq("name1"))
-                .filter(issue -> issue.getTitle().eq("foo"))
-                .toList().on(em);
-        assertEquals(2, issues.size());
-
-    }
-
-
-    @Test
-    void testOrderBy() {
-        List<Issue> issues = Querying.of(Root_.issue())
-            .filter(issue -> issue.getTitle().eq("foo"))
-            .sorted(issue -> issue.getProject().getName().desc(),
-                    issue -> issue.getId().asc())
-            .toList().on(em);
-        assertEquals("name2", issues.get(0).getProject().getName());
-        assertEquals("name1", issues.get(1).getProject().getName());
-        assertEquals("name1", issues.get(2).getProject().getName());
     }
 
 }

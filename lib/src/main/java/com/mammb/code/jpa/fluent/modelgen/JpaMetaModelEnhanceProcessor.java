@@ -20,6 +20,7 @@ import com.mammb.code.jpa.fluent.modelgen.model.StaticMetamodelEntity;
 import com.mammb.code.jpa.fluent.modelgen.writer.ApiClassWriter;
 import com.mammb.code.jpa.fluent.modelgen.writer.CriteriaModelClassWriter;
 import com.mammb.code.jpa.fluent.modelgen.writer.ModelClassWriter;
+import com.mammb.code.jpa.fluent.modelgen.writer.ModelWriter;
 import com.mammb.code.jpa.fluent.modelgen.writer.RepositoryClassWriter;
 import com.mammb.code.jpa.fluent.modelgen.writer.RootClassWriter;
 
@@ -147,6 +148,7 @@ public class JpaMetaModelEnhanceProcessor extends AbstractProcessor {
         } else {
             ModelClassWriter.of(context, entity).writeFile();
         }
+        ModelWriter.of(context, entity).writeFile();
         context.addGenerated(entity);
 
     }
