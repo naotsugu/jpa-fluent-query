@@ -16,7 +16,6 @@
 package com.mammb.code.jpa.fluent.modelgen.model;
 
 import com.mammb.code.jpa.fluent.modelgen.Context;
-
 import javax.lang.model.element.Element;
 import javax.lang.model.type.DeclaredType;
 import java.util.List;
@@ -26,7 +25,7 @@ import java.util.List;
  *
  * @author Naotsugu Kobayashi
  */
-public class StaticMetamodelAttribute implements AttributeBinder {
+public class StaticMetamodelAttribute implements MetamodelAttribute {
 
     /** Context of processing. */
     private final Context context;

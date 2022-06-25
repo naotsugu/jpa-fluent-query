@@ -5,23 +5,23 @@ import com.mammb.code.jpa.fluent.query.Request;
 import com.mammb.code.jpa.fluent.query.SlicePoint;
 import com.mammb.code.jpa.fluent.query.Sorts;
 import com.mammb.code.jpa.fluent.test.Issue;
-import com.mammb.code.jpa.fluent.test.IssueRoot_;
+import com.mammb.code.jpa.fluent.test.IssueModel.*;
 
-public class IssueRequest implements Request<Issue, IssueRoot_<Issue>> {
+public class IssueRequest implements Request<Issue, Root_> {
 
     public String titleLike = "";
     public String description = "";
     private SlicePoint point = SlicePoint.of();
 
     @Override
-    public Filter<Issue, IssueRoot_<Issue>> getFilter() {
+    public Filter<Issue, Root_> getFilter() {
         return Filter.of(
             issue -> issue.getTitle().like(titleLike),
             issue -> issue.getDescription().eq(description));
     }
 
     @Override
-    public Sorts<Issue, IssueRoot_<Issue>> getSorts() {
+    public Sorts<Issue, Root_> getSorts() {
         return Sorts.of(
             issue -> issue.getTitle().asc(),
             issue -> issue.getDescription().desc(),

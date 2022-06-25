@@ -1,13 +1,31 @@
+/*
+ * Copyright 2019-2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.mammb.code.jpa.fluent.modelgen.writer;
 
 import com.mammb.code.jpa.fluent.modelgen.Context;
 import com.mammb.code.jpa.fluent.modelgen.model.StaticMetamodelAttribute;
 import com.mammb.code.jpa.fluent.modelgen.model.StaticMetamodelEntity;
-
 import java.util.Map;
 
+/**
+ * The join model class generator.
+ * @see AttributeClassGenerator
+ * @author Naotsugu Kobayashi
+ */
 public class JoinModelClassGenerator extends AttributeClassGenerator {
-
 
     private JoinModelClassGenerator(Context context, StaticMetamodelEntity entity, ImportBuilder imports) {
         super(context, entity, imports);
@@ -26,18 +44,19 @@ public class JoinModelClassGenerator extends AttributeClassGenerator {
     }
 
 
-    protected Template parentClassTemplate() {
+    @Override
+    protected Template classTemplate() {
         return Template.of("""
-            static class Join_<T extends $EntityClass$> implements Supplier<Join<?, T>>, Criteria.AnyExpression<T, Join<?, T>> {
-                private final Supplier<Join<?, T>> join;
+            static class Join_ implements Supplier<Join<?, $EntityClass$>>, Criteria.AnyExpression<$EntityClass$, Join<?, $EntityClass$>> {
+                private final Supplier<Join<?, $EntityClass$>> join;
                 protected final CriteriaQuery<?> query;
                 protected final CriteriaBuilder builder;
-                public Join_(Supplier<Join<?, T>> join, CriteriaQuery<?> query, CriteriaBuilder builder) {
+                public Join_(Supplier<Join<?, $EntityClass$>> join, CriteriaQuery<?> query, CriteriaBuilder builder) {
                     this.join = join;
                     this.query = query;
                     this.builder = builder;
                 }
-                @Override public Join<?, T> get() { return join.get(); }
+                @Override public Join<?, $EntityClass$> get() { return join.get(); }
                 @Override public CriteriaBuilder builder() { return builder; }
                 public CriteriaQuery<?> query() { return query; }
                 $AttributeMethods$
@@ -45,25 +64,16 @@ public class JoinModelClassGenerator extends AttributeClassGenerator {
             """);
     }
 
-    protected Template childClassTemplate() {
-        return Template.of("""
-            static class Join_<T extends $EntityClass$> extends $SuperClass$Model.Join_<T> implements Criteria.AnyExpression<T, Join<?, T>> {
-                public Join_(Supplier<Join<?, T>> join, CriteriaQuery<?> query, CriteriaBuilder builder) {
-                    super(join, query, builder);
-                }
-                $AttributeMethods$
-            }
-            """);
-    }
 
+    @Override
     protected void singularAttribute(StaticMetamodelAttribute attr, Map<String, String> map, StringBuilder sb) {
-        if (attr.getValueType().isStruct()) {
+        if (attr.getValueType().getPersistenceType().isStruct()) {
             sb.append(Template.of("""
-                public $ValueType$Model.Join_<$ValueType$> join$AttributeName$() {
-                    return new $ValueType$Model.Join_<>(() -> get().join($EnclosingType$_.$attributeName$), query(), builder());
+                public $ValueType$Model.Join_ join$AttributeName$() {
+                    return new $ValueType$Model.Join_(() -> get().join($EnclosingType$_.$attributeName$), query(), builder());
                 }
-                public $ValueType$Model.Path_<$ValueType$> get$AttributeName$() {
-                    return new $ValueType$Model.Path_<>(() -> get().get($EnclosingType$_.$attributeName$), query(), builder());
+                public $ValueType$Model.Path_ get$AttributeName$() {
+                    return new $ValueType$Model.Path_(() -> get().get($EnclosingType$_.$attributeName$), query(), builder());
                 }
             """).bind(map));
         } else {
@@ -74,11 +84,14 @@ public class JoinModelClassGenerator extends AttributeClassGenerator {
             """).bind(map));
         }
     }
+
+
+    @Override
     protected void collectionAttribute(StaticMetamodelAttribute attr, Map<String, String> map, StringBuilder sb) {
-        if (attr.getValueType().isStruct()) {
+        if (attr.getValueType().getPersistenceType().isStruct()) {
             sb.append(Template.of("""
-                public $ValueType$Model.Join_<$ValueType$> join$AttributeName$() {
-                    return new $ValueType$Model.Join_<>(() -> ((Join<?, $EnclosingType$>) get()).join($EnclosingType$_.$attributeName$), query(), builder());
+                public $ValueType$Model.Join_ join$AttributeName$() {
+                    return new $ValueType$Model.Join_(() -> get().join($EnclosingType$_.$attributeName$), query(), builder());
                 }
             """).bind(map));
         } else {
@@ -90,15 +103,18 @@ public class JoinModelClassGenerator extends AttributeClassGenerator {
         }
         sb.append(Template.of("""
             public Criteria.CollectionExp<$ValueType$, $AttributeJavaType$<$ValueType$>, Expression<$AttributeJavaType$<$ValueType$>>> get$AttributeName$() {
-                return new Criteria.CollectionExp(() -> ((Join<?, $EnclosingType$>) get()).get($EnclosingType$_.$attributeName$), builder());
+                return new Criteria.CollectionExp(() -> get().get($EnclosingType$_.$attributeName$), builder());
             }
         """).bind(map));
     }
+
+
+    @Override
     protected void mapAttribute(StaticMetamodelAttribute attr, Map<String, String> map, StringBuilder sb) {
-        if (attr.getValueType().isStruct()) {
+        if (attr.getValueType().getPersistenceType().isStruct()) {
             sb.append(Template.of("""
-                public $EnclosingType$Map.Join_<$ValueType$> join$AttributeName$() {
-                    return new $EnclosingType$Map.Join_<>(() -> ((Join<?, $EnclosingType$>) get()).join($EnclosingType$_.$attributeName$), query(), builder());
+                public $EnclosingType$Map.Join_ join$AttributeName$() {
+                    return new $EnclosingType$Map.Join_(() -> get().join($EnclosingType$_.$attributeName$), query(), builder());
                 }
             """).bind(map));
         } else {
@@ -110,7 +126,7 @@ public class JoinModelClassGenerator extends AttributeClassGenerator {
         }
         sb.append(Template.of("""
             public Expression<Map<$KeyType$, $ValueType$>> get$AttributeName$() {
-                return ((Join<?, $EnclosingType$>) get()).get($EnclosingType$_.$attributeName$);
+                return get().get($EnclosingType$_.$attributeName$);
             }
         """).bind(map));
     }

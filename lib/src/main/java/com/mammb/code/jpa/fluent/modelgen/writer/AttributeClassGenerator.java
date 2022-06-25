@@ -1,12 +1,33 @@
+/*
+ * Copyright 2019-2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.mammb.code.jpa.fluent.modelgen.writer;
 
 import com.mammb.code.jpa.fluent.modelgen.Context;
 import com.mammb.code.jpa.fluent.modelgen.model.StaticMetamodelAttribute;
 import com.mammb.code.jpa.fluent.modelgen.model.StaticMetamodelEntity;
-
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Abstract class for attribute class generator.
+ * @see RootModelClassGenerator
+ * @see JoinModelClassGenerator
+ * @see PathModelClassGenerator
+ * @author Naotsugu Kobayashi
+ */
 public abstract class AttributeClassGenerator {
 
     /** Context of processing. */
@@ -19,35 +40,35 @@ public abstract class AttributeClassGenerator {
     private final ImportBuilder imports;
 
 
+    /**
+     * Constructor.
+     * @param context the context of processing
+     * @param entity the representation of static metamodel
+     * @param imports the import sentences
+     */
     protected AttributeClassGenerator(Context context, StaticMetamodelEntity entity, ImportBuilder imports) {
         this.context = context;
         this.entity = entity;
         this.imports = imports;
     }
 
-    public String generate() {
-        StringBuilder sb = new StringBuilder();
-        if (entity.getSuperClass().isBlank()) {
-            sb.append(parentClassTemplate().bind(
-                "$EntityClass$", imports.add(entity.getTargetEntityQualifiedName()),
-                "$AttributeMethods$", attributeMethods()).indentString(1)
-            );
-        } else {
-            sb.append(childClassTemplate().bind(
-                "$EntityClass$", imports.add(entity.getTargetEntityQualifiedName()),
-                "$SuperClass$",  imports.add(entity.getSuperEntityQualifiedName()),
-                "$AttributeMethods$", attributeMethods()).indentString(1)
-            );
-        }
-        return sb.toString();
 
+    /**
+     * Generate class.
+     * @return the generated class definition
+     */
+    public String generate() {
+        return classTemplate().bind(
+            "$EntityClass$", imports.add(entity.getTargetEntityQualifiedName()),
+            "$AttributeMethods$", attributeMethods()).getIndentedValue(1);
     }
+
 
     private String attributeMethods() {
 
         StringBuilder sb = new StringBuilder();
 
-        for (StaticMetamodelAttribute attr : entity.getAttributes()) {
+        for (StaticMetamodelAttribute attr : entity.getAllAttributes()) {
 
             var map = Map.of(
                 "$EnclosingType$",     imports.add(attr.getEnclosingType().getName()),
@@ -72,14 +93,38 @@ public abstract class AttributeClassGenerator {
         return sb.toString();
     }
 
-    protected abstract Template parentClassTemplate();
 
-    protected abstract Template childClassTemplate();
+    /**
+     * Get the definition of class template.
+     * @return the definition of class template
+     */
+    protected abstract Template classTemplate();
 
+
+    /**
+     * Write the singular attribute methods.
+     * @param attr the {@link StaticMetamodelAttribute}
+     * @param map the map of binding value
+     * @param sb the {@link StringBuilder}
+     */
     protected abstract void singularAttribute(StaticMetamodelAttribute attr, Map<String, String> map, StringBuilder sb);
 
+
+    /**
+     * Write the plural attribute methods.
+     * @param attr the {@link StaticMetamodelAttribute}
+     * @param map the map of binding value
+     * @param sb the {@link StringBuilder}
+     */
     protected abstract void collectionAttribute(StaticMetamodelAttribute attr, Map<String, String> map, StringBuilder sb);
 
+
+    /**
+     * Write the map attribute methods.
+     * @param attr the {@link StaticMetamodelAttribute}
+     * @param map the map of binding value
+     * @param sb the {@link StringBuilder}
+     */
     protected abstract void mapAttribute(StaticMetamodelAttribute attr, Map<String, String> map, StringBuilder sb);
 
 
@@ -93,6 +138,7 @@ public abstract class AttributeClassGenerator {
             ? str
             : str.substring(0, 1).toUpperCase() + str.substring(1);
     }
+
 
     /**
      * Get the criteria path class name from given attribute.
@@ -112,4 +158,5 @@ public abstract class AttributeClassGenerator {
             return "Criteria.AnyPath<" + imports.add(attr.getValueType().getName()) + ">";
         }
     }
+
 }

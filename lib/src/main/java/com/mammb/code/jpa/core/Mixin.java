@@ -15,30 +15,18 @@
  */
 package com.mammb.code.jpa.core;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Root source.
- * @param <E> the type of entity
- * @param <R> the type of root
+ * MixIn Annotation.
  * @author Naotsugu Kobayashi
  */
-public interface RootSource<E, R extends RootAware<E>> {
-
-    /**
-     * Create the root from the given query.
-     * @param query {@link CriteriaQuery}
-     * @param builder {@link CriteriaBuilder}
-     * @return the {@link RootAware}
-     */
-    R root(CriteriaQuery<?> query, CriteriaBuilder builder);
-
-
-    /**
-     * Get the root entity class.
-     * @return the root entity class
-     */
-    Class<E> rootClass();
-
+@Documented
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Mixin {
 }

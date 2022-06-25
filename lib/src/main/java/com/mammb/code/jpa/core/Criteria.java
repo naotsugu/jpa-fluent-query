@@ -20,7 +20,11 @@ import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -174,6 +178,15 @@ public class Criteria {
         private static String escapedPartial(String str) {
             return "%" + ESCAPE_PATTERN.matcher(str).replaceAll("\\\\$1") + "%";
         }
+
+        default Expression<String> concat(String y) { return builder().concat(get(), y); }
+        default Expression<String> concat(Expression<String> y) { return builder().concat(get(), y); }
+        default Expression<String> substring(int from) { return builder().substring(get(), from); }
+        default Expression<String> substring(int from, int len) { return builder().substring(get(), from, len); }
+        default Expression<String> trim() { return builder().trim(get()); }
+        default Expression<String> lower() { return builder().lower(get()); }
+        default Expression<String> upper() { return builder().upper(get()); }
+        default Expression<Integer> length() { return builder().length(get()); }
     }
 
     public interface BooleanExpression<T extends Expression<Boolean>>
@@ -194,6 +207,13 @@ public class Criteria {
         default Predicate lt(Number y) { return Objects.isNull(y) ? null : builder().lt(get(), y); }
         default Predicate le(Expression<? extends Number> y) { return builder().le(get(), y); }
         default Predicate le(Number y) { return Objects.isNull(y) ? null : builder().le(get(), y); }
+
+        default Expression<Long> toLong() { return builder().toLong(get()); }
+        default Expression<Integer> toInteger() { return builder().toInteger(get()); }
+        default Expression<Float> toFloat() { return builder().toFloat(get()); }
+        default Expression<Double> toDouble() { return builder().toDouble(get()); }
+        default Expression<BigDecimal> toBigDecimal() { return builder().toBigDecimal(get()); }
+        default Expression<BigInteger> toBigInteger() { return builder().toBigInteger(get()); }
     }
 
     public interface AnyCollectionExpression<C extends Collection<?>, T extends Expression<C>>
@@ -211,6 +231,16 @@ public class Criteria {
         default Predicate isMember(E elem) { return Objects.isNull(elem) ? null : builder().isMember(elem, get()); }
         default Predicate isNotMember(Expression<E> elem) { return builder().isMember(elem, get()); }
         default Predicate isNotMember(E elem) { return Objects.isNull(elem) ? null : builder().isMember(elem, get()); }
+    }
+
+    public interface AnyMapExpression<M extends Map<?, ?>, T extends Expression<M>>
+        extends Supplier<T>, AnyExpression<M, T>, CommonType {
+        T get();
+    }
+
+    public interface MapExpression<K, V, M extends Map<K, V>, T extends Expression<M>>
+        extends Supplier<T>, AnyExpression<M, T>, AnyMapExpression<M, T>, CommonType {
+        T get();
     }
 
     public interface MapKeyPath<K> extends Supplier<Path<K>>, CommonType {

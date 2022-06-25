@@ -18,12 +18,8 @@ package com.mammb.code.jpa.fluent.modelgen;
 import com.mammb.code.jpa.fluent.modelgen.model.RepositoryTraitType;
 import com.mammb.code.jpa.fluent.modelgen.model.StaticMetamodelEntity;
 import com.mammb.code.jpa.fluent.modelgen.writer.ApiClassWriter;
-import com.mammb.code.jpa.fluent.modelgen.writer.CriteriaModelClassWriter;
 import com.mammb.code.jpa.fluent.modelgen.writer.ModelClassWriter;
-import com.mammb.code.jpa.fluent.modelgen.writer.ModelWriter;
 import com.mammb.code.jpa.fluent.modelgen.writer.RepositoryClassWriter;
-import com.mammb.code.jpa.fluent.modelgen.writer.RootClassWriter;
-
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
@@ -47,20 +43,12 @@ import java.util.Set;
 })
 @SupportedOptions({
     JpaMetaModelEnhanceProcessor.DEBUG_OPTION,
-    JpaMetaModelEnhanceProcessor.ADD_ROOT_FACTORY,
-    JpaMetaModelEnhanceProcessor.ADD_ROOT_CRITERIA,
     JpaMetaModelEnhanceProcessor.ADD_REPOSITORY,
 })
 public class JpaMetaModelEnhanceProcessor extends AbstractProcessor {
 
     /** Debug option. */
     public static final String DEBUG_OPTION = "debug";
-
-    /** Add root factory option. */
-    public static final String ADD_ROOT_FACTORY = "addRootFactory";
-
-    /** Add criteria option. */
-    public static final String ADD_ROOT_CRITERIA = "addCriteria";
 
     /** Add criteria option. */
     public static final String ADD_REPOSITORY = "addRepository";
@@ -78,7 +66,6 @@ public class JpaMetaModelEnhanceProcessor extends AbstractProcessor {
         super.init(env);
         this.context = Context.of(env,
             Boolean.parseBoolean(env.getOptions().getOrDefault(JpaMetaModelEnhanceProcessor.DEBUG_OPTION, "false")),
-            Boolean.parseBoolean(env.getOptions().getOrDefault(JpaMetaModelEnhanceProcessor.ADD_ROOT_CRITERIA, "true")),
             Boolean.parseBoolean(env.getOptions().getOrDefault(JpaMetaModelEnhanceProcessor.ADD_REPOSITORY, "true")));
 
         var version = getClass().getPackage().getImplementationVersion();
@@ -112,10 +99,7 @@ public class JpaMetaModelEnhanceProcessor extends AbstractProcessor {
             }
 
             if (context.hasGeneratedModel()) {
-                RootClassWriter.of(context).writeClass();
-                if (context.isAddCriteria()) {
-                    ApiClassWriter.of(context).writeClasses();
-                }
+                ApiClassWriter.of(context).writeClasses();
                 if (context.isAddRepository()) {
                     context.getGeneratedModelClasses().stream()
                         .filter(StaticMetamodelEntity::isEntityMetamodel)
@@ -138,17 +122,17 @@ public class JpaMetaModelEnhanceProcessor extends AbstractProcessor {
      */
     protected void createMetaModelClasses(final StaticMetamodelEntity entity) {
 
+        if (!entity.getTargetEntity().getPersistenceType().isEntity() &&
+            !entity.getTargetEntity().getPersistenceType().isEmbeddable()) {
+            return;
+        }
+
         if (context.isAlreadyGenerated(entity.getQualifiedName())) {
             context.logDebug("Skip meta model generation : {}", entity.getQualifiedName());
             return;
         }
 
-        if (context.isAddCriteria()) {
-            CriteriaModelClassWriter.of(context, entity).writeFile();
-        } else {
-            ModelClassWriter.of(context, entity).writeFile();
-        }
-        ModelWriter.of(context, entity).writeFile();
+        ModelClassWriter.of(context, entity).writeFile();
         context.addGenerated(entity);
 
     }

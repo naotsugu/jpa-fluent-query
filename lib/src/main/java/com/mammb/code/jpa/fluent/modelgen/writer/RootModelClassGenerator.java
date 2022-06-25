@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019-2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.mammb.code.jpa.fluent.modelgen.writer;
 
 import com.mammb.code.jpa.fluent.modelgen.Context;
@@ -5,11 +20,17 @@ import com.mammb.code.jpa.fluent.modelgen.model.StaticMetamodelAttribute;
 import com.mammb.code.jpa.fluent.modelgen.model.StaticMetamodelEntity;
 import java.util.Map;
 
+/**
+ * The root model class generator.
+ * @see AttributeClassGenerator
+ * @author Naotsugu Kobayashi
+ */
 public class RootModelClassGenerator extends AttributeClassGenerator {
 
     private RootModelClassGenerator(Context context, StaticMetamodelEntity entity, ImportBuilder imports) {
         super(context, entity, imports);
     }
+
 
     /**
      * Create a class writer instance.
@@ -22,18 +43,20 @@ public class RootModelClassGenerator extends AttributeClassGenerator {
         return new RootModelClassGenerator(context, entity, imports);
     }
 
-    protected Template parentClassTemplate() {
+
+    @Override
+    protected Template classTemplate() {
         return Template.of("""
-            public static class Root_<T extends $EntityClass$> implements RootAware<T>, Criteria.AnyExpression<T, Root<T>> {
-                private final Root<T> root;
+            public static class Root_ implements RootAware<$EntityClass$>, Criteria.AnyExpression<$EntityClass$, Root<$EntityClass$>> {
+                private final Root<$EntityClass$> root;
                 private final CriteriaQuery<?> query;
                 private final CriteriaBuilder builder;
-                public Root_(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+                public Root_(Root<$EntityClass$> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
                     this.root = root;
                     this.query = query;
                     this.builder = builder;
                 }
-                @Override public Root<T> get() { return root; }
+                @Override public Root<$EntityClass$> get() { return root; }
                 @Override public CriteriaBuilder builder() { return builder; }
                 public CriteriaQuery<?> query() { return query; }
                 $AttributeMethods$
@@ -41,27 +64,15 @@ public class RootModelClassGenerator extends AttributeClassGenerator {
             """);
     }
 
-    protected Template childClassTemplate() {
-        return Template.of("""
-            public static class Root_<T extends $EntityClass$> extends $SuperClass$Model.Root_<T> implements Criteria.AnyExpression<T, Root<T>> {
-                public Root_(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-                    super(root, query, builder);
-                }
-                $AttributeMethods$
-            }
-            """);
-    }
-
-
 
     protected void singularAttribute(StaticMetamodelAttribute attr, Map<String, String> map, StringBuilder sb) {
-        if (attr.getValueType().isStruct()) {
+        if (attr.getValueType().getPersistenceType().isStruct()) {
             sb.append(Template.of("""
-                public $ValueType$Model.Join_<$ValueType$> join$AttributeName$() {
-                    return new $ValueType$Model.Join_<>(() -> get().join($EnclosingType$_.$attributeName$), query(), builder());
+                public $ValueType$Model.Join_ join$AttributeName$() {
+                    return new $ValueType$Model.Join_(() -> get().join($EnclosingType$_.$attributeName$), query(), builder());
                 }
-                public $ValueType$Model.Path_<$ValueType$> get$AttributeName$() {
-                    return new $ValueType$Model.Path_<>(() ->get().get($EnclosingType$_.$attributeName$), query(), builder());
+                public $ValueType$Model.Path_ get$AttributeName$() {
+                    return new $ValueType$Model.Path_(() ->get().get($EnclosingType$_.$attributeName$), query(), builder());
                 }
             """).bind(map));
         } else {
@@ -74,11 +85,12 @@ public class RootModelClassGenerator extends AttributeClassGenerator {
     }
 
 
+    @Override
     protected void collectionAttribute(StaticMetamodelAttribute attr, Map<String, String> map, StringBuilder sb) {
-        if (attr.getValueType().isStruct()) {
+        if (attr.getValueType().getPersistenceType().isStruct()) {
             sb.append(Template.of("""
-                public $ValueType$Model.Join_<$ValueType$> join$AttributeName$() {
-                    return new $ValueType$Model.Join_<>(() -> get().join($EnclosingType$_.$attributeName$), query(), builder());
+                public $ValueType$Model.Join_ join$AttributeName$() {
+                    return new $ValueType$Model.Join_(() -> get().join($EnclosingType$_.$attributeName$), query(), builder());
                 }
             """).bind(map));
         }
@@ -90,11 +102,12 @@ public class RootModelClassGenerator extends AttributeClassGenerator {
     }
 
 
+    @Override
     protected void mapAttribute(StaticMetamodelAttribute attr, Map<String, String> map, StringBuilder sb) {
-        if (attr.getValueType().isStruct()) {
+        if (attr.getValueType().getPersistenceType().isStruct()) {
             sb.append(Template.of("""
-                public $ValueType$Model.Join_<$ValueType$> join$AttributeName$() {
-                    return new $ValueType$Model.Join_<>(() -> get().join($EnclosingType$_.$attributeName$),query(), builder());
+                public $ValueType$Model.Join_ join$AttributeName$() {
+                    return new $ValueType$Model.Join_(() -> get().join($EnclosingType$_.$attributeName$),query(), builder());
                 }
             """).bind(map));
         }
