@@ -124,7 +124,18 @@ public interface QueryHelper {
         return em.createQuery(cq);
     }
 
-    @SuppressWarnings("unchecked")
+
+    /**
+     * Get the sub query.
+     * @param query parent query
+     * @param cb {@link CriteriaBuilder)
+     * @param subRootSource the sub query root source
+     * @param filter {@link Filter}
+     * @param <E> the type of sub query root entity
+     * @param <R> the type of sub query root
+     * @param <U> the type of sub query result
+     * @return the sub query
+     */
     static <E, R extends RootAware<E>, U> Subquery<U> subQuery(
             AbstractQuery<?> query, CriteriaBuilder cb,
             SubRootSource<E, R, U> subRootSource, Filter<E, R> filter) {
@@ -137,7 +148,6 @@ public interface QueryHelper {
             throw new RuntimeException("");
         }
     }
-
 
 
     /**

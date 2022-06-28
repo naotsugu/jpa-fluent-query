@@ -101,15 +101,17 @@ class QueryingTest {
         assertEquals("name1", issues.get(2).getProject().getName());
     }
 
+
     @Test
     void testSlice() {
         createIssues();
-
         Page<Issue> issues = Querying.of(IssueModel.root())
-            .filter(issue -> issue.getTitle().eq("title"))
+            .filter(issue -> issue.getTitle().eq("foo"))
             .toPage(SlicePoint.of()).on(em);
-
+        assertEquals(1, issues.getTotalPages());
+        assertEquals(3, issues.getTotalElements());
     }
+
 
     @Test
     void testSubQuery() {
