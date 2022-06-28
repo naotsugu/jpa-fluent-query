@@ -95,6 +95,8 @@ public class ModelClassWriter {
     private void writeImportTo(PrintWriter pw) {
         imports.add("jakarta.persistence.criteria.CriteriaBuilder");
         imports.add("jakarta.persistence.criteria.CriteriaQuery");
+        imports.add("jakarta.persistence.criteria.Subquery");
+        imports.add("jakarta.persistence.criteria.AbstractQuery");
         imports.add("jakarta.persistence.criteria.Expression");
         imports.add("jakarta.persistence.criteria.Predicate");
         imports.add("jakarta.persistence.criteria.Root");
@@ -131,6 +133,19 @@ public class ModelClassWriter {
                         }
                         @Override public Class<$ClassName$> rootClass() { return $ClassName$.class; }
                     };
+                }
+                public static <U> SubRootSource<$ClassName$, Root_, U> subRoot(Class<U> type) {
+                    return new SubRootSource<$ClassName$, Root_, U>() {
+                        @Override public Root_ root(AbstractQuery<?> query, CriteriaBuilder builder) {
+                            Subquery<U> subquery = query.subquery(type);
+                            return new Root_(subquery.from(rootClass()), subquery, builder);
+                        }
+                        @Override public Class<$ClassName$> rootClass() { return $ClassName$.class; }
+                        @Override public Class<U> resultType() { return type; }
+                    };
+                }
+                public static SubRootSource<$ClassName$, Root_, $ClassName$> subRoot() {
+                    return subRoot($ClassName$.class);
                 }
 
                 $RootClass$

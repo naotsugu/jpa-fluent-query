@@ -49,16 +49,16 @@ public class RootModelClassGenerator extends AttributeClassGenerator {
         return Template.of("""
             public static class Root_ implements RootAware<$EntityClass$>, Criteria.AnyExpression<$EntityClass$, Root<$EntityClass$>> {
                 private final Root<$EntityClass$> root;
-                private final CriteriaQuery<?> query;
+                private final AbstractQuery<?> query;
                 private final CriteriaBuilder builder;
-                public Root_(Root<$EntityClass$> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+                public Root_(Root<$EntityClass$> root, AbstractQuery<?> query, CriteriaBuilder builder) {
                     this.root = root;
                     this.query = query;
                     this.builder = builder;
                 }
                 @Override public Root<$EntityClass$> get() { return root; }
                 @Override public CriteriaBuilder builder() { return builder; }
-                public CriteriaQuery<?> query() { return query; }
+                @Override public AbstractQuery<?> query() { return query; }
                 $AttributeMethods$
             }
             """);

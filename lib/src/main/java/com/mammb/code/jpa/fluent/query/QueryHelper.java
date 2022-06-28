@@ -17,11 +17,17 @@ package com.mammb.code.jpa.fluent.query;
 
 import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSource;
+import com.mammb.code.jpa.core.SubRootSource;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Tuple;
 import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.AbstractQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Order;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Selection;
+import jakarta.persistence.criteria.Subquery;
 import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.SingularAttribute;
 
@@ -68,7 +74,11 @@ public interface QueryHelper {
      * @return a query
      */
     static <E, R extends RootAware<E>> TypedQuery<E> query(
-            EntityManager em, RootSource<E, R> rootSource, Filter<E, R> filter, Sorts<E, R> sorts) {
+            EntityManager em,
+            RootSource<E, R> rootSource,
+            Filter<E, R> filter,
+            Sorts<E, R> sorts) {
+
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<E> cq = cb.createQuery(rootSource.rootClass());
         R root = rootSource.root(cq, cb);
@@ -83,6 +93,51 @@ public interface QueryHelper {
 
         return em.createQuery(cq);
     }
+
+
+    /**
+     * Create a tuple query.
+     * @param em {@link EntityManager}
+     * @param rootSource {@link RootSource}
+     * @param filter {@link Filter}
+     * @param sorts {@link Sorts}
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @return a tuple query
+     */
+    static <E, R extends RootAware<E>> TypedQuery<Tuple> tupleQuery(
+        EntityManager em, RootSource<E, R> rootSource, Filter<E, R> filter, Sorts<E, R> sorts,
+        Selection<?>... selections) {
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Tuple> cq = cb.createTupleQuery();
+        cq.select(cb.tuple(selections));
+        R root = rootSource.root(cq, cb);
+        Optional.ofNullable(filter.apply(root)).ifPresent(cq::where);
+
+        List<Order> orders = new ArrayList<>();
+        Optional.ofNullable(sorts.apply(root)).ifPresent(orders::addAll);
+        orders.addAll(getIdentifierName(root.get().getModel()).stream()
+            .map(name -> cb.asc(root.get().get(name))).toList());
+        cq.orderBy(orders);
+
+        return em.createQuery(cq);
+    }
+
+    @SuppressWarnings("unchecked")
+    static <E, R extends RootAware<E>, U> Subquery<U> subQuery(
+            AbstractQuery<?> query, CriteriaBuilder cb,
+            SubRootSource<E, R, U> subRootSource, Filter<E, R> filter) {
+        R subRoot = subRootSource.root(query, cb);
+        AbstractQuery<?> abstractQuery = subRoot.query();
+        if (abstractQuery instanceof Subquery sq) {
+            Optional.ofNullable(filter.apply(subRoot)).ifPresent(sq::where);
+            return (Subquery<U>) sq;
+        } else {
+            throw new RuntimeException("");
+        }
+    }
+
 
 
     /**
@@ -122,7 +177,7 @@ public interface QueryHelper {
     static <E, R extends RootAware<E>> Page<E> page(
             EntityManager em, RootSource<E, R> rootSource, Filter<E, R> filter, Sorts<E, R> sorts, SlicePoint slicePoint) {
 
-        Long count = countQuery(em, rootSource, filter).getSingleResult();
+        var count = countQuery(em, rootSource, filter).getSingleResult();
         if (count <= slicePoint.getOffset()) {
             return Page.of(List.of(), count, slicePoint);
         }

@@ -49,16 +49,16 @@ public class PathModelClassGenerator extends AttributeClassGenerator {
         return Template.of("""
             public static class Path_ implements Supplier<Path<$EntityClass$>>, Criteria.AnyExpression<$EntityClass$, Path<$EntityClass$>> {
                 private final Supplier<Path<$EntityClass$>> path;
-                private final CriteriaQuery<?> query;
+                private final AbstractQuery<?> query;
                 private final CriteriaBuilder builder;
-                public Path_(Supplier<Path<$EntityClass$>> path, CriteriaQuery<?> query, CriteriaBuilder builder) {
+                public Path_(Supplier<Path<$EntityClass$>> path, AbstractQuery<?> query, CriteriaBuilder builder) {
                     this.path = path;
                     this.query = query;
                     this.builder = builder;
                 }
                 @Override public Path<$EntityClass$> get() { return path.get(); }
                 @Override public CriteriaBuilder builder() { return builder; }
-                public CriteriaQuery<?> query() { return query; }
+                public AbstractQuery<?> query() { return query; }
                 $AttributeMethods$
             }
             """);

@@ -15,6 +15,7 @@
  */
 package com.mammb.code.jpa.core;
 
+import jakarta.persistence.criteria.AbstractQuery;
 import jakarta.persistence.criteria.Root;
 import java.util.function.Supplier;
 
@@ -23,5 +24,5 @@ import java.util.function.Supplier;
  * @param <E> the type of entity
  * @author Naotsugu Kobayashi
  */
-public interface RootAware<E> extends Supplier<Root<E>>, BuilderAware {
+public interface RootAware<E> extends Supplier<Root<E>>, BuilderAware, QueryAware<AbstractQuery<?>> {
 }

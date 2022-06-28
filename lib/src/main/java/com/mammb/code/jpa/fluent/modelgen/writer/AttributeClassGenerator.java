@@ -90,7 +90,8 @@ public abstract class AttributeClassGenerator {
                 collectionAttribute(attr, map, sb);
             }
         }
-        return sb.toString();
+        var ret = sb.toString();
+        return ret.substring(Template.firstCharIndexOf(ret));
     }
 
 
@@ -151,7 +152,7 @@ public abstract class AttributeClassGenerator {
         } else if (attr.getValueType().isBoolean()) {
             return "Criteria.BooleanPath";
         } else if (attr.getValueType().isNumber()) {
-            return "Criteria.NumberPath";
+            return "Criteria.NumberPath<" + imports.add(attr.getValueType().getName()) + ">";
         } else if (attr.getValueType().isComparable()) {
             return "Criteria.ComparablePath<" + imports.add(attr.getValueType().getName()) + ">";
         } else {

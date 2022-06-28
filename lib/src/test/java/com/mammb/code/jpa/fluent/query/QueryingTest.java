@@ -3,6 +3,7 @@ package com.mammb.code.jpa.fluent.query;
 import com.mammb.code.jpa.fluent.test.Issue;
 import com.mammb.code.jpa.fluent.test.IssueModel;
 import com.mammb.code.jpa.fluent.test.Project;
+import com.mammb.code.jpa.fluent.test.ProjectModel;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -24,17 +25,13 @@ class QueryingTest {
 
     @BeforeAll
     static void initAll() {
-
         emf = Persistence.createEntityManagerFactory("testUnit");
         em = emf.createEntityManager();
     }
 
 
     @AfterAll
-    static void tearDownAll() {
-        em.close();
-        emf.close();
-    }
+    static void tearDownAll() { em.close(); emf.close(); }
 
     @BeforeEach
     void init() {
@@ -46,9 +43,9 @@ class QueryingTest {
         em.getTransaction().rollback();
     }
 
+
     @Test
     void testCount() {
-
         createIssues();
         var count = Querying.of(IssueModel.root()).count().on(em);
         assertEquals(6L, count);
@@ -102,6 +99,28 @@ class QueryingTest {
         assertEquals("name2", issues.get(0).getProject().getName());
         assertEquals("name1", issues.get(1).getProject().getName());
         assertEquals("name1", issues.get(2).getProject().getName());
+    }
+
+    @Test
+    void testSlice() {
+        createIssues();
+
+        Page<Issue> issues = Querying.of(IssueModel.root())
+            .filter(issue -> issue.getTitle().eq("title"))
+            .toPage(SlicePoint.of()).on(em);
+
+    }
+
+    @Test
+    void testSubQuery() {
+        createIssues();
+        List<Issue> issues = Querying.of(IssueModel.root())
+            .filter(issue -> SubQuery.of(ProjectModel.subRoot())
+                                     .filter(prj -> prj.getName().eq("name1"))
+                                     .filter(prj -> prj.getId().eq(issue.getProject().getId()))
+                                     .exists(issue))
+            .toList().on(em);
+        assertEquals(3, issues.size());
     }
 
 

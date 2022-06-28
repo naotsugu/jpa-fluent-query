@@ -43,11 +43,11 @@ public interface Querying<E, R extends RootAware<E>> extends CreateQuery<E, R> {
 
         return new Querying<>() {
             @Override
-            public Querying<E, R> filter(Filter<E, R> f) { return Querying.of(rootSource, filter.and(f), sorts); }
+            public Querying<E, R> filter(Filter<E, R> f) { return Querying.of(rootSource(), filter().and(f), sorts()); }
             @Override
-            public Querying<E, R> sorted(Sort<E, R> sort) { return Querying.of(rootSource, filter, sorts.and(sort)); }
+            public Querying<E, R> sorted(Sort<E, R> sort) { return Querying.of(rootSource(), filter(), sorts().and(sort)); }
             @Override
-            public Querying<E, R> sorted(Sort<E, R> sort1, Sort<E, R> sort2) { return Querying.of(rootSource, filter, sorts.and(sort1).and(sort2)); }
+            public Querying<E, R> sorted(Sort<E, R> sort1, Sort<E, R> sort2) { return Querying.of(rootSource(), filter(), sorts().and(sort1).and(sort2)); }
             @Override
             public RootSource<E, R> rootSource() { return rootSource; }
             @Override

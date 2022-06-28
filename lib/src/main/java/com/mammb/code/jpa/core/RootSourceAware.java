@@ -23,6 +23,10 @@ package com.mammb.code.jpa.core;
  */
 public interface RootSourceAware<E, R extends RootAware<E>> {
 
+    /**
+     * Get the root source.
+     * @return the root source
+     */
     RootSource<E, R> rootSource();
 
 }
