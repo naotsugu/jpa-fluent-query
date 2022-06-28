@@ -35,8 +35,12 @@ public class ApiClassWriter {
 
     /** The name of RootSource class. */
     public static final String ROOT_SOURCE = "RootSource";
+    /** The name of SubRootSource class. */
+    public static final String SUB_ROOT_SOURCE = "SubRootSource";
     /** The name of BuilderAware class. */
     public static final String BUILDER_AWARE = "BuilderAware";
+    /** The name of QueryAware class. */
+    public static final String QUERY_AWARE = "QueryAware";
     /** The name of RootAware class. */
     public static final String ROOT_AWARE = "RootAware";
     /** The name of Criteria class. */
@@ -73,7 +77,9 @@ public class ApiClassWriter {
     public void writeClasses() {
         context.logDebug("Create api class");
         writeRootSourceClass();
-        writeBuilderClass();
+        writeSubRootSourceClass();
+        writeQueryAwareClass();
+        writeBuilderAwareClass();
         writeRootAwareClass();
         writeCriteriaClass();
         writeRepositoryClass();
@@ -125,9 +131,94 @@ public class ApiClassWriter {
 
 
     /**
-     * Write a criteria class file.
+     * Write a SubRootSource class file.
      */
-    private void writeBuilderClass() {
+    private void writeSubRootSourceClass() {
+
+        if (Objects.nonNull(context.getElementUtils().getTypeElement(PACKAGE_NAME + "." + SUB_ROOT_SOURCE))) {
+            return;
+        }
+
+        try {
+
+            ImportBuilder imports = ImportBuilder.of(PACKAGE_NAME);
+            FileObject fo = context.getFiler().createSourceFile(imports.getSelfPackage() + "." + SUB_ROOT_SOURCE);
+
+            try (PrintWriter pw = new PrintWriter(fo.openOutputStream())) {
+
+                pw.println("package " + imports.getSelfPackage() + ";");
+                pw.println();
+
+                imports.add("javax.annotation.processing.Generated");
+                imports.add("jakarta.persistence.criteria.AbstractQuery");
+                imports.add("jakarta.persistence.criteria.CriteriaBuilder");
+                imports.add("jakarta.persistence.criteria.Subquery");
+                pw.println(imports.generateImports(context.isJakarta()));
+                pw.println();
+
+                pw.println("@Generated(value = \"%s\")".formatted(JpaMetaModelEnhanceProcessor.class.getName()));
+                pw.println("""
+                    public interface %1$s<E, R extends %2$s<E>, U> {
+                        R root(AbstractQuery<?> query, CriteriaBuilder builder);
+                        Class<E> rootClass();
+                        Class<U> resultType();
+                    }
+                    """.formatted(SUB_ROOT_SOURCE, ROOT_AWARE));
+
+                pw.flush();
+            }
+
+        } catch (Exception e) {
+            context.logError("Problem opening file to write {} class : {}", SUB_ROOT_SOURCE, e.getMessage());
+        }
+
+    }
+
+
+    /**
+     * Write a QueryAware class file.
+     */
+    private void writeQueryAwareClass() {
+
+        if (Objects.nonNull(context.getElementUtils().getTypeElement(PACKAGE_NAME + "." + QUERY_AWARE))) {
+            return;
+        }
+
+        try {
+
+            ImportBuilder imports = ImportBuilder.of(PACKAGE_NAME);
+            FileObject fo = context.getFiler().createSourceFile(PACKAGE_NAME + "." + QUERY_AWARE);
+
+            try (PrintWriter pw = new PrintWriter(fo.openOutputStream())) {
+
+                pw.println("package " + imports.getSelfPackage() + ";");
+                pw.println();
+
+                imports.add("javax.annotation.processing.Generated");
+                imports.add("jakarta.persistence.criteria.AbstractQuery");
+                pw.println(imports.generateImports(context.isJakarta()));
+                pw.println();
+
+                pw.println("@Generated(value = \"%s\")".formatted(JpaMetaModelEnhanceProcessor.class.getName()));
+                pw.println("""
+                    public interface %1$s<Q extends AbstractQuery<?>> {
+                        Q query();
+                    }
+                    """.formatted(QUERY_AWARE));
+                pw.flush();
+            }
+
+        } catch (Exception e) {
+            context.logError("Problem opening file to write {} class : {}", QUERY_AWARE, e.getMessage());
+        }
+
+    }
+
+
+    /**
+     * Write a BuilderAware class file.
+     */
+    private void writeBuilderAwareClass() {
 
         if (Objects.nonNull(context.getElementUtils().getTypeElement(PACKAGE_NAME + "." + BUILDER_AWARE))) {
             return;
@@ -184,6 +275,7 @@ public class ApiClassWriter {
                 pw.println();
 
                 imports.add("javax.annotation.processing.Generated");
+                imports.add("jakarta.persistence.criteria.AbstractQuery");
                 imports.add("jakarta.persistence.criteria.Root");
                 imports.add("java.util.function.Supplier");
                 pw.println(imports.generateImports(context.isJakarta()));
@@ -191,9 +283,9 @@ public class ApiClassWriter {
 
                 pw.println("@Generated(value = \"%s\")".formatted(JpaMetaModelEnhanceProcessor.class.getName()));
                 pw.println("""
-                    public interface %1$s<E> extends Supplier<Root<E>>, %2$s {
+                    public interface %1$s<E> extends Supplier<Root<E>>, %2$s, %3$s<AbstractQuery<?>> {
                     }
-                    """.formatted(ROOT_AWARE, BUILDER_AWARE));
+                    """.formatted(ROOT_AWARE, BUILDER_AWARE, QUERY_AWARE));
                 pw.flush();
             }
 
