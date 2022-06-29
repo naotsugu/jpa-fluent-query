@@ -125,6 +125,18 @@ class QueryingTest {
         assertEquals(3, issues.size());
     }
 
+    @Test
+    void testCorrelateSubQuery() {
+        createIssues();
+        List<Issue> issues = Querying.of(IssueModel.root())
+            .filter(issue -> SubQuery.of(issue.correlate(Long.class))
+                                     .filter(sub -> sub.getTitle().eq("foo"))
+                                     .filter(sub -> sub.getId().eq(issue.getProject().getId()))
+                                     .exists(issue))
+            .toList().on(em);
+        assertEquals(3, issues.size());
+    }
+
 
     private void createIssues() {
 

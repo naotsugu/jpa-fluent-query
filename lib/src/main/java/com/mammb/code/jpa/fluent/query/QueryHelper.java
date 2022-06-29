@@ -106,13 +106,14 @@ public interface QueryHelper {
      * @return a tuple query
      */
     static <E, R extends RootAware<E>> TypedQuery<Tuple> tupleQuery(
-        EntityManager em, RootSource<E, R> rootSource, Filter<E, R> filter, Sorts<E, R> sorts,
-        Selection<?>... selections) {
+            EntityManager em, RootSource<E, R> rootSource,
+            Filter<E, R> filter, Sorts<E, R> sorts, Selectors<E, R> selectors) {
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Tuple> cq = cb.createTupleQuery();
-        cq.select(cb.tuple(selections));
         R root = rootSource.root(cq, cb);
+
+        cq.select(cb.tuple(selectors.apply(root).toArray(Selection[]::new)));
         Optional.ofNullable(filter.apply(root)).ifPresent(cq::where);
 
         List<Order> orders = new ArrayList<>();
