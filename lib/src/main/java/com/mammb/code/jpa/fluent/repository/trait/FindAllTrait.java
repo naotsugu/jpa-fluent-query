@@ -16,6 +16,7 @@
 package com.mammb.code.jpa.fluent.repository.trait;
 
 import com.mammb.code.jpa.core.EntityManagerAware;
+import com.mammb.code.jpa.core.Mapper;
 import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSourceAware;
 import com.mammb.code.jpa.fluent.query.Filter;
@@ -46,7 +47,7 @@ public interface FindAllTrait<E, R extends RootAware<E>> extends EntityManagerAw
     }
 
     default List<E> findAll(Filter<E, R> filter, Sorts<E, R> sorts) {
-        return QueryHelper.query(em(), rootSource(), filter, sorts).getResultList();
+        return QueryHelper.query(em(), rootSource(), Mapper.of(), filter, sorts).getResultList();
     }
 
     default long count() {

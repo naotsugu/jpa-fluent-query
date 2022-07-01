@@ -15,15 +15,14 @@
  */
 package com.mammb.code.jpa.core;
 
-import jakarta.persistence.criteria.AbstractQuery;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
-import java.util.function.Supplier;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-/**
- * Root aware.
- * @param <E> the type of entity
- * @author Naotsugu Kobayashi
- */
-public interface RootAware<E> extends Supplier<Root<E>>, BuilderAware, QueryAware<AbstractQuery<?>> {
+@Documented
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Mappable {
 }

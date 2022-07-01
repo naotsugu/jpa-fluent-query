@@ -15,10 +15,12 @@
  */
 package com.mammb.code.jpa.fluent.query;
 
+import com.mammb.code.jpa.core.Mapper;
 import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSource;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Create Query helper interface.
@@ -26,7 +28,7 @@ import java.util.List;
  * @param <R> the root element
  * @author Naotsugu Kobayashi
  */
-public interface CreateQuery<E, R extends RootAware<E>> {
+public interface CreateQuery<E, R extends RootAware<E>, U> {
 
     RootSource<E, R> rootSource();
 
@@ -34,21 +36,26 @@ public interface CreateQuery<E, R extends RootAware<E>> {
 
     Sorts<E, R> sorts();
 
+    Mapper<E, R, U> mapper();
 
     default Query<Long> count() {
         return em -> QueryHelper.countQuery(em, rootSource(), filter()).getSingleResult();
     }
 
-    default Query<List<E>> toList() {
-        return em -> QueryHelper.query(em, rootSource(), filter(), sorts()).getResultList();
+    default Query<Optional<U>> toSingle() {
+        return em -> Optional.ofNullable(QueryHelper.query(em, rootSource(), mapper(), filter(), sorts()).getSingleResult());
     }
 
-    default Query<Slice<E>> toSlice(SlicePoint slicePoint) {
-        return em -> QueryHelper.slice(em, rootSource(), filter(), sorts(), slicePoint);
+    default Query<List<U>> toList() {
+        return em -> QueryHelper.query(em, rootSource(), mapper(), filter(), sorts()).getResultList();
     }
 
-    default Query<Page<E>> toPage(SlicePoint slicePoint) {
-        return em -> QueryHelper.page(em, rootSource(), filter(), sorts(), slicePoint);
+    default Query<Slice<U>> toSlice(SlicePoint slicePoint) {
+        return em -> QueryHelper.slice(em, rootSource(), mapper(), filter(), sorts(), slicePoint);
+    }
+
+    default Query<Page<U>> toPage(SlicePoint slicePoint) {
+        return em -> QueryHelper.page(em, rootSource(), mapper(), filter(), sorts(), slicePoint);
     }
 
 }

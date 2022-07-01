@@ -7,12 +7,7 @@ import com.mammb.code.jpa.fluent.test.ProjectModel;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
+import org.junit.jupiter.api.*;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,27 +56,33 @@ class QueryingTest {
         assertEquals(3L, count);
     }
 
+    @Test
+    void testSimpleQuery() {
+        createIssues();
+        List<Issue> issues = Querying.of(IssueModel.root())
+            .toList().on(em);
+        assertEquals(6, issues.size());
+    }
+
 
     @Test
     void testSimpleFilter() {
-
         createIssues();
-
         List<Issue> issues = Querying.of(IssueModel.root())
-                .toList().on(em);
-        assertEquals(6, issues.size());
-
-        issues = Querying.of(IssueModel.root())
                 .filter(issue -> issue.getTitle().eq("foo"))
                 .toList().on(em);
         assertEquals(3, issues.size());
+    }
 
-        issues = Querying.of(IssueModel.root())
-                .filter(issue -> issue.getProject().getName().eq("name1"))
-                .filter(issue -> issue.getTitle().eq("foo"))
-                .toList().on(em);
+
+    @Test
+    void testSomeFilter() {
+        createIssues();
+        List<Issue> issues = Querying.of(IssueModel.root())
+            .filter(issue -> issue.getProject().getName().eq("name1"))
+            .filter(issue -> issue.getTitle().eq("foo"))
+            .toList().on(em);
         assertEquals(2, issues.size());
-
     }
 
 
@@ -99,6 +100,18 @@ class QueryingTest {
         assertEquals("name2", issues.get(0).getProject().getName());
         assertEquals("name1", issues.get(1).getProject().getName());
         assertEquals("name1", issues.get(2).getProject().getName());
+
+    }
+
+    @Test
+    void testSelector() {
+
+        createIssues();
+
+//        List<Issue> issues = Querying.of(IssueModel.root())
+//            .filter(r -> r.getTitle().eq("foo"))
+//            .toList(Mapper.issueDto(r -> r.getId(), r -> r.getTitle())).on(em);
+
     }
 
 
@@ -120,18 +133,6 @@ class QueryingTest {
             .filter(issue -> SubQuery.of(ProjectModel.subRoot())
                                      .filter(prj -> prj.getName().eq("name1"))
                                      .filter(prj -> prj.getId().eq(issue.getProject().getId()))
-                                     .exists(issue))
-            .toList().on(em);
-        assertEquals(3, issues.size());
-    }
-
-    @Test
-    void testCorrelateSubQuery() {
-        createIssues();
-        List<Issue> issues = Querying.of(IssueModel.root())
-            .filter(issue -> SubQuery.of(issue.correlate(Long.class))
-                                     .filter(sub -> sub.getTitle().eq("foo"))
-                                     .filter(sub -> sub.getId().eq(issue.getProject().getId()))
                                      .exists(issue))
             .toList().on(em);
         assertEquals(3, issues.size());

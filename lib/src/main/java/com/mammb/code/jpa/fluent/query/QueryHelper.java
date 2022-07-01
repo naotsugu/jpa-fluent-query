@@ -15,6 +15,7 @@
  */
 package com.mammb.code.jpa.fluent.query;
 
+import com.mammb.code.jpa.core.Mapper;
 import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSource;
 import com.mammb.code.jpa.core.SubRootSource;
@@ -68,52 +69,22 @@ public interface QueryHelper {
      * @param em {@link EntityManager}
      * @param rootSource {@link RootSource}
      * @param filter {@link Filter}
+     * @param mapper {@link Mapper}
      * @param sorts {@link Sorts}
      * @param <E> the type of entity
      * @param <R> the type of root
      * @return a query
      */
-    static <E, R extends RootAware<E>> TypedQuery<E> query(
+    static <E, R extends RootAware<E>, U> TypedQuery<U> query(
             EntityManager em,
             RootSource<E, R> rootSource,
+            Mapper<E, R, U> mapper,
             Filter<E, R> filter,
             Sorts<E, R> sorts) {
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<E> cq = cb.createQuery(rootSource.rootClass());
-        R root = rootSource.root(cq, cb);
-        cq.select(root.get());
-        Optional.ofNullable(filter.apply(root)).ifPresent(cq::where);
-
-        List<Order> orders = new ArrayList<>();
-        Optional.ofNullable(sorts.apply(root)).ifPresent(orders::addAll);
-        orders.addAll(getIdentifierName(root.get().getModel()).stream()
-            .map(name -> cb.asc(root.get().get(name))).toList());
-        cq.orderBy(orders);
-
-        return em.createQuery(cq);
-    }
-
-
-    /**
-     * Create a tuple query.
-     * @param em {@link EntityManager}
-     * @param rootSource {@link RootSource}
-     * @param filter {@link Filter}
-     * @param sorts {@link Sorts}
-     * @param <E> the type of entity
-     * @param <R> the type of root
-     * @return a tuple query
-     */
-    static <E, R extends RootAware<E>> TypedQuery<Tuple> tupleQuery(
-            EntityManager em, RootSource<E, R> rootSource,
-            Filter<E, R> filter, Sorts<E, R> sorts, Selectors<E, R> selectors) {
-
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Tuple> cq = cb.createTupleQuery();
-        R root = rootSource.root(cq, cb);
-
-        cq.select(cb.tuple(selectors.apply(root).toArray(Selection[]::new)));
+        R root = mapper.apply(rootSource, cb);
+        CriteriaQuery<U> cq = (CriteriaQuery<U>) root.query();
         Optional.ofNullable(filter.apply(root)).ifPresent(cq::where);
 
         List<Order> orders = new ArrayList<>();
@@ -141,13 +112,9 @@ public interface QueryHelper {
             AbstractQuery<?> query, CriteriaBuilder cb,
             SubRootSource<E, R, U> subRootSource, Filter<E, R> filter) {
         R subRoot = subRootSource.root(query, cb);
-        AbstractQuery<?> abstractQuery = subRoot.query();
-        if (abstractQuery instanceof Subquery sq) {
-            Optional.ofNullable(filter.apply(subRoot)).ifPresent(sq::where);
-            return (Subquery<U>) sq;
-        } else {
-            throw new RuntimeException("");
-        }
+        Subquery<U> subquery = (Subquery<U>) subRoot.query();
+        Optional.ofNullable(filter.apply(subRoot)).ifPresent(subquery::where);
+        return subquery;
     }
 
 
@@ -155,6 +122,7 @@ public interface QueryHelper {
      * Get the slice of entity.
      * @param em {@link EntityManager}
      * @param rootSource {@link RootSource}
+     * @param mapper {@link Mapper}
      * @param filter {@link Filter}
      * @param sorts {@link Sorts}
      * @param slicePoint  {@link SlicePoint}
@@ -162,12 +130,13 @@ public interface QueryHelper {
      * @param <R> the type of root
      * @return a slice
      */
-    static <E, R extends RootAware<E>> Slice<E> slice(
-            EntityManager em, RootSource<E, R> rootSource, Filter<E, R> filter, Sorts<E, R> sorts, SlicePoint slicePoint) {
-        var query = QueryHelper.query(em, rootSource, filter, sorts);
+    static <E, R extends RootAware<E>, U> Slice<U> slice(
+            EntityManager em, RootSource<E, R> rootSource, Mapper<E, R, U> mapper,
+            Filter<E, R> filter, Sorts<E, R> sorts, SlicePoint slicePoint) {
+        var query = QueryHelper.query(em, rootSource, mapper, filter, sorts);
         query.setFirstResult(Math.toIntExact(slicePoint.getOffset()));
         query.setMaxResults(slicePoint.getSize() + 1);
-        List<E> result = query.getResultList();
+        List<U> result = query.getResultList();
         return (result.size() > slicePoint.getSize())
             ? Slice.of(result.subList(0, slicePoint.getSize()), true, slicePoint)
             : Slice.of(result, false, slicePoint);
@@ -178,6 +147,7 @@ public interface QueryHelper {
      * Get the page of entity.
      * @param em {@link EntityManager}
      * @param rootSource {@link RootSource}
+     * @param mapper {@link Mapper}
      * @param filter {@link Filter}
      * @param sorts {@link Sorts}
      * @param slicePoint  {@link SlicePoint}
@@ -185,18 +155,19 @@ public interface QueryHelper {
      * @param <R> the type of root
      * @return a page
      */
-    static <E, R extends RootAware<E>> Page<E> page(
-            EntityManager em, RootSource<E, R> rootSource, Filter<E, R> filter, Sorts<E, R> sorts, SlicePoint slicePoint) {
+    static <E, R extends RootAware<E>, U> Page<U> page(
+            EntityManager em, RootSource<E, R> rootSource, Mapper<E, R, U> mapper,
+            Filter<E, R> filter, Sorts<E, R> sorts, SlicePoint slicePoint) {
 
         var count = countQuery(em, rootSource, filter).getSingleResult();
         if (count <= slicePoint.getOffset()) {
             return Page.of(List.of(), count, slicePoint);
         }
 
-        var query = QueryHelper.query(em, rootSource, filter, sorts);
+        var query = QueryHelper.query(em, rootSource, mapper, filter, sorts);
         query.setFirstResult(Math.toIntExact(slicePoint.getOffset()));
         query.setMaxResults(slicePoint.getSize());
-        List<E> result = query.getResultList();
+        List<U> result = query.getResultList();
         return Page.of(result, count, slicePoint);
     }
 
