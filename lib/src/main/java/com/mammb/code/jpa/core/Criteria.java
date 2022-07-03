@@ -20,6 +20,7 @@ import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Selection;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -35,7 +36,12 @@ import java.util.regex.Pattern;
  */
 public class Criteria {
 
+    public interface Selector<E, R extends RootAware<E>, U> {
+        Criteria.AnyExpression<U, ? extends Selection<U>> apply(R root);
+    }
+
     interface CommonType extends BuilderAware {}
+
 
     public static class AnyPath<E> implements AnyExpression<E, Path<E>>, CommonType {
         private final Supplier<Path<E>> path;

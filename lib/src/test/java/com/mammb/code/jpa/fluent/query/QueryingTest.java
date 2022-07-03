@@ -1,7 +1,9 @@
 package com.mammb.code.jpa.fluent.query;
 
 import com.mammb.code.jpa.fluent.test.Issue;
+import com.mammb.code.jpa.fluent.test.IssueDto;
 import com.mammb.code.jpa.fluent.test.IssueModel;
+import com.mammb.code.jpa.fluent.test.Mappers;
 import com.mammb.code.jpa.fluent.test.Project;
 import com.mammb.code.jpa.fluent.test.ProjectModel;
 import jakarta.persistence.EntityManager;
@@ -104,14 +106,13 @@ class QueryingTest {
     }
 
     @Test
-    void testSelector() {
-
+    void testMapperConstruct() {
         createIssues();
-
-//        List<Issue> issues = Querying.of(IssueModel.root())
-//            .filter(r -> r.getTitle().eq("foo"))
-//            .toList(Mapper.issueDto(r -> r.getId(), r -> r.getTitle())).on(em);
-
+        List<IssueDto> issues = Querying.of(IssueModel.root())
+            .filter(r -> r.getTitle().eq("foo"))
+            .map(Mappers.issueDto(r -> r.getId(), r -> r.getTitle()))
+            .toList().on(em);
+        assertEquals("foo", issues.get(0).title());
     }
 
 

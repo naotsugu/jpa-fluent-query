@@ -15,6 +15,7 @@
  */
 package com.mammb.code.jpa.fluent.query;
 
+import com.mammb.code.jpa.core.Criteria;
 import com.mammb.code.jpa.core.RootAware;
 import jakarta.persistence.criteria.Selection;
 
@@ -36,6 +37,11 @@ public interface Selector<E, R extends RootAware<E>, U> {
      * @return a selector result
      */
     Selection<? extends U> apply(R root);
+
+
+    static <E, R extends RootAware<E>, U> Selector<E, R, U> of(Criteria.Selector<E, R, U> source) {
+        return r -> source.apply(r).get();
+    }
 
 
     /**

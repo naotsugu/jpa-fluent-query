@@ -15,7 +15,6 @@
  */
 package com.mammb.code.jpa.fluent.query;
 
-import com.mammb.code.jpa.core.Mapper;
 import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSource;
 
@@ -33,7 +32,7 @@ public interface Querying<E, R extends RootAware<E>, U> extends CreateQuery<E, R
 
     Querying<E, R, U> sorted(Sort<E, R> sort1, Sort<E, R> sort2);
 
-    Querying<E, R, U> map(Mapper<E, R, U> mapper);
+    <Y> Querying<E, R, Y> map(Mapper<E, R, Y> mapper);
 
 
     static <E, R extends RootAware<E>> Querying<E, R, E> of(RootSource<E, R> rootSource) {
@@ -54,7 +53,7 @@ public interface Querying<E, R extends RootAware<E>, U> extends CreateQuery<E, R
             @Override
             public Querying<E, R, U> sorted(Sort<E, R> sort1, Sort<E, R> sort2) { return Querying.of(rootSource(), mapper(), filter(), sorts().and(sort1).and(sort2)); }
             @Override
-            public Querying<E, R, U> map(Mapper<E, R, U> mapper) { return Querying.of(rootSource(), mapper, filter(), sorts()); }
+            public <Y> Querying<E, R, Y> map(Mapper<E, R, Y> mapper) { return Querying.of(rootSource(), mapper, filter(), sorts()); }
             @Override
             public RootSource<E, R> rootSource() { return rootSource; }
             @Override

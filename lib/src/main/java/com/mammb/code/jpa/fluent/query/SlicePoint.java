@@ -92,14 +92,9 @@ public interface SlicePoint {
     static SlicePoint of(int number, int size) {
         return new SlicePoint() {
             @Override
-            public int getNumber() {
-                return number;
-            }
-
+            public int getNumber() { return number; }
             @Override
-            public int getSize() {
-                return size;
-            }
+            public int getSize() { return size; }
         };
     }
 

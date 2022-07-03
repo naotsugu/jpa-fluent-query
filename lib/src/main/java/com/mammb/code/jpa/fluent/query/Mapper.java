@@ -13,18 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mammb.code.jpa.core;
+package com.mammb.code.jpa.fluent.query;
 
-import com.mammb.code.jpa.fluent.query.Selector;
+import com.mammb.code.jpa.core.RootAware;
+import com.mammb.code.jpa.core.RootSource;
 import jakarta.persistence.Tuple;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Selection;
-import java.util.Arrays;
+import java.util.List;
+
 
 public interface Mapper<E, R extends RootAware<E>, U> {
 
     R apply(RootSource<E, R> rootSource, CriteriaBuilder builder);
+
 
     static <E, R extends RootAware<E>> Mapper<E, R, E> of() {
         return (RootSource<E, R> rootSource, CriteriaBuilder builder) ->  {
@@ -35,27 +38,26 @@ public interface Mapper<E, R extends RootAware<E>, U> {
         };
     }
 
-    @SafeVarargs
+
     static <E, R extends RootAware<E>> Mapper<E, R, Tuple> tuple(
-            Selector<E, R, ?>... selectors) {
+            List<Selector<E, R, ?>> selectors) {
         return (RootSource<E, R> rootSource, CriteriaBuilder builder) ->  {
             CriteriaQuery<Tuple> query = builder.createTupleQuery();
             R root = rootSource.root(query, builder);
-            query.select(builder.tuple(Arrays.stream(selectors)
+            query.select(builder.tuple(selectors.stream()
                 .map(sel -> sel.apply(root)).toArray(Selection[]::new)));
             return root;
         };
     }
 
-    @SafeVarargs
+
     static <E, R extends RootAware<E>, U> Mapper<E, R, U> construct(
-            Class<U> result, Selector<E, R, ?>... selectors) {
+            Class<U> result, List<Selector<E, R, ?>> selectors) {
         return (RootSource<E, R> rootSource, CriteriaBuilder builder) ->  {
             CriteriaQuery<U> query = builder.createQuery(result);
             R root = rootSource.root(query, builder);
-            query.select(builder.construct(result,
-                builder.tuple(Arrays.stream(selectors)
-                    .map(sel -> sel.apply(root)).toArray(Selection[]::new))));
+            query.select(builder.construct(result, selectors.stream()
+                    .map(sel -> sel.apply(root)).toArray(Selection[]::new)));
             return root;
         };
     }

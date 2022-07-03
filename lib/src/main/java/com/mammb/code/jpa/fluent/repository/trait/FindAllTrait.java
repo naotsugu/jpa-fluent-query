@@ -16,13 +16,12 @@
 package com.mammb.code.jpa.fluent.repository.trait;
 
 import com.mammb.code.jpa.core.EntityManagerAware;
-import com.mammb.code.jpa.core.Mapper;
+import com.mammb.code.jpa.fluent.query.Mapper;
 import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSourceAware;
 import com.mammb.code.jpa.fluent.query.Filter;
 import com.mammb.code.jpa.fluent.query.QueryHelper;
 import com.mammb.code.jpa.fluent.query.Request;
-import com.mammb.code.jpa.fluent.query.Sort;
 import com.mammb.code.jpa.fluent.query.Sorts;
 import java.util.List;
 
