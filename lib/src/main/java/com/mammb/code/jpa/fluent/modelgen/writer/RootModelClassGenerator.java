@@ -59,11 +59,11 @@ public class RootModelClassGenerator extends AttributeClassGenerator {
                 @Override public Root<$EntityClass$> get() { return root; }
                 @Override public CriteriaBuilder builder() { return builder; }
                 @Override public AbstractQuery<?> query() { return query; }
-                public <U> SubRootSource<$EntityClass$, SubRoot_, U> correlate(Class<U> type) {
-                    return new SubRootSource<$EntityClass$, SubRoot_, U>() {
-                        @Override public SubRoot_ root(AbstractQuery<?> query, CriteriaBuilder builder) {
+                public <U> SubRootSource<$EntityClass$, SubRoot_<U>, U> correlate(Class<U> type) {
+                    return new SubRootSource<$EntityClass$, SubRoot_<U>, U>() {
+                        @Override public SubRoot_<U> root(AbstractQuery<?> query, CriteriaBuilder builder) {
                             Subquery<U> subquery = query.subquery(type);
-                            return new SubRoot_(subquery.correlate(get()), subquery, builder);
+                            return new SubRoot_<U>(subquery.correlate(get()), subquery, builder);
                         }
                         @Override public Class<$EntityClass$> rootClass() { return $EntityClass$.class; }
                         @Override public Class<U> resultType() { return type; }

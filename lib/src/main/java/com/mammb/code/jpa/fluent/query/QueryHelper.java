@@ -17,7 +17,7 @@ package com.mammb.code.jpa.fluent.query;
 
 import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSource;
-import com.mammb.code.jpa.core.SubRootAware;
+import com.mammb.code.jpa.core.SubRoot;
 import com.mammb.code.jpa.core.SubRootSource;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -81,6 +81,7 @@ public interface QueryHelper {
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
         R root = mapper.apply(rootSource, cb);
+        @SuppressWarnings("unchecked")
         CriteriaQuery<U> cq = (CriteriaQuery<U>) root.query();
         Optional.ofNullable(filter.apply(root)).ifPresent(cq::where);
 
@@ -105,13 +106,13 @@ public interface QueryHelper {
      * @param <U> the type of sub query result
      * @return the sub query
      */
-    static <E, R extends SubRootAware<E>, U> Subquery<U> subQuery(
+    static <E, R extends SubRoot<E, U>, U> Subquery<U> subQuery(
             AbstractQuery<?> query, CriteriaBuilder cb,
             SubRootSource<E, R, U> subRootSource, Filter<E, R> filter) {
         R subRoot = subRootSource.root(query, cb);
-        Subquery<U> subquery = (Subquery<U>) subRoot.query();
-        Optional.ofNullable(filter.apply(subRoot)).ifPresent(subquery::where);
-        return subquery;
+        Subquery<U> subQuery = subRoot.query();
+        Optional.ofNullable(filter.apply(subRoot)).ifPresent(subQuery::where);
+        return subQuery;
     }
 
 

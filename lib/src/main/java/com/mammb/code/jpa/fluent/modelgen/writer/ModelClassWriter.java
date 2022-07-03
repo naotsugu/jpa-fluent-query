@@ -134,23 +134,26 @@ public class ModelClassWriter {
                         @Override public Class<$ClassName$> rootClass() { return $ClassName$.class; }
                     };
                 }
-                public static <U> SubRootSource<$ClassName$, SubRoot_, U> subRoot(Class<U> type) {
-                    return new SubRootSource<$ClassName$, SubRoot_, U>() {
-                        @Override public SubRoot_ root(AbstractQuery<?> query, CriteriaBuilder builder) {
+                public static <U> SubRootSource<$ClassName$, SubRoot_<U>, U> subRoot(Class<U> type) {
+                    return new SubRootSource<$ClassName$, SubRoot_<U>, U>() {
+                        @Override public SubRoot_<U> root(AbstractQuery<?> query, CriteriaBuilder builder) {
                             Subquery<U> subquery = query.subquery(type);
-                            return new SubRoot_(subquery.from(rootClass()), subquery, builder);
+                            return new SubRoot_<U>(subquery.from(rootClass()), subquery, builder);
                         }
                         @Override public Class<$ClassName$> rootClass() { return $ClassName$.class; }
                         @Override public Class<U> resultType() { return type; }
                     };
                 }
-                public static SubRootSource<$ClassName$, SubRoot_, $ClassName$> subRoot() {
+                public static SubRootSource<$ClassName$, SubRoot_<$ClassName$>, $ClassName$> subRoot() {
                     return subRoot($ClassName$.class);
                 }
-                public static class SubRoot_ extends Root_ implements SubRootAware<$ClassName$> {
-                    public SubRoot_(Root<$ClassName$> root, Subquery<?> query, CriteriaBuilder builder) {
+                public static class SubRoot_<U> extends Root_ implements SubRoot<$ClassName$, U> {
+                    private final Subquery<U> query;
+                    public SubRoot_(Root<$ClassName$> root, Subquery<U> query, CriteriaBuilder builder) {
                         super(root, query, builder);
+                        this.query = query;
                     }
+                    @Override public Subquery<U> query() { return query; }
                 }
 
                 $RootClass$
