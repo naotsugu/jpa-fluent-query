@@ -11,7 +11,7 @@ import jakarta.persistence.criteria.Subquery;
  * @param <U> the type of sub query result
  * @author Naotsugu Kobayashi
  */
-public interface SubRootSource<E, R extends RootAware<E>, U> {
+public interface SubRootSource<E, R extends SubRootAware<E>, U> {
 
     /**
      * Create the sub root from the given query.

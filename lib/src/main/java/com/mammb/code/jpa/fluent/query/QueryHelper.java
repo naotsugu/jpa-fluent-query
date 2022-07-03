@@ -17,6 +17,7 @@ package com.mammb.code.jpa.fluent.query;
 
 import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSource;
+import com.mammb.code.jpa.core.SubRootAware;
 import com.mammb.code.jpa.core.SubRootSource;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -104,7 +105,7 @@ public interface QueryHelper {
      * @param <U> the type of sub query result
      * @return the sub query
      */
-    static <E, R extends RootAware<E>, U> Subquery<U> subQuery(
+    static <E, R extends SubRootAware<E>, U> Subquery<U> subQuery(
             AbstractQuery<?> query, CriteriaBuilder cb,
             SubRootSource<E, R, U> subRootSource, Filter<E, R> filter) {
         R subRoot = subRootSource.root(query, cb);
