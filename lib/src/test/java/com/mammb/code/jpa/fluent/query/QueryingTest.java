@@ -131,10 +131,10 @@ class QueryingTest {
     void testSubQuery() {
         createIssues();
         List<Issue> issues = Querying.of(IssueModel.root())
-            .filter(issue -> SubQuery.of(ProjectModel.subRoot())
+            .filter(issue -> SubQuery.of(ProjectModel.subRoot(), issue)
                                      .filter(prj -> prj.getName().eq("name1"))
                                      .filter(prj -> prj.getId().eq(issue.getProject().getId()))
-                                     .exists(issue))
+                                     .exists())
             .toList().on(em);
         assertEquals(3, issues.size());
     }
