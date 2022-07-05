@@ -115,9 +115,18 @@ class QueryingTest {
         assertEquals("foo", issues.get(0).title());
     }
 
-
     @Test
     void testSlice() {
+        createIssues();
+        Slice<Issue> issues = Querying.of(IssueModel.root())
+            .filter(issue -> issue.getTitle().eq("foo"))
+            .toSlice(SlicePoint.of()).on(em);
+        assertEquals(3, issues.getContent().size());
+        assertFalse(issues.hasNext());
+    }
+
+    @Test
+    void testPage() {
         createIssues();
         Page<Issue> issues = Querying.of(IssueModel.root())
             .filter(issue -> issue.getTitle().eq("foo"))
