@@ -17,6 +17,12 @@ package com.mammb.code.jpa.core;
 
 import jakarta.persistence.criteria.CriteriaQuery;
 
+/**
+ * Criteria root.
+ * @param <E> the type of entity
+ * @param <U> type of query result
+ * @author Naotsugu Kobayashi
+ */
 public interface CriteriaRoot<E, U> extends RootAware<E> {
     @Override CriteriaQuery<U> query();
 }
