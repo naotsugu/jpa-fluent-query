@@ -15,7 +15,7 @@
  */
 package com.mammb.code.jpa.fluent.modelgen.writer;
 
-import com.mammb.code.jpa.fluent.modelgen.Context;
+import com.mammb.code.jpa.fluent.modelgen.MetamodelContext;
 import com.mammb.code.jpa.fluent.modelgen.JpaMetaModelEnhanceProcessor;
 import com.mammb.code.jpa.fluent.modelgen.model.StaticMetamodelEntity;
 import javax.annotation.processing.FilerException;
@@ -29,7 +29,7 @@ import java.io.PrintWriter;
 public class ModelClassWriter {
 
     /** Context of processing. */
-    private final Context context;
+    private final MetamodelContext context;
 
     /** Representation of static metamodel. */
     private final StaticMetamodelEntity entity;
@@ -43,7 +43,7 @@ public class ModelClassWriter {
      * @param context the context of processing
      * @param entity the representation of static metamodel
      */
-    protected ModelClassWriter(Context context, StaticMetamodelEntity entity) {
+    protected ModelClassWriter(MetamodelContext context, StaticMetamodelEntity entity) {
         this.context = context;
         this.entity = entity;
         this.imports = ImportBuilder.of(entity.getPackageName());
@@ -56,7 +56,7 @@ public class ModelClassWriter {
      * @param entity the static metamodel entity
      * @return Class writer
      */
-    public static ModelClassWriter of(Context context, StaticMetamodelEntity entity) {
+    public static ModelClassWriter of(MetamodelContext context, StaticMetamodelEntity entity) {
         return new ModelClassWriter(context, entity);
     }
 

@@ -35,17 +35,6 @@ public abstract class PackageNames {
      * @param modelEntities the metamodel entities
      * @return the common package name
      */
-    public static String createCommonPackageName(Collection<StaticMetamodelEntity> modelEntities) {
-        return createCommonPackageName(modelEntities.stream()
-            .map(StaticMetamodelEntity::getQualifiedName).toList());
-    }
-
-
-    /**
-     * Get the common package name.
-     * @param modelEntities the metamodel entities
-     * @return the common package name
-     */
     public static String createCommonPackageName(List<String> modelEntities) {
         var name = modelEntities.stream()
             .reduce(modelEntities.get(0), PackageNames::getCommonPrefix);

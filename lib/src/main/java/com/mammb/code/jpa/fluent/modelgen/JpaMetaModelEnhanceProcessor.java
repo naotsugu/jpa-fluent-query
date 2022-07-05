@@ -54,7 +54,7 @@ public class JpaMetaModelEnhanceProcessor extends AbstractProcessor {
     public static final String ADD_REPOSITORY = "addRepository";
 
     /** Context of processing. */
-    private Context context;
+    private MetamodelContext context;
 
     /** Annotation processing round. */
     private int round = 0;
@@ -64,7 +64,7 @@ public class JpaMetaModelEnhanceProcessor extends AbstractProcessor {
     public void init(ProcessingEnvironment env) {
 
         super.init(env);
-        this.context = Context.of(env,
+        this.context = MetamodelContext.of(env,
             Boolean.parseBoolean(env.getOptions().getOrDefault(JpaMetaModelEnhanceProcessor.DEBUG_OPTION, "false")),
             Boolean.parseBoolean(env.getOptions().getOrDefault(JpaMetaModelEnhanceProcessor.ADD_REPOSITORY, "true")));
 

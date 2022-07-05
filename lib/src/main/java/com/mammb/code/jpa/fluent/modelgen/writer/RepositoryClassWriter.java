@@ -15,16 +15,14 @@
  */
 package com.mammb.code.jpa.fluent.modelgen.writer;
 
-import com.mammb.code.jpa.fluent.modelgen.Context;
+import com.mammb.code.jpa.fluent.modelgen.MetamodelContext;
 import com.mammb.code.jpa.fluent.modelgen.JpaMetaModelEnhanceProcessor;
-import com.mammb.code.jpa.fluent.modelgen.model.RepositoryTraitType;
 import com.mammb.code.jpa.fluent.modelgen.model.StaticMetamodelEntity;
 
 import javax.annotation.processing.FilerException;
 import javax.tools.FileObject;
 import java.io.PrintWriter;
 import java.util.Objects;
-import java.util.StringJoiner;
 
 /**
  * The repository class writer.
@@ -33,7 +31,7 @@ import java.util.StringJoiner;
 public class RepositoryClassWriter {
 
     /** Context of processing. */
-    private final Context context;
+    private final MetamodelContext context;
 
     /** Representation of static metamodel. */
     private final StaticMetamodelEntity entity;
@@ -47,7 +45,7 @@ public class RepositoryClassWriter {
      * @param context the context of processing
      * @param entity the representation of static metamodel
      */
-    protected RepositoryClassWriter(Context context, StaticMetamodelEntity entity) {
+    protected RepositoryClassWriter(MetamodelContext context, StaticMetamodelEntity entity) {
         this.context = context;
         this.entity = entity;
         this.imports = ImportBuilder.of(entity.getPackageName());
@@ -60,7 +58,7 @@ public class RepositoryClassWriter {
      * @param entity the representation of static metamodel
      * @return Root class factory writer
      */
-    public static RepositoryClassWriter of(Context context, StaticMetamodelEntity entity) {
+    public static RepositoryClassWriter of(MetamodelContext context, StaticMetamodelEntity entity) {
         return new RepositoryClassWriter(context, entity);
     }
 

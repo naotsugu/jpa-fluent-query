@@ -15,18 +15,15 @@
  */
 package com.mammb.code.jpa.fluent.modelgen.model;
 
-import com.mammb.code.jpa.fluent.modelgen.Context;
+import com.mammb.code.jpa.fluent.modelgen.MetamodelContext;
 import com.mammb.code.jpa.fluent.modelgen.writer.ImportBuilder;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.TypeMirror;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +40,7 @@ public class RepositoryTraitType {
     public static final String ANNOTATION_TYPE = "com.mammb.code.jpa.core.RepositoryTrait";
 
     /** Context of processing. */
-    private final Context context;
+    private final MetamodelContext context;
 
     /** The type element of repository trait. */
     private final TypeElement element;
@@ -57,7 +54,7 @@ public class RepositoryTraitType {
      * @param context the context of processing
      * @param element the repository root type element
      */
-    protected RepositoryTraitType(Context context, TypeElement element) {
+    protected RepositoryTraitType(MetamodelContext context, TypeElement element) {
         this.context = context;
         this.element = element;
         this.typeParameters = List.copyOf(element.getTypeParameters());
@@ -70,7 +67,7 @@ public class RepositoryTraitType {
      * @param element the static metamodel type element
      * @return RepositoryRootType
      */
-    public static Optional<RepositoryTraitType> of(final Context context, final Element element) {
+    public static Optional<RepositoryTraitType> of(final MetamodelContext context, final Element element) {
         return (isRepositoryTraitType(element) && element instanceof TypeElement typeElement)
             ? Optional.of(new RepositoryTraitType(context, typeElement))
             : Optional.empty();

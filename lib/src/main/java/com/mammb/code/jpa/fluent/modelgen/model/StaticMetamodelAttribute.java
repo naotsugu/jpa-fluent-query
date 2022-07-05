@@ -15,7 +15,7 @@
  */
 package com.mammb.code.jpa.fluent.modelgen.model;
 
-import com.mammb.code.jpa.fluent.modelgen.Context;
+import com.mammb.code.jpa.fluent.modelgen.MetamodelContext;
 import javax.lang.model.element.Element;
 import javax.lang.model.type.DeclaredType;
 import java.util.List;
@@ -28,7 +28,7 @@ import java.util.List;
 public class StaticMetamodelAttribute implements MetamodelAttribute {
 
     /** Context of processing. */
-    private final Context context;
+    private final MetamodelContext context;
 
     /** Static metamodel element. */
     private final Element element;
@@ -48,7 +48,7 @@ public class StaticMetamodelAttribute implements MetamodelAttribute {
      * @param context context of processing
      * @param element the static metamodel element
      */
-    protected StaticMetamodelAttribute(Context context, Element element) {
+    protected StaticMetamodelAttribute(MetamodelContext context, Element element) {
 
         if (!element.asType().toString().startsWith(AttributeType.PACKAGE_NAME) &&
             !element.asType().toString().startsWith(AttributeType.PACKAGE_NAME_LEGACY)) {
@@ -81,7 +81,7 @@ public class StaticMetamodelAttribute implements MetamodelAttribute {
      * @param element the attribute element
      * @return static metamodel attribute
      */
-    public static StaticMetamodelAttribute of(Context context, Element element) {
+    public static StaticMetamodelAttribute of(MetamodelContext context, Element element) {
         return new StaticMetamodelAttribute(context, element);
     }
 

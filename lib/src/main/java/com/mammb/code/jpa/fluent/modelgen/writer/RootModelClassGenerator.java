@@ -15,7 +15,7 @@
  */
 package com.mammb.code.jpa.fluent.modelgen.writer;
 
-import com.mammb.code.jpa.fluent.modelgen.Context;
+import com.mammb.code.jpa.fluent.modelgen.MetamodelContext;
 import com.mammb.code.jpa.fluent.modelgen.model.StaticMetamodelAttribute;
 import com.mammb.code.jpa.fluent.modelgen.model.StaticMetamodelEntity;
 import java.util.Map;
@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public class RootModelClassGenerator extends AttributeClassGenerator {
 
-    private RootModelClassGenerator(Context context, StaticMetamodelEntity entity, ImportBuilder imports) {
+    private RootModelClassGenerator(MetamodelContext context, StaticMetamodelEntity entity, ImportBuilder imports) {
         super(context, entity, imports);
     }
 
@@ -39,7 +39,7 @@ public class RootModelClassGenerator extends AttributeClassGenerator {
      * @param imports the import sentences
      * @return Class writer
      */
-    public static RootModelClassGenerator of(Context context, StaticMetamodelEntity entity, ImportBuilder imports) {
+    public static RootModelClassGenerator of(MetamodelContext context, StaticMetamodelEntity entity, ImportBuilder imports) {
         return new RootModelClassGenerator(context, entity, imports);
     }
 

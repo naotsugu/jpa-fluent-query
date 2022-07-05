@@ -15,7 +15,7 @@
  */
 package com.mammb.code.jpa.fluent.modelgen.writer;
 
-import com.mammb.code.jpa.fluent.modelgen.Context;
+import com.mammb.code.jpa.fluent.modelgen.MetamodelContext;
 import com.mammb.code.jpa.fluent.modelgen.model.StaticMetamodelAttribute;
 import com.mammb.code.jpa.fluent.modelgen.model.StaticMetamodelEntity;
 import java.util.Map;
@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public class PathModelClassGenerator extends AttributeClassGenerator {
 
-    private PathModelClassGenerator(Context context, StaticMetamodelEntity entity, ImportBuilder imports) {
+    private PathModelClassGenerator(MetamodelContext context, StaticMetamodelEntity entity, ImportBuilder imports) {
         super(context, entity, imports);
     }
 
@@ -39,7 +39,7 @@ public class PathModelClassGenerator extends AttributeClassGenerator {
      * @param imports the import sentences
      * @return Class writer
      */
-    public static PathModelClassGenerator of(Context context, StaticMetamodelEntity entity, ImportBuilder imports) {
+    public static PathModelClassGenerator of(MetamodelContext context, StaticMetamodelEntity entity, ImportBuilder imports) {
         return new PathModelClassGenerator(context, entity, imports);
     }
 

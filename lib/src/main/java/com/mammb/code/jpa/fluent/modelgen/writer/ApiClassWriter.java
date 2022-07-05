@@ -15,7 +15,7 @@
  */
 package com.mammb.code.jpa.fluent.modelgen.writer;
 
-import com.mammb.code.jpa.fluent.modelgen.Context;
+import com.mammb.code.jpa.fluent.modelgen.MetamodelContext;
 import com.mammb.code.jpa.fluent.modelgen.JpaMetaModelEnhanceProcessor;
 
 import javax.tools.FileObject;
@@ -49,14 +49,14 @@ public class ApiClassWriter {
     public static final String REPOSITORY = "Repository";
 
     /** Context of processing. */
-    private final Context context;
+    private final MetamodelContext context;
 
 
     /**
      * Constructor.
      * @param context the context of processing
      */
-    protected ApiClassWriter(Context context) {
+    protected ApiClassWriter(MetamodelContext context) {
         this.context = context;
     }
 
@@ -66,7 +66,7 @@ public class ApiClassWriter {
      * @param context the context of processing
      * @return the criteria class writer
      */
-    public static ApiClassWriter of(Context context) {
+    public static ApiClassWriter of(MetamodelContext context) {
         return new ApiClassWriter(context);
     }
 
@@ -331,6 +331,11 @@ public class ApiClassWriter {
                 pw.println("@Generated(value = \"%s\")".formatted(JpaMetaModelEnhanceProcessor.class.getName()));
                 pw.println("""
                     public class %1$s {
+
+                        public interface Selector<E, R extends RootAware<E>, U> {
+                            Criteria.AnyExpression<U, ? extends Selection<U>> apply(R root);
+                        }
+
                         interface CommonType extends %2$s {}
 
                         public static class AnyPath<E> implements AnyExpression<E, Path<E>>, CommonType {

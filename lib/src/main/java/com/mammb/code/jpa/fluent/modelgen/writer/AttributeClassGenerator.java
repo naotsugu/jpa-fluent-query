@@ -15,7 +15,7 @@
  */
 package com.mammb.code.jpa.fluent.modelgen.writer;
 
-import com.mammb.code.jpa.fluent.modelgen.Context;
+import com.mammb.code.jpa.fluent.modelgen.MetamodelContext;
 import com.mammb.code.jpa.fluent.modelgen.model.StaticMetamodelAttribute;
 import com.mammb.code.jpa.fluent.modelgen.model.StaticMetamodelEntity;
 import java.util.Map;
@@ -31,7 +31,7 @@ import java.util.Objects;
 public abstract class AttributeClassGenerator {
 
     /** Context of processing. */
-    private final Context context;
+    private final MetamodelContext context;
 
     /** Representation of static metamodel. */
     private final StaticMetamodelEntity entity;
@@ -46,7 +46,7 @@ public abstract class AttributeClassGenerator {
      * @param entity the representation of static metamodel
      * @param imports the import sentences
      */
-    protected AttributeClassGenerator(Context context, StaticMetamodelEntity entity, ImportBuilder imports) {
+    protected AttributeClassGenerator(MetamodelContext context, StaticMetamodelEntity entity, ImportBuilder imports) {
         this.context = context;
         this.entity = entity;
         this.imports = imports;
