@@ -128,8 +128,8 @@ public class ModelClassWriter {
                 }
                 public static RootSource<$ClassName$, Root_> root() {
                     return new RootSource<$ClassName$, Root_>() {
-                        @Override public Root_ root(AbstractQuery<?> query, CriteriaBuilder builder) {
-                            return new Root_(query.from(rootClass()), query, builder);
+                        @Override public Root_ root(Root<$ClassName$> source, AbstractQuery<?> query, CriteriaBuilder builder) {
+                            return new Root_(source, query, builder);
                         }
                         @Override public Class<$ClassName$> rootClass() { return $ClassName$.class; }
                     };

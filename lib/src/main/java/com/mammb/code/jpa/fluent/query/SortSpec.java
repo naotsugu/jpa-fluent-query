@@ -27,6 +27,7 @@ import java.util.Objects;
  * @param <T> the type of entity
  * @author Naotsugu Kobayashi
  */
+@FunctionalInterface
 public interface SortSpec<T> {
 
     List<Order> toOrders(Root<T> root, CriteriaBuilder builder);

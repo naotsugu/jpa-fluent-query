@@ -29,6 +29,7 @@ import java.util.Objects;
  * @param <R> the type of root
  * @author Naotsugu Kobayashi
  */
+@FunctionalInterface
 public interface Filter<E, R extends RootAware<E>> {
 
     /**

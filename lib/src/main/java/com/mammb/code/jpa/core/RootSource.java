@@ -35,7 +35,7 @@ public interface RootSource<E, R extends RootAware<E>> {
      * @param builder {@link CriteriaBuilder}
      * @return the {@link RootAware}
      */
-    R root(AbstractQuery<?> query, CriteriaBuilder builder);
+    R root(Root<E> source, AbstractQuery<?> query, CriteriaBuilder builder);
 
 
     /**
@@ -43,5 +43,19 @@ public interface RootSource<E, R extends RootAware<E>> {
      * @return the root entity class
      */
     Class<E> rootClass();
+
+
+    static <E, R extends RootAware<E>> RootSource<E, R> directly(R rootAware, Class<E> rootClass) {
+        return new RootSource<>() {
+            @Override
+            public R root(Root<E> source, AbstractQuery<?> query, CriteriaBuilder builder) {
+                return rootAware;
+            }
+            @Override
+            public Class<E> rootClass() {
+                return rootClass;
+            }
+        };
+    }
 
 }

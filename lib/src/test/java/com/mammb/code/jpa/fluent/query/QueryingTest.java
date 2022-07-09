@@ -9,7 +9,6 @@ import com.mammb.code.jpa.fluent.test.ProjectModel;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-import jakarta.persistence.criteria.Root;
 import org.junit.jupiter.api.*;
 import java.util.List;
 
@@ -34,6 +33,7 @@ class QueryingTest {
     @BeforeEach
     void init() {
         em.getTransaction().begin();
+        createIssues();
     }
 
     @AfterEach
@@ -44,7 +44,6 @@ class QueryingTest {
 
     @Test
     void testCount() {
-        createIssues();
         var count = Querying.of(IssueModel.root()).count().on(em);
         assertEquals(6L, count);
     }
@@ -52,7 +51,6 @@ class QueryingTest {
 
     @Test
     void testCountWithFilter() {
-        createIssues();
         var count = Querying.of(IssueModel.root())
             .filter(issue -> issue.getTitle().eq("foo"))
             .count().on(em);
@@ -61,7 +59,6 @@ class QueryingTest {
 
     @Test
     void testSimpleQuery() {
-        createIssues();
         List<Issue> issues = Querying.of(IssueModel.root())
             .toList().on(em);
         assertEquals(6, issues.size());
@@ -70,7 +67,6 @@ class QueryingTest {
 
     @Test
     void testSimpleFilter() {
-        createIssues();
         List<Issue> issues = Querying.of(IssueModel.root())
                 .filter(issue -> issue.getTitle().eq("foo"))
                 .toList().on(em);
@@ -80,7 +76,6 @@ class QueryingTest {
 
     @Test
     void testSomeFilter() {
-        createIssues();
         List<Issue> issues = Querying.of(IssueModel.root())
             .filter(issue -> issue.getProject().getName().eq("name1"))
             .filter(issue -> issue.getTitle().eq("foo"))
@@ -91,9 +86,6 @@ class QueryingTest {
 
     @Test
     void testOrderBy() {
-
-        createIssues();
-
         List<Issue> issues = Querying.of(IssueModel.root())
             .filter(issue -> issue.getTitle().eq("foo"))
             .sorted(issue -> issue.getProject().getName().desc(),
@@ -108,7 +100,6 @@ class QueryingTest {
 
     @Test
     void testMapperConstruct() {
-        createIssues();
         List<IssueDto> issues = Querying.of(IssueModel.root())
             .filter(r -> r.getTitle().eq("foo"))
             .map(Mappers.issueDto(r -> r.getId(), r -> r.getTitle()))
@@ -118,7 +109,6 @@ class QueryingTest {
 
     @Test
     void testSlice() {
-        createIssues();
         Slice<Issue> issues = Querying.of(IssueModel.root())
             .filter(issue -> issue.getTitle().eq("foo"))
             .toSlice(SlicePoint.of()).on(em);
@@ -128,7 +118,6 @@ class QueryingTest {
 
     @Test
     void testPage() {
-        createIssues();
         Page<Issue> issues = Querying.of(IssueModel.root())
             .filter(issue -> issue.getTitle().eq("foo"))
             .toPage(SlicePoint.of()).on(em);
@@ -138,7 +127,6 @@ class QueryingTest {
 
     @Test
     void testSubQueryExists() {
-        createIssues();
         List<Issue> issues = Querying.of(IssueModel.root())
             .filter(issue -> SubQuerying.of(ProjectModel.root())
                                         .filter(prj -> prj.getName().eq("name1"))
@@ -151,12 +139,11 @@ class QueryingTest {
 
     @Test
     void testSubQuery() {
-        createIssues();
         Querying.of(IssueModel.root())
             .filter(issue -> issue.getId().gt(
-                SubQuerying.of(ProjectModel.root())
-                          .filter(prj -> prj.getName().eq("name1"))
-                          .toExpression(Long.class, prj -> prj.getId())))
+                    SubQuerying.of(ProjectModel.root())
+                               .filter(prj -> prj.getName().eq("name1"))
+                               .to(Long.class, prj -> prj.getId())))
             .toList().on(em);
     }
 
@@ -175,6 +162,7 @@ class QueryingTest {
         var issue6 = new Issue(); issue6.setTitle("bar"); issue6.setProject(project2);
         em.persist(issue1); em.persist(issue2); em.persist(issue3);
         em.persist(issue4); em.persist(issue5); em.persist(issue6);
+
     }
 
 }

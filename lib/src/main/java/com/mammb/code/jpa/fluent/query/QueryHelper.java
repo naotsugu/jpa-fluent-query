@@ -50,7 +50,7 @@ public interface QueryHelper {
             EntityManager em, RootSource<E, R> rootSource, Filter<E, R> filter) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-        R root = rootSource.root(cq, cb);
+        R root = rootSource.root(cq.from(rootSource.rootClass()), cq, cb);
         cq.select(cq.isDistinct() ? cb.countDistinct(root.get()) : cb.count(root.get()));
         Optional.ofNullable(filter.apply(root)).ifPresent(cq::where);
         cq.orderBy(List.of());
@@ -92,10 +92,20 @@ public interface QueryHelper {
     }
 
 
+    /**
+     * Create a sub query.
+     * @param subRootSource {@link RootSource}
+     * @param filter {@link Filter}
+     * @param mapper {@link Mapper}
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @param <U> the type of result value
+     * @return {@link Subquery}
+     */
     static <E, R extends RootAware<E>, U> Subquery<U> subQuery(
             RootSource<E, R> subRootSource,
-            Mapper<E, R, U> mapper,
-            Filter<E, R> filter) {
+            Filter<E, R> filter,
+            Mapper<E, R, U> mapper) {
         R root = mapper.apply(subRootSource, QueryContext.builder());
         @SuppressWarnings("unchecked")
         Subquery<U> subQuery = (Subquery<U>) root.query();

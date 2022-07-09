@@ -23,6 +23,7 @@ import jakarta.persistence.EntityManager;
  * @param <R> the type of querying result
  * @author Naotsugu Kobayashi
  */
+@FunctionalInterface
 public interface Query<R> {
 
     /**

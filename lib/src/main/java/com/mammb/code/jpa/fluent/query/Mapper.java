@@ -21,11 +21,19 @@ import com.mammb.code.jpa.core.RootSource;
 import jakarta.persistence.Tuple;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Selection;
 import jakarta.persistence.criteria.Subquery;
 import java.util.List;
 
-
+/**
+ * Mapper.
+ * @param <E> the type of entity
+ * @param <R> the type of root
+ * @param <U> the type of result
+ * @author Naotsugu Kobayashi
+ */
+@FunctionalInterface
 public interface Mapper<E, R extends RootAware<E>, U> {
 
     R apply(RootSource<E, R> rootSource, CriteriaBuilder builder);
@@ -33,8 +41,9 @@ public interface Mapper<E, R extends RootAware<E>, U> {
 
     static <E, R extends RootAware<E>> Mapper<E, R, E> of() {
         return (RootSource<E, R> rootSource, CriteriaBuilder builder) ->  {
-            CriteriaQuery<E> query = QueryContext.put(builder.createQuery(rootSource.rootClass()));
-            R root = rootSource.root(query, builder);
+            CriteriaQuery<E> query = builder.createQuery(rootSource.rootClass());
+            QueryContext.put(query);
+            R root = rootSource.root(query.from(rootSource.rootClass()), query, builder);
             query.select(QueryContext.put(root.get()));
             return root;
         };
@@ -44,8 +53,9 @@ public interface Mapper<E, R extends RootAware<E>, U> {
     static <E, R extends RootAware<E>> Mapper<E, R, Tuple> tuple(
             List<Selector<E, R, ?>> selectors) {
         return (RootSource<E, R> rootSource, CriteriaBuilder builder) ->  {
-            CriteriaQuery<Tuple> query = QueryContext.put(builder.createTupleQuery());
-            R root = rootSource.root(query, builder);
+            CriteriaQuery<Tuple> query = builder.createTupleQuery();
+            QueryContext.put(query);
+            R root = rootSource.root(query.from(rootSource.rootClass()), query, builder);
             QueryContext.put(root.get());
             query.select(builder.tuple(selectors.stream()
                 .map(sel -> sel.apply(root)).toArray(Selection[]::new)));
@@ -57,8 +67,9 @@ public interface Mapper<E, R extends RootAware<E>, U> {
     static <E, R extends RootAware<E>, U> Mapper<E, R, U> construct(
             Class<U> result, List<Selector<E, R, ?>> selectors) {
         return (RootSource<E, R> rootSource, CriteriaBuilder builder) ->  {
-            CriteriaQuery<U> query = QueryContext.put(builder.createQuery(result));
-            R root = rootSource.root(query, builder);
+            CriteriaQuery<U> query = builder.createQuery(result);
+            QueryContext.put(query);
+            R root = rootSource.root(query.from(rootSource.rootClass()), query, builder);
             QueryContext.put(root.get());
             query.select(builder.construct(result, selectors.stream()
                     .map(sel -> sel.apply(root)).toArray(Selection[]::new)));
@@ -66,21 +77,34 @@ public interface Mapper<E, R extends RootAware<E>, U> {
         };
     }
 
+
     static <E, R extends RootAware<E>> Mapper<E, R, E> subQuery() {
-        return (RootSource<E, R> rootSource, CriteriaBuilder builder) ->  {
-            Subquery<E> sq = QueryContext.query().subquery(rootSource.rootClass());
-            R root = rootSource.root(sq, builder);
+        return (RootSource<E, R> subRootSource, CriteriaBuilder builder) ->  {
+            Subquery<E> sq = QueryContext.query().subquery(subRootSource.rootClass());
+            R root = subRootSource.root(sq.from(subRootSource.rootClass()), sq, builder);
             sq.select(root.get());
             return root;
         };
     }
 
+
     static <E, R extends RootAware<E>, U> Mapper<E, R, U> subQuery(
             Class<U> resultType, ExpressionSelector<E, R, U> selector) {
-        return (RootSource<E, R> rootSource, CriteriaBuilder builder) ->  {
+        return (RootSource<E, R> subRootSource, CriteriaBuilder builder) ->  {
             Subquery<U> sq = QueryContext.query().subquery(resultType);
-            R root = rootSource.root(sq, builder);
+            R root = subRootSource.root(sq.from(subRootSource.rootClass()), sq, builder);
             sq.select(selector.apply(root));
+            return root;
+        };
+    }
+
+
+    static <E, R extends RootAware<E>> Mapper<E, R, E> correlate() {
+        return (RootSource<E, R> rootSource, CriteriaBuilder builder) ->  {
+            Subquery<E> sq = QueryContext.query().subquery(rootSource.rootClass());
+            @SuppressWarnings("unchecked")
+            R root = rootSource.root(sq.correlate((Root<E>) QueryContext.root()), sq, builder);
+            sq.select(root.get());
             return root;
         };
     }

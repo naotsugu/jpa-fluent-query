@@ -29,6 +29,7 @@ import java.util.function.Supplier;
  * @param <U> the type of selector result
  * @author Naotsugu Kobayashi
  */
+@FunctionalInterface
 public interface Selector<E, R extends RootAware<E>, U> {
 
     /**

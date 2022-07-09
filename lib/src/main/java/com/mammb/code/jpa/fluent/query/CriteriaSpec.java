@@ -28,6 +28,7 @@ import java.util.Objects;
  * @param <E> the type of entity
  * @author Naotsugu Kobayashi
  */
+@FunctionalInterface
 public interface CriteriaSpec<E> extends Serializable {
 
     Predicate toPredicate(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder builder);

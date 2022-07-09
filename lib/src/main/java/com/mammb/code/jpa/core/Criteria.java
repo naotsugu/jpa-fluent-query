@@ -148,7 +148,6 @@ public class Criteria {
         default Predicate nonNull() { return builder().isNotNull(get()); }
         default Order asc() { return builder().asc(get()); }
         default Order desc() { return builder().desc(get()); }
-        default Class<? extends E> type() { return get().getJavaType(); }
     }
 
     public interface ComparableExpression<E extends Comparable<? super E>, T extends Expression<E>>

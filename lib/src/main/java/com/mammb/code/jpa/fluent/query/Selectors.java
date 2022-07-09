@@ -28,6 +28,7 @@ import java.util.Objects;
  * @param <R> the type of root
  * @author Naotsugu Kobayashi
  */
+@FunctionalInterface
 public interface Selectors<E, R extends RootAware<E>> {
 
     List<Selection<?>> apply(R root);
