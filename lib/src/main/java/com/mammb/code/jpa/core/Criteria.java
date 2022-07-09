@@ -39,6 +39,9 @@ public class Criteria {
     public interface Selector<E, R extends RootAware<E>, U> {
         Criteria.AnyExpression<U, ? extends Selection<U>> apply(R root);
     }
+    public interface ExpressionSelector<E, R extends RootAware<E>, U> {
+        Criteria.AnyExpression<U, ? extends Expression<U>> apply(R root);
+    }
 
     interface CommonType extends BuilderAware {}
 
@@ -103,9 +106,7 @@ public class Criteria {
     }
 
     public static class NumberPath<T extends Number> extends AnyPath<T> implements NumberExpression<T, Path<T>>, CommonType {
-        public NumberPath(Supplier<Path<T>> path, CriteriaBuilder builder) {
-            super(path, builder);
-        }
+        public NumberPath(Supplier<Path<T>> path, CriteriaBuilder builder) { super(path, builder); }
     }
 
     public static class NumberExp<T extends Number> extends AnyExp<T> implements NumberExpression<T, Expression<T>>, CommonType {
@@ -147,6 +148,7 @@ public class Criteria {
         default Predicate nonNull() { return builder().isNotNull(get()); }
         default Order asc() { return builder().asc(get()); }
         default Order desc() { return builder().desc(get()); }
+        default Class<? extends E> type() { return get().getJavaType(); }
     }
 
     public interface ComparableExpression<E extends Comparable<? super E>, T extends Expression<E>>

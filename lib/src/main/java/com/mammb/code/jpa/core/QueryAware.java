@@ -17,6 +17,10 @@ package com.mammb.code.jpa.core;
 
 import jakarta.persistence.criteria.AbstractQuery;
 
+/**
+ * Query aware.
+ * @author Naotsugu Kobayashi
+ */
 public interface QueryAware<Q extends AbstractQuery<?>> {
     Q query();
 }

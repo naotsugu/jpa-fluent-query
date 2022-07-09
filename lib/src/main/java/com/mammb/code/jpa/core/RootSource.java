@@ -15,8 +15,11 @@
  */
 package com.mammb.code.jpa.core;
 
+import jakarta.persistence.criteria.AbstractQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 
 /**
  * Root source.
@@ -28,11 +31,11 @@ public interface RootSource<E, R extends RootAware<E>> {
 
     /**
      * Create the root from the given query.
-     * @param query {@link CriteriaQuery}
+     * @param query {@link AbstractQuery}
      * @param builder {@link CriteriaBuilder}
      * @return the {@link RootAware}
      */
-    R root(CriteriaQuery<?> query, CriteriaBuilder builder);
+    R root(AbstractQuery<?> query, CriteriaBuilder builder);
 
 
     /**

@@ -9,6 +9,7 @@ import com.mammb.code.jpa.fluent.test.ProjectModel;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import jakarta.persistence.criteria.Root;
 import org.junit.jupiter.api.*;
 import java.util.List;
 
@@ -135,17 +136,28 @@ class QueryingTest {
         assertEquals(3, issues.getTotalElements());
     }
 
+    @Test
+    void testSubQueryExists() {
+        createIssues();
+        List<Issue> issues = Querying.of(IssueModel.root())
+            .filter(issue -> SubQuerying.of(ProjectModel.root())
+                                        .filter(prj -> prj.getName().eq("name1"))
+                                        .filter(prj -> prj.getId().eq(issue.getProject().getId()))
+                                        .exists())
+            .toList().on(em);
+        assertEquals(3, issues.size());
+    }
+
 
     @Test
     void testSubQuery() {
         createIssues();
-        List<Issue> issues = Querying.of(IssueModel.root())
-            .filter(issue -> SubQuery.of(ProjectModel.subRoot(), issue)
-                                     .filter(prj -> prj.getName().eq("name1"))
-                                     .filter(prj -> prj.getId().eq(issue.getProject().getId()))
-                                     .exists())
+        Querying.of(IssueModel.root())
+            .filter(issue -> issue.getId().gt(
+                SubQuerying.of(ProjectModel.root())
+                          .filter(prj -> prj.getName().eq("name1"))
+                          .toExpression(Long.class, prj -> prj.getId())))
             .toList().on(em);
-        assertEquals(3, issues.size());
     }
 
 

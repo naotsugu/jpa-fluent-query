@@ -15,21 +15,17 @@
  */
 package com.mammb.code.jpa.fluent.query;
 
+import com.mammb.code.jpa.core.QueryContext;
 import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSource;
-import com.mammb.code.jpa.core.SubRoot;
-import com.mammb.code.jpa.core.SubRootSource;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.AbstractQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Order;
-import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Subquery;
 import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.SingularAttribute;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -80,10 +76,10 @@ public interface QueryHelper {
             Filter<E, R> filter,
             Sorts<E, R> sorts) {
 
-        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaBuilder cb = QueryContext.put(em.getCriteriaBuilder());
         R root = mapper.apply(rootSource, cb);
         @SuppressWarnings("unchecked")
-        CriteriaQuery<U> cq = (CriteriaQuery<U>) root.query();
+        CriteriaQuery<U> cq = (CriteriaQuery<U>) QueryContext.query();
         Optional.ofNullable(filter.apply(root)).ifPresent(cq::where);
 
         List<Order> orders = new ArrayList<>();
@@ -91,28 +87,19 @@ public interface QueryHelper {
         orders.addAll(getIdentifierName(root.get().getModel()).stream()
             .map(name -> cb.asc(root.get().get(name))).toList());
         cq.orderBy(orders);
-
+        QueryContext.close();
         return em.createQuery(cq);
     }
 
 
-    /**
-     * Get the sub query.
-     * @param query parent query
-     * @param cb {@link CriteriaBuilder)
-     * @param subRootSource the sub query root source
-     * @param filter {@link Filter}
-     * @param <E> the type of sub query root entity
-     * @param <R> the type of sub query root
-     * @param <U> the type of sub query result
-     * @return the sub query
-     */
-    static <E, R extends SubRoot<E, U>, U> Subquery<U> subQuery(
-            AbstractQuery<?> query, CriteriaBuilder cb,
-            SubRootSource<E, R, U> subRootSource, Filter<E, R> filter) {
-        R subRoot = subRootSource.root(query, cb);
-        Subquery<U> subQuery = subRoot.query();
-        Optional.ofNullable(filter.apply(subRoot)).ifPresent(subQuery::where);
+    static <E, R extends RootAware<E>, U> Subquery<U> subQuery(
+            RootSource<E, R> subRootSource,
+            Mapper<E, R, U> mapper,
+            Filter<E, R> filter) {
+        R root = mapper.apply(subRootSource, QueryContext.builder());
+        @SuppressWarnings("unchecked")
+        Subquery<U> subQuery = (Subquery<U>) root.query();
+        Optional.ofNullable(filter.apply(root)).ifPresent(subQuery::where);
         return subQuery;
     }
 
