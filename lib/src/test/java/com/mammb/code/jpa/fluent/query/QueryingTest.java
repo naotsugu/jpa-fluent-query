@@ -148,6 +148,25 @@ class QueryingTest {
     }
 
 
+    @Test
+    void testSelfCorrelate() {
+        Querying.of(IssueModel.root())
+                .filter(issue -> SubQuerying.of(issue)
+                                            .filter(r -> r.getTitle().eq("for"))
+                                            .exists())
+            .toList().on(em);
+    }
+
+    @Test
+    void testCorrelate() {
+        Querying.of(IssueModel.root())
+            .filter(issue -> SubQuerying.of(ProjectModel.root())
+                    .filter(prj -> prj.getName().eq("name1"))
+                    .filter(issue, (issue1, prj) -> issue1.getProject().eq(prj))
+                    .exists())
+            .toList().on(em);
+    }
+
     private void createIssues() {
 
         var project1 = new Project(); project1.setName("name1");

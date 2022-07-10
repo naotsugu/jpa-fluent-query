@@ -13,24 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mammb.code.jpa.core;
+package com.mammb.code.jpa.fluent.query;
 
-import jakarta.persistence.criteria.AbstractQuery;
-import jakarta.persistence.criteria.Root;
-import java.util.function.Supplier;
+import com.mammb.code.jpa.core.RootAware;
+import jakarta.persistence.criteria.Predicate;
 
 /**
- * Root aware.
- * @param <E> the type of entity
+ * The filter for WHERE clause.
+ * @param <E1> the type of entity
+ * @param <R1> the type of root
+ * @param <E2>
+ * @param <R2>
  * @author Naotsugu Kobayashi
  */
-public interface RootAware<E> extends
-        Supplier<Root<E>>,
-        BuilderAware,
-        QueryAware<AbstractQuery<?>>,
-        Criteria.AnyExpression<E, Root<E>>,
-        Typed<E> {
+@FunctionalInterface
+public interface BiFilter<E1, R1 extends RootAware<E1>, E2, R2 extends RootAware<E2>> {
 
-    RootAware<E> with(Root<E> root, AbstractQuery<?> query);
+    /**
+     * Creates a {@link Predicate} for the given {@link RootAware}.
+     * @param root1 a {@link RootAware}
+     * @param root2 a {@link RootAware}
+     * @return a {@link Predicate}
+     */
+    Predicate apply(R1 root1, R2 root2);
 
 }
+
+

@@ -35,7 +35,7 @@ import java.util.Optional;
  *
  * @author Naotsugu Kobayashi
  */
-public interface QueryHelper {
+public interface QueryBuilder {
 
     /**
      * Create a count query.
@@ -105,10 +105,12 @@ public interface QueryHelper {
     static <E, R extends RootAware<E>, U> Subquery<U> subQuery(
             RootSource<E, R> subRootSource,
             Filter<E, R> filter,
-            Mapper<E, R, U> mapper) {
+            Mapper<E, R, U> mapper,
+            CorrelateFilter<?, ?, E, R> correlateFilter) {
         R root = mapper.apply(subRootSource, QueryContext.builder());
         @SuppressWarnings("unchecked")
         Subquery<U> subQuery = (Subquery<U>) root.query();
+        filter = filter.and(Optional.ofNullable(correlateFilter.apply(QueryContext.root(), subQuery)).orElse(Filter.empty()));
         Optional.ofNullable(filter.apply(root)).ifPresent(subQuery::where);
         return subQuery;
     }
@@ -129,7 +131,7 @@ public interface QueryHelper {
     static <E, R extends RootAware<E>, U> Slice<U> slice(
             EntityManager em, RootSource<E, R> rootSource, Mapper<E, R, U> mapper,
             Filter<E, R> filter, Sorts<E, R> sorts, SlicePoint slicePoint) {
-        var query = QueryHelper.query(em, rootSource, mapper, filter, sorts);
+        var query = QueryBuilder.query(em, rootSource, mapper, filter, sorts);
         query.setFirstResult(Math.toIntExact(slicePoint.getOffset()));
         query.setMaxResults(slicePoint.getSize() + 1);
         List<U> result = query.getResultList();
@@ -160,7 +162,7 @@ public interface QueryHelper {
             return Page.of(List.of(), count, slicePoint);
         }
 
-        var query = QueryHelper.query(em, rootSource, mapper, filter, sorts);
+        var query = QueryBuilder.query(em, rootSource, mapper, filter, sorts);
         query.setFirstResult(Math.toIntExact(slicePoint.getOffset()));
         query.setMaxResults(slicePoint.getSize());
         List<U> result = query.getResultList();

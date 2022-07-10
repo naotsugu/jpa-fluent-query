@@ -20,7 +20,7 @@ import com.mammb.code.jpa.fluent.query.Mapper;
 import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSourceAware;
 import com.mammb.code.jpa.fluent.query.Filter;
-import com.mammb.code.jpa.fluent.query.QueryHelper;
+import com.mammb.code.jpa.fluent.query.QueryBuilder;
 import com.mammb.code.jpa.fluent.query.Request;
 import com.mammb.code.jpa.fluent.query.Slice;
 import com.mammb.code.jpa.fluent.query.SlicePoint;
@@ -52,7 +52,7 @@ public interface FindSliceTrait<E, R extends RootAware<E>> extends EntityManager
      * @return the {@link Slice}
      */
     default Slice<E> findSlice(Filter<E, R> filter, Sorts<E, R> sorts, SlicePoint slicePoint) {
-        return QueryHelper.slice(em(), rootSource(), Mapper.of(), filter, sorts, slicePoint);
+        return QueryBuilder.slice(em(), rootSource(), Mapper.of(), filter, sorts, slicePoint);
     }
 
 }

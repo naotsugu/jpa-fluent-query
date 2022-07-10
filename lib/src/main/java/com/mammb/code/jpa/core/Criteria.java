@@ -138,7 +138,7 @@ public class Criteria {
 
     public interface AnyExpression<E, T extends Expression<E>> extends Supplier<T>, CommonType {
         T get();
-        default Predicate eq(AnyExpression<E, T> y) { return builder().equal(get(), y.get()); }
+        default Predicate eq(AnyExpression<E, ?> y) { return builder().equal(get(), y.get()); }
         default Predicate eq(Expression<?> y) { return builder().equal(get(), y); }
         default Predicate eq(Object y) { return isEmpty(y) ? null : builder().equal(get(), y); }
         default Predicate ne(AnyExpression<E, T> y) { return builder().notEqual(get(), y.get()); }

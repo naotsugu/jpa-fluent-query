@@ -38,23 +38,23 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
     Mapper<E, R, U> mapper();
 
     default Query<Long> count() {
-        return em -> QueryHelper.countQuery(em, rootSource(), filter()).getSingleResult();
+        return em -> QueryBuilder.countQuery(em, rootSource(), filter()).getSingleResult();
     }
 
     default Query<Optional<U>> toSingle() {
-        return em -> Optional.ofNullable(QueryHelper.query(em, rootSource(), mapper(), filter(), sorts()).getSingleResult());
+        return em -> Optional.ofNullable(QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts()).getSingleResult());
     }
 
     default Query<List<U>> toList() {
-        return em -> QueryHelper.query(em, rootSource(), mapper(), filter(), sorts()).getResultList();
+        return em -> QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts()).getResultList();
     }
 
     default Query<Slice<U>> toSlice(SlicePoint slicePoint) {
-        return em -> QueryHelper.slice(em, rootSource(), mapper(), filter(), sorts(), slicePoint);
+        return em -> QueryBuilder.slice(em, rootSource(), mapper(), filter(), sorts(), slicePoint);
     }
 
     default Query<Page<U>> toPage(SlicePoint slicePoint) {
-        return em -> QueryHelper.page(em, rootSource(), mapper(), filter(), sorts(), slicePoint);
+        return em -> QueryBuilder.page(em, rootSource(), mapper(), filter(), sorts(), slicePoint);
     }
 
 }

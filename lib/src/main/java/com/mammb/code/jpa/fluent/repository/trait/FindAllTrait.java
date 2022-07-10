@@ -20,7 +20,7 @@ import com.mammb.code.jpa.fluent.query.Mapper;
 import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSourceAware;
 import com.mammb.code.jpa.fluent.query.Filter;
-import com.mammb.code.jpa.fluent.query.QueryHelper;
+import com.mammb.code.jpa.fluent.query.QueryBuilder;
 import com.mammb.code.jpa.fluent.query.Request;
 import com.mammb.code.jpa.fluent.query.Sorts;
 import java.util.List;
@@ -46,7 +46,7 @@ public interface FindAllTrait<E, R extends RootAware<E>> extends EntityManagerAw
     }
 
     default List<E> findAll(Filter<E, R> filter, Sorts<E, R> sorts) {
-        return QueryHelper.query(em(), rootSource(), Mapper.of(), filter, sorts).getResultList();
+        return QueryBuilder.query(em(), rootSource(), Mapper.of(), filter, sorts).getResultList();
     }
 
     default long count() {
@@ -54,7 +54,7 @@ public interface FindAllTrait<E, R extends RootAware<E>> extends EntityManagerAw
     }
 
     default long count(Filter<E, R> filter) {
-        return QueryHelper.countQuery(em(), rootSource(), filter).getSingleResult();
+        return QueryBuilder.countQuery(em(), rootSource(), filter).getSingleResult();
     }
 
 }
