@@ -104,14 +104,12 @@ public interface QueryBuilder {
      */
     static <E, R extends RootAware<E>, U> Subquery<U> subQuery(
             RootSource<E, R> subRootSource,
-            Filter<E, R> filter,
-            Mapper<E, R, U> mapper,
-            CorrelateFilter<?, ?, E, R> correlateFilter) {
+            SubQueryFilter<E, R> filter,
+            Mapper<E, R, U> mapper) {
         R root = mapper.apply(subRootSource, QueryContext.builder());
         @SuppressWarnings("unchecked")
         Subquery<U> subQuery = (Subquery<U>) root.query();
-        filter = filter.and(Optional.ofNullable(correlateFilter.apply(QueryContext.root(), subQuery)).orElse(Filter.empty()));
-        Optional.ofNullable(filter.apply(root)).ifPresent(subQuery::where);
+        Optional.ofNullable(filter.apply(root, subQuery)).ifPresent(subQuery::where);
         return subQuery;
     }
 
