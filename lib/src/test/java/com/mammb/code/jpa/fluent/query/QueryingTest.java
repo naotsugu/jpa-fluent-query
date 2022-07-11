@@ -152,7 +152,7 @@ class QueryingTest {
     void testSelfCorrelate() {
         Querying.of(IssueModel.root())
                 .filter(issue -> SubQuerying.of(issue)
-                                            .filter(r -> r.getTitle().eq("for"))
+                                            .filter(r -> r.getTitle().eq("foo"))
                                             .exists())
             .toList().on(em);
     }

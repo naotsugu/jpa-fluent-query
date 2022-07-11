@@ -45,12 +45,12 @@ public interface RootSource<E, R extends RootAware<E>> {
     Class<E> rootClass();
 
 
-    static <E, R extends RootAware<E>> RootSource<E, R> directly(R rootAware, Class<E> rootClass) {
+    static <E, R extends RootAware<E>> RootSource<E, R> directly(R root, Class<E> rootClass) {
         return new RootSource<>() {
             @Override
             @SuppressWarnings("unchecked")
             public R root(Root<E> source, AbstractQuery<?> query, CriteriaBuilder builder) {
-                return (R) rootAware.with(source, query);
+                return (R) root.with(source, query);
             }
             @Override
             public Class<E> rootClass() {

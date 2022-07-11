@@ -60,7 +60,7 @@ public class MapperModelProcessor extends AbstractProcessor {
         }
 
         context = new Context(env,
-            Boolean.parseBoolean(env.getOptions().getOrDefault(JpaMetaModelEnhanceProcessor.DEBUG_OPTION, "false")));
+            Boolean.parseBoolean(env.getOptions().getOrDefault(JpaModelProcessor.DEBUG_OPTION, "false")));
 
         var version = getClass().getPackage().getImplementationVersion();
         context.logInfo("MapperModelProcessor {}", (Objects.isNull(version) ? "" : version));

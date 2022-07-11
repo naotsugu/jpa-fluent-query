@@ -15,8 +15,8 @@
  */
 package com.mammb.code.jpa.fluent.modelgen.writer;
 
-import com.mammb.code.jpa.fluent.modelgen.MetamodelContext;
-import com.mammb.code.jpa.fluent.modelgen.JpaMetaModelEnhanceProcessor;
+import com.mammb.code.jpa.fluent.modelgen.ModelContext;
+import com.mammb.code.jpa.fluent.modelgen.JpaModelProcessor;
 
 import javax.tools.FileObject;
 import java.io.PrintWriter;
@@ -49,14 +49,14 @@ public class ApiClassWriter {
     public static final String REPOSITORY = "Repository";
 
     /** Context of processing. */
-    private final MetamodelContext context;
+    private final ModelContext context;
 
 
     /**
      * Constructor.
      * @param context the context of processing
      */
-    protected ApiClassWriter(MetamodelContext context) {
+    protected ApiClassWriter(ModelContext context) {
         this.context = context;
     }
 
@@ -66,7 +66,7 @@ public class ApiClassWriter {
      * @param context the context of processing
      * @return the criteria class writer
      */
-    public static ApiClassWriter of(MetamodelContext context) {
+    public static ApiClassWriter of(ModelContext context) {
         return new ApiClassWriter(context);
     }
 
@@ -112,7 +112,7 @@ public class ApiClassWriter {
                 pw.println(imports.generateImports(context.isJakarta()));
                 pw.println();
 
-                pw.println("@Generated(value = \"%s\")".formatted(JpaMetaModelEnhanceProcessor.class.getName()));
+                pw.println("@Generated(value = \"%s\")".formatted(JpaModelProcessor.class.getName()));
                 pw.println("""
                 public interface %1$s<E, T extends java.util.function.Supplier<Root<E>>> {
                     T root(CriteriaQuery<?> query, CriteriaBuilder builder);
@@ -156,7 +156,7 @@ public class ApiClassWriter {
                 pw.println(imports.generateImports(context.isJakarta()));
                 pw.println();
 
-                pw.println("@Generated(value = \"%s\")".formatted(JpaMetaModelEnhanceProcessor.class.getName()));
+                pw.println("@Generated(value = \"%s\")".formatted(JpaModelProcessor.class.getName()));
                 pw.println("""
                     public interface %1$s<E, R extends %2$s<E>, U> {
                         R root(AbstractQuery<?> query, CriteriaBuilder builder);
@@ -199,7 +199,7 @@ public class ApiClassWriter {
                 pw.println(imports.generateImports(context.isJakarta()));
                 pw.println();
 
-                pw.println("@Generated(value = \"%s\")".formatted(JpaMetaModelEnhanceProcessor.class.getName()));
+                pw.println("@Generated(value = \"%s\")".formatted(JpaModelProcessor.class.getName()));
                 pw.println("""
                     public interface %1$s<Q extends AbstractQuery<?>> {
                         Q query();
@@ -239,7 +239,7 @@ public class ApiClassWriter {
                 pw.println(imports.generateImports(context.isJakarta()));
                 pw.println();
 
-                pw.println("@Generated(value = \"%s\")".formatted(JpaMetaModelEnhanceProcessor.class.getName()));
+                pw.println("@Generated(value = \"%s\")".formatted(JpaModelProcessor.class.getName()));
                 pw.println("""
                 public interface %1$s {
                     CriteriaBuilder builder();
@@ -281,7 +281,7 @@ public class ApiClassWriter {
                 pw.println(imports.generateImports(context.isJakarta()));
                 pw.println();
 
-                pw.println("@Generated(value = \"%s\")".formatted(JpaMetaModelEnhanceProcessor.class.getName()));
+                pw.println("@Generated(value = \"%s\")".formatted(JpaModelProcessor.class.getName()));
                 pw.println("""
                     public interface %1$s<E> extends Supplier<Root<E>>, %2$s, %3$s<AbstractQuery<?>> {
                     }
@@ -328,7 +328,7 @@ public class ApiClassWriter {
                 pw.println(imports.generateImports(context.isJakarta()));
                 pw.println();
 
-                pw.println("@Generated(value = \"%s\")".formatted(JpaMetaModelEnhanceProcessor.class.getName()));
+                pw.println("@Generated(value = \"%s\")".formatted(JpaModelProcessor.class.getName()));
                 pw.println("""
                     public class %1$s {
 
@@ -567,7 +567,7 @@ public class ApiClassWriter {
                 pw.println(imports.generateImports(context.isJakarta()));
                 pw.println();
 
-                pw.println("@Generated(value = \"%s\")".formatted(JpaMetaModelEnhanceProcessor.class.getName()));
+                pw.println("@Generated(value = \"%s\")".formatted(JpaModelProcessor.class.getName()));
                 pw.println("""
                     public interface %1$s<PK extends Serializable, E, R extends %2$s<E>> {
                         %3$s<E, R> rootSource();

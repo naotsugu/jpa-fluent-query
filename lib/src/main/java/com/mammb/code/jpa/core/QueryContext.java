@@ -47,8 +47,8 @@ public interface QueryContext {
     static CriteriaQuery<?> query() {
         return Objects.requireNonNull(((QueryContextImpl) threadLocal.get()).query);
     }
-    static Root<?> root() {
-        return Objects.requireNonNull(((QueryContextImpl) threadLocal.get()).root);
+    static <E> Root<E> root() {
+        return Objects.requireNonNull((Root<E>) ((QueryContextImpl) threadLocal.get()).root);
     }
     static void close() {
         var context = (QueryContextImpl) threadLocal.get();

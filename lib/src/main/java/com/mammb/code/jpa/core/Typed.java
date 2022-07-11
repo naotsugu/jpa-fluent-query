@@ -15,6 +15,11 @@
  */
 package com.mammb.code.jpa.core;
 
+/**
+ *
+ * @param <E>
+ * @author Naotsugu Kobayashi
+ */
 public interface Typed<E> {
     Class<E> type();
 }

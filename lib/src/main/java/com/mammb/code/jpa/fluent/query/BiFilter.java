@@ -20,22 +20,22 @@ import jakarta.persistence.criteria.Predicate;
 
 /**
  * The filter for WHERE clause.
- * @param <E1> the type of entity
- * @param <R1> the type of root
- * @param <E2>
- * @param <R2>
+ * @param <E1> the type of another entity
+ * @param <R1> the type of another root
+ * @param <E> the type of self entity
+ * @param <R> the type of self root
  * @author Naotsugu Kobayashi
  */
 @FunctionalInterface
-public interface BiFilter<E1, R1 extends RootAware<E1>, E2, R2 extends RootAware<E2>> {
+public interface BiFilter<E1, R1 extends RootAware<E1>, E, R extends RootAware<E>> {
 
     /**
      * Creates a {@link Predicate} for the given {@link RootAware}.
-     * @param root1 a {@link RootAware}
-     * @param root2 a {@link RootAware}
+     * @param root1 an other {@link RootAware}
+     * @param root a self {@link RootAware}
      * @return a {@link Predicate}
      */
-    Predicate apply(R1 root1, R2 root2);
+    Predicate apply(R1 root1, R root);
 
 }
 

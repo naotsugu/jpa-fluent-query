@@ -16,7 +16,7 @@
 package com.mammb.code.jpa.fluent.modelgen.writer;
 
 import com.mammb.code.jpa.fluent.modelgen.Context;
-import com.mammb.code.jpa.fluent.modelgen.JpaMetaModelEnhanceProcessor;
+import com.mammb.code.jpa.fluent.modelgen.JpaModelProcessor;
 import com.mammb.code.jpa.fluent.modelgen.model.MappableType;
 import java.io.PrintWriter;
 import java.util.List;
@@ -88,7 +88,7 @@ public class MappersClassWriter {
                 }
                 """).bind(
                 "$packageName$", imports.getSelfPackage(),
-                "$GeneratorClass$", JpaMetaModelEnhanceProcessor.class.getName(),
+                "$GeneratorClass$", JpaModelProcessor.class.getName(),
                 "$MapperClassName$", className,
                 "$mapperMethods$", mapperMethods(),
                 "$import$", imports.generateImports(false)));

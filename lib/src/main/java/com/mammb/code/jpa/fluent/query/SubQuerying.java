@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019-2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.mammb.code.jpa.fluent.query;
 
 import com.mammb.code.jpa.core.Criteria;
@@ -6,8 +21,14 @@ import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSource;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 
+/**
+ * SubQuerying.
+ * @param <E> the type of entity
+ * @param <R> the type of root
+ * @param <U> the type of query result
+ * @author Naotsugu Kobayashi
+ */
 public interface SubQuerying<E, R extends RootAware<E>, U> {
 
     SubQuerying<E, R, U> filter(Filter<E, R> filter);
@@ -36,13 +57,12 @@ public interface SubQuerying<E, R extends RootAware<E>, U> {
     }
 
     static <E, R extends RootAware<E>> SubQuerying<E, R, E> of(R correlate) {
-        return SubQuerying.of(RootSource.directly(correlate, correlate.type()), Mapper.correlate(), SubQueryFilter.empty());
+        return SubQuerying.of(RootSource.directly(correlate, correlate.type()),
+            Mapper.correlate(), SubQueryFilter.empty());
     }
 
     private static <E, R extends RootAware<E>, U> SubQuerying<E, R, U> of(
-            RootSource<E, R> subRootSource,
-            Mapper<E, R, U> mapper,
-            SubQueryFilter<E, R> filter) {
+            RootSource<E, R> subRootSource, Mapper<E, R, U> mapper, SubQueryFilter<E, R> filter) {
 
         return new SubQuerying<>() {
             @Override
@@ -50,10 +70,10 @@ public interface SubQuerying<E, R extends RootAware<E>, U> {
                 return SubQuerying.of(rootSource(), mapper(), filter().and(SubQueryFilter.of(f)));
             }
             @Override
-            public <E1, R1 extends RootAware<E1>> SubQuerying<E, R, U> filter(R1 correlateRoot, BiFilter<E1, R1, E, R> biFilter) {
-                @SuppressWarnings("unchecked")
-                Root<E1> raw = (Root<E1>) QueryContext.root();
-                return SubQuerying.of(rootSource(), mapper(), filter().and(SubQueryFilter.correlateOf(raw, correlateRoot, biFilter)));
+            public <E1, R1 extends RootAware<E1>> SubQuerying<E, R, U> filter(
+                    R1 correlateRoot, BiFilter<E1, R1, E, R> filter) {
+                return SubQuerying.of(rootSource(), mapper(),
+                    filter().and(SubQueryFilter.correlateOf(QueryContext.root(), correlateRoot, filter)));
             }
             @Override
             public SubQueryFilter<E, R> filter() { return filter; }

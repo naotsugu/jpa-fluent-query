@@ -33,7 +33,7 @@ import java.util.List;
  *
  * @author Naotsugu Kobayashi
  */
-public class MetamodelContext {
+public class ModelContext {
 
     /** Annotation processing environment. */
     private final ProcessingEnvironment pe;
@@ -60,7 +60,7 @@ public class MetamodelContext {
      * @param debug the mode of debug
      * @param addRepository the mode of add repository
      */
-    protected MetamodelContext(ProcessingEnvironment pe, boolean debug, boolean addRepository) {
+    protected ModelContext(ProcessingEnvironment pe, boolean debug, boolean addRepository) {
         this.pe = pe;
         this.generatedModelClasses = new HashSet<>();
         this.repositoryTraits = new HashSet<>();
@@ -77,8 +77,8 @@ public class MetamodelContext {
      * @param addRepository the mode of add repository
      * @return the context
      */
-    public static MetamodelContext of(ProcessingEnvironment pe, boolean debug, boolean addRepository) {
-        return new MetamodelContext(pe, debug, addRepository);
+    public static ModelContext of(ProcessingEnvironment pe, boolean debug, boolean addRepository) {
+        return new ModelContext(pe, debug, addRepository);
     }
 
 
