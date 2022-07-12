@@ -29,11 +29,11 @@ import jakarta.persistence.criteria.Predicate;
  * @param <U> the type of query result
  * @author Naotsugu Kobayashi
  */
-public interface SubQuerying<E, R extends RootAware<E>, U> {
+public interface SubQuery<E, R extends RootAware<E>, U> {
 
-    SubQuerying<E, R, U> filter(Filter<E, R> filter);
+    SubQuery<E, R, U> filter(Filter<E, R> filter);
 
-    <E1, R1 extends RootAware<E1>> SubQuerying<E, R, U> filter(R1 correlateRoot, BiFilter<E1, R1, E, R> filter);
+    <E1, R1 extends RootAware<E1>> SubQuery<E, R, U> filter(R1 correlateRoot, BiFilter<E1, R1, E, R> filter);
 
     RootSource<E, R> rootSource();
     Mapper<E, R, U> mapper();
@@ -52,27 +52,27 @@ public interface SubQuerying<E, R extends RootAware<E>, U> {
         return QueryContext.builder().exists(QueryBuilder.subQuery(rootSource(), filter(), mapper()));
     }
 
-    static <E, R extends RootAware<E>> SubQuerying<E, R, E> of(RootSource<E, R> subRootSource) {
-        return SubQuerying.of(subRootSource, Mapper.subQuery(), SubQueryFilter.empty());
+    static <E, R extends RootAware<E>> SubQuery<E, R, E> of(RootSource<E, R> subRootSource) {
+        return SubQuery.of(subRootSource, Mapper.subQuery(), SubQueryFilter.empty());
     }
 
-    static <E, R extends RootAware<E>> SubQuerying<E, R, E> of(R correlate) {
-        return SubQuerying.of(RootSource.directly(correlate, correlate.type()),
-            Mapper.correlate(), SubQueryFilter.empty());
+    static <E, R extends RootAware<E>> SubQuery<E, R, E> of(R correlate) {
+        return SubQuery.of(RootSource.directly(correlate, correlate.type()),
+            Mapper.subQuery(), SubQueryFilter.empty());
     }
 
-    private static <E, R extends RootAware<E>, U> SubQuerying<E, R, U> of(
+    private static <E, R extends RootAware<E>, U> SubQuery<E, R, U> of(
             RootSource<E, R> subRootSource, Mapper<E, R, U> mapper, SubQueryFilter<E, R> filter) {
 
-        return new SubQuerying<>() {
+        return new SubQuery<>() {
             @Override
-            public SubQuerying<E, R, U> filter(Filter<E, R> f) {
-                return SubQuerying.of(rootSource(), mapper(), filter().and(SubQueryFilter.of(f)));
+            public SubQuery<E, R, U> filter(Filter<E, R> f) {
+                return SubQuery.of(rootSource(), mapper(), filter().and(SubQueryFilter.of(f)));
             }
             @Override
-            public <E1, R1 extends RootAware<E1>> SubQuerying<E, R, U> filter(
+            public <E1, R1 extends RootAware<E1>> SubQuery<E, R, U> filter(
                     R1 correlateRoot, BiFilter<E1, R1, E, R> filter) {
-                return SubQuerying.of(rootSource(), mapper(),
+                return SubQuery.of(rootSource(), mapper(),
                     filter().and(SubQueryFilter.correlateOf(QueryContext.root(), correlateRoot, filter)));
             }
             @Override

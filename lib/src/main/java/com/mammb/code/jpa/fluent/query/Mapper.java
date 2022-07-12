@@ -102,8 +102,9 @@ public interface Mapper<E, R extends RootAware<E>, U> {
     static <E, R extends RootAware<E>> Mapper<E, R, E> correlate() {
         return (RootSource<E, R> rootSource, CriteriaBuilder builder) ->  {
             Subquery<E> sq = QueryContext.query().subquery(rootSource.rootClass());
-            @SuppressWarnings("unchecked")
-            R root = rootSource.root(sq.correlate((Root<E>) QueryContext.root()), sq, builder);
+            //Root<E> raw = sq.from(rootSource.rootClass());
+            Root<E> correlate = sq.correlate(QueryContext.root());
+            R root = rootSource.root(correlate, sq, builder);
             sq.select(root.get());
             return root;
         };

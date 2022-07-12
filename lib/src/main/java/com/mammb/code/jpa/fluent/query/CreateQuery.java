@@ -17,42 +17,83 @@ package com.mammb.code.jpa.fluent.query;
 
 import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSource;
-
 import java.util.List;
 import java.util.Optional;
 
 /**
  * Create Query helper interface.
- * @param <E> the entity of root
- * @param <R> the root element
+ * @param <E> the type of entity of root
+ * @param <R> the type of root element
+ * @param <U> the type of query result
  * @author Naotsugu Kobayashi
  */
 public interface CreateQuery<E, R extends RootAware<E>, U> {
 
+    /**
+     * Get the root source.
+     * @return the root source
+     */
     RootSource<E, R> rootSource();
 
+    /**
+     * Get the current filter.
+     * @return the current filter
+     */
     Filter<E, R> filter();
 
+    /**
+     * Get the current sorts.
+     * @return the current sorts
+     */
     Sorts<E, R> sorts();
 
+    /**
+     * Get the current mapper.
+     * @return the current mapper
+     */
     Mapper<E, R, U> mapper();
 
+
+    /**
+     * Get the count result.
+     * @return the count result
+     */
     default Query<Long> count() {
         return em -> QueryBuilder.countQuery(em, rootSource(), filter()).getSingleResult();
     }
 
+
+    /**
+     * Get the single result.
+     * @return the single result
+     */
     default Query<Optional<U>> toSingle() {
         return em -> Optional.ofNullable(QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts()).getSingleResult());
     }
 
+
+    /**
+     * Get the {@link List} result.
+     * @return the {@link List} result
+     */
     default Query<List<U>> toList() {
         return em -> QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts()).getResultList();
     }
 
+
+    /**
+     * Get the {@link Slice} result.
+     * @return the {@link Slice} result
+     */
     default Query<Slice<U>> toSlice(SlicePoint slicePoint) {
         return em -> QueryBuilder.slice(em, rootSource(), mapper(), filter(), sorts(), slicePoint);
     }
 
+
+    /**
+     * Get the {@link Page} result.
+     * @return the {@link Page} result
+     */
     default Query<Page<U>> toPage(SlicePoint slicePoint) {
         return em -> QueryBuilder.page(em, rootSource(), mapper(), filter(), sorts(), slicePoint);
     }
