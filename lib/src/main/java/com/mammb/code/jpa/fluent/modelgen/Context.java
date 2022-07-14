@@ -24,6 +24,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+/**
+ * Context of annotation processing.
+ *
+ * @author Naotsugu Kobayashi
+ */
 public class Context {
 
     /** Annotation processing environment. */
@@ -32,7 +37,7 @@ public class Context {
     /** Mode of debug. */
     private final boolean debug;
 
-    /** Generated classes holder. */
+    /** Generated classes(fqcn) holder. */
     private final Collection<String> generatedClasses;
 
 
@@ -45,6 +50,15 @@ public class Context {
         this.pe = pe;
         this.debug = debug;
         this.generatedClasses = new ArrayList<>();
+    }
+
+
+    /**
+     * Get the annotation processing environment.
+     * @return the annotation processing environment
+     */
+    protected ProcessingEnvironment pe() {
+        return pe;
     }
 
 

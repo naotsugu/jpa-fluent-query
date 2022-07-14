@@ -16,7 +16,6 @@
 package com.mammb.code.jpa.fluent.query;
 
 import com.mammb.code.jpa.core.Criteria;
-import com.mammb.code.jpa.core.QueryContext;
 import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSource;
 import jakarta.persistence.criteria.Expression;
@@ -58,7 +57,7 @@ public interface SubQuery<E, R extends RootAware<E>, U> {
 
     static <E, R extends RootAware<E>> SubQuery<E, R, E> of(R correlate) {
         return SubQuery.of(RootSource.directly(correlate, correlate.type()),
-            Mapper.subQuery(), SubQueryFilter.empty());
+            Mapper.correlate(), SubQueryFilter.empty());
     }
 
     private static <E, R extends RootAware<E>, U> SubQuery<E, R, U> of(

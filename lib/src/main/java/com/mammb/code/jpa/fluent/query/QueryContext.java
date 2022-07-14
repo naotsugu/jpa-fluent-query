@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mammb.code.jpa.core;
+package com.mammb.code.jpa.fluent.query;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -41,12 +41,16 @@ public interface QueryContext {
         ((QueryContextImpl) threadLocal.get()).root = Objects.requireNonNull(root);
         return root;
     }
+
     static CriteriaBuilder builder() {
         return Objects.requireNonNull(((QueryContextImpl) threadLocal.get()).builder);
     }
+
     static CriteriaQuery<?> query() {
         return Objects.requireNonNull(((QueryContextImpl) threadLocal.get()).query);
     }
+
+    @SuppressWarnings("unchecked")
     static <E> Root<E> root() {
         return Objects.requireNonNull((Root<E>) ((QueryContextImpl) threadLocal.get()).root);
     }

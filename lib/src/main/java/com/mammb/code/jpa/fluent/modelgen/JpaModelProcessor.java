@@ -56,9 +56,6 @@ public class JpaModelProcessor extends AbstractProcessor {
     /** Context of processing. */
     private ModelContext context;
 
-    /** Annotation processing round. */
-    private int round = 0;
-
 
     @Override
     public void init(ProcessingEnvironment env) {
@@ -82,8 +79,6 @@ public class JpaModelProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-
-        context.logDebug("### Round : {}", ++round);
 
         if (roundEnv.errorRaised() || roundEnv.processingOver() || annotations.isEmpty()) {
             return false;

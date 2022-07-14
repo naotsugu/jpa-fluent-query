@@ -76,7 +76,8 @@ public class MapperModelProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 
-        if (Objects.isNull(context) || roundEnv.errorRaised() || roundEnv.processingOver() || annotations.isEmpty()) {
+        if (Objects.isNull(context) || annotations.isEmpty() ||
+            roundEnv.errorRaised() || roundEnv.processingOver()) {
             return false;
         }
 

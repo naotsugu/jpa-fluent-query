@@ -23,9 +23,14 @@ import java.util.Map;
  */
 public class Template {
 
+    /** template string value. */
     private String string;
 
 
+    /**
+     * Create the template from given string.
+     * @param string template string
+     */
     private Template(String string) {
         this.string = string;
     }

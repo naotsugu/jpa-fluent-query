@@ -44,7 +44,7 @@ class QueryingTest {
 
     /**
      * <pre>
-     * select count(i.id) from Issue i
+     * SELECT COUNT(ID) FROM ISSUE
      * </pre>
      */
     @Test
@@ -55,7 +55,7 @@ class QueryingTest {
 
     /**
      * <pre>
-     * select count(i.id) from Issue i where i.title = ?
+     * SELECT COUNT(ID) FROM ISSUE WHERE (TITLE = 'foo')
      * </pre>
      */
     @Test
@@ -68,7 +68,7 @@ class QueryingTest {
 
     /**
      * <pre>
-     * select i.* from Issue i order by i.id asc
+     * SELECT ID, CREATEDON, DESCRIPTION, LASTMODIFIEDON, TITLE, VERSION, PROJECT_ID FROM ISSUE ORDER BY ID ASC
      * </pre>
      */
     @Test
@@ -81,7 +81,7 @@ class QueryingTest {
 
     /**
      * <pre>
-     * select * from Issue i where i.title = ? order by i.id asc
+     * SELECT ID, CREATEDON, DESCRIPTION, LASTMODIFIEDON, TITLE, VERSION, PROJECT_ID FROM ISSUE WHERE (TITLE = 'foo') ORDER BY ID ASC
      * </pre>
      */
     @Test
@@ -94,8 +94,7 @@ class QueryingTest {
 
     /**
      * <pre>
-     * select i.* from Issue i join Project p on p.id = i.project_id
-     * where p.name = ? and i.title = ? order by i.id asc
+     * SELECT t0.* FROM ISSUE t0, PROJECT t1 WHERE (((t1.NAME = ?) AND (t0.TITLE = ?)) AND (t1.ID = t0.PROJECT_ID)) ORDER BY t0.ID ASC
      * </pre>
      */
     @Test
@@ -110,8 +109,8 @@ class QueryingTest {
 
     /**
      * <pre>
-     * select i.* from Issue i join Project p on p.id = i.project_id where i.title= ?
-     * order by p.name desc, i.id asc, i.id asc
+     * SELECT t1.* FROM PROJECT t0, ISSUE t1 WHERE ((t1.TITLE = ?) AND (t0.ID = t1.PROJECT_ID))
+     * ORDER BY t0.NAME DESC, t1.ID ASC, t1.ID ASC
      * </pre>
      */
     @Test
@@ -130,7 +129,7 @@ class QueryingTest {
 
     /**
      * <pre>
-     * select i.id, i.title from Issue i where i.title = ? order by i.id asc
+     * SELECT ID, TITLE FROM ISSUE WHERE (TITLE = ?) ORDER BY ID ASC
      * </pre>
      */
     @Test
@@ -144,8 +143,8 @@ class QueryingTest {
 
     /**
      * <pre>
-     * select * from Issue i where i.title = ? order by i.id asc
-     * offset ? rows fetch first ? rows only
+     * SELECT ID AS a1, CREATEDON AS a2, DESCRIPTION AS a3, LASTMODIFIEDON AS a4, TITLE AS a5, VERSION AS a6, PROJECT_ID AS a7
+     * FROM ISSUE WHERE (TITLE = 'foo') ORDER BY ID ASC LIMIT 16 OFFSET 0
      * </pre>
      */
     @Test
@@ -159,12 +158,9 @@ class QueryingTest {
 
     /**
      * <pre>
-     * select count(i.id) from Issue i where i.title = ?
-     * </pre>
-     *
-     * <pre>
-     * select * from Issue i where i.title = ? order by i.id asc
-     * offset ? rows fetch first ? rows only
+     * SELECT COUNT(ID) FROM ISSUE WHERE (TITLE = 'foo')
+     * SELECT ID AS a1, CREATEDON AS a2, DESCRIPTION AS a3, LASTMODIFIEDON AS a4, TITLE AS a5, VERSION AS a6, PROJECT_ID AS a7
+     * FROM ISSUE WHERE (TITLE = 'foo') ORDER BY ID ASC LIMIT 15 OFFSET 0
      * </pre>
      */
     @Test
@@ -177,26 +173,11 @@ class QueryingTest {
     }
 
     /**
-     * select
-     *             i1_0.id,
-     *             i1_0.createdOn,
-     *             i1_0.description,
-     *             i1_0.lastModifiedOn,
-     *             i1_0.project_id,
-     *             i1_0.title,
-     *             i1_0.version
-     *         from
-     *             Issue i1_0
-     *         where
-     *             exists(select
-     *                 p1_0.id
-     *             from
-     *                 Project p1_0
-     *             where
-     *                 p1_0.name=?
-     *                 and p1_0.id=i1_0.project_id)
-     *         order by
-     *             i1_0.id asc
+     * <pre>
+     * SELECT t0.* FROM ISSUE t0 WHERE EXISTS (
+     *      SELECT 1 FROM PROJECT t2, PROJECT t1 WHERE (((t1.NAME = 'name1') AND (t1.ID = t2.ID)) AND (t2.ID = t0.PROJECT_ID))
+     * ) ORDER BY t0.ID ASC
+     * </pre>
      */
     @Test
     void testSubQueryExists() {
@@ -211,27 +192,11 @@ class QueryingTest {
 
 
     /**
-     *         select
-     *             i1_0.id,
-     *             i1_0.createdOn,
-     *             i1_0.description,
-     *             i1_0.lastModifiedOn,
-     *             i1_0.project_id,
-     *             i1_0.title,
-     *             i1_0.version
-     *         from
-     *             Issue i1_0
-     *         where
-     *             i1_0.id>(
-     *                 select
-     *                     p1_0.id
-     *                 from
-     *                     Project p1_0
-     *                 where
-     *                     p1_0.name=?
-     *             )
-     *         order by
-     *             i1_0.id asc
+     * <pre>
+     * SELECT t0.* FROM ISSUE t0 WHERE (t0.ID > (
+     *      SELECT t1.ID FROM PROJECT t1 WHERE (t1.NAME = ?))
+     * ) ORDER BY t0.ID ASC
+     * </pre>
      */
     @Test
     void testSubQuery() {
@@ -245,10 +210,18 @@ class QueryingTest {
 
 
     /**
+     * Hibernate is strange.
      * <pre>
-     * select i1.* from Issue i1 where exists(
-     *   select i2.id from Issue i2 where i2.title = ? and i2.id = i1.id
-     * ) order by i1.id asc
+     * select i1_0.* from Issue i1_0 where exists(
+     *     select i1_0.id where i1_0.title=?
+     * ) order by i1_0.id asc
+     * </pre>
+     *
+     * Eclipselink is good.
+     * <pre>
+     * SELECT t0.* FROM ISSUE t0 WHERE EXISTS (
+     *      SELECT 1 FROM ISSUE t1 WHERE ((t1.TITLE = 'foo') AND (t1.ID = t0.ID))
+     * ) ORDER BY t0.ID ASC
      * </pre>
      */
     @Test
@@ -256,16 +229,23 @@ class QueryingTest {
         Querying.of(IssueModel.root())
                 .filter(issue -> SubQuery.of(issue)
                                             .filter(r -> r.getTitle().eq("foo"))
-                                            .filter(r -> r.getId().eq(issue.getId()))
                                             .exists())
             .toList().on(em);
     }
 
     /**
+     * Hibernate creates broken SQL.
      * <pre>
      * select i.* from Issue i where exists(
      *   select p.id from Project p where p.name = ? and i.project_id = p.id
      * ) order by i.id asc
+     * </pre>
+     *
+     * Eclipselink is good.
+     * <pre>
+     * SELECT t0.* FROM ISSUE t0 WHERE EXISTS (
+     *      SELECT 1 FROM ISSUE t2, PROJECT t1 WHERE (((t1.NAME = 'name1') AND (t2.PROJECT_ID = t1.ID)) AND (t2.ID = t0.ID))
+     * ) ORDER BY t0.ID ASC
      * </pre>
      */
     @Test
@@ -277,6 +257,7 @@ class QueryingTest {
                     .exists())
             .toList().on(em);
     }
+
 
     private void createIssues() {
 

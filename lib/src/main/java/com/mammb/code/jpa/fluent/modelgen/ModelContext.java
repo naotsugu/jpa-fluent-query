@@ -33,19 +33,13 @@ import java.util.List;
  *
  * @author Naotsugu Kobayashi
  */
-public class ModelContext {
-
-    /** Annotation processing environment. */
-    private final ProcessingEnvironment pe;
+public class ModelContext extends Context {
 
     /** Generated model classes holder. */
     private final Collection<StaticMetamodelEntity> generatedModelClasses;
 
     /** RepositoryRootTypes. */
     private final Collection<RepositoryTraitType> repositoryTraits;
-
-    /** Mode of debug. */
-    private final boolean debug;
 
     /** Add repository option. */
     private final boolean addRepository;
@@ -61,10 +55,9 @@ public class ModelContext {
      * @param addRepository the mode of add repository
      */
     protected ModelContext(ProcessingEnvironment pe, boolean debug, boolean addRepository) {
-        this.pe = pe;
+        super(pe, debug);
         this.generatedModelClasses = new HashSet<>();
         this.repositoryTraits = new HashSet<>();
-        this.debug = debug;
         this.addRepository = addRepository;
         this.jakarta = true;
     }
@@ -101,33 +94,6 @@ public class ModelContext {
 
 
     /**
-     * Get the filer used to create new source, class, or auxiliary files.
-     * @return the filer used to create new source, class, or auxiliary files
-     */
-    public Filer getFiler() {
-        return pe.getFiler();
-    }
-
-
-    /**
-     * Get an implementation of some utility methods for operating on elements.
-     * @return utility for operating on elements
-     */
-    public Elements getElementUtils() {
-        return pe.getElementUtils();
-    }
-
-
-    /**
-     * Get an implementation of some utility methods for operating on types.
-     * @return utility for operating on types
-     */
-    public Types getTypeUtils() {
-        return pe.getTypeUtils();
-    }
-
-
-    /**
      * Add the given metamodel as generated.
      * @param entity the {@link StaticMetamodelEntity}
      */
@@ -150,51 +116,8 @@ public class ModelContext {
      * @param name the qualified name of metamodel
      * @return {@code true} if already generated
      */
-    boolean isAlreadyGenerated(String name) {
+    public boolean isAlreadyGenerated(String name) {
         return generatedModelClasses.stream().anyMatch(entity -> entity.getQualifiedName().equals(name));
-    }
-
-
-    /**
-     * Write the debug log message.
-     * @param message the message
-     * @param args the arguments referenced by the format specifiers in this string.
-     */
-    public void logDebug(String message, Object... args) {
-        if (!debug) return;
-        pe.getMessager().printMessage(Diagnostic.Kind.OTHER, formatted(message, args));
-    }
-
-
-    /**
-     * Write the info log message.
-     * @param message the message
-     * @param args the arguments referenced by the format specifiers in this string.
-     */
-    public void logInfo(String message, Object... args) {
-        pe.getMessager().printMessage(Diagnostic.Kind.NOTE, formatted(message, args));
-    }
-
-
-    /**
-     * Write the error log message.
-     * @param message the message
-     * @param args the arguments referenced by the format specifiers in this string.
-     */
-    public void logError(String message, Object... args) {
-        pe.getMessager().printMessage(Diagnostic.Kind.ERROR, formatted(message, args));
-    }
-
-
-    /**
-     * Format the given format string with args.
-     * @param format the format string
-     * @param args the arguments referenced by the format specifiers in this string.
-     * @return the formatted string
-     */
-    private String formatted(String format, Object... args) {
-        return Arrays.stream(args).map(Object::toString)
-            .reduce(format, (str, arg) -> str.replaceFirst("\\{}", arg));
     }
 
 

@@ -22,5 +22,11 @@ import jakarta.persistence.criteria.AbstractQuery;
  * @author Naotsugu Kobayashi
  */
 public interface QueryAware<Q extends AbstractQuery<?>> {
+
+    /**
+     * Get the query.
+     * @return the query
+     */
     Q query();
+
 }

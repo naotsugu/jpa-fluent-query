@@ -21,7 +21,6 @@ import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Selection;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
@@ -141,7 +140,7 @@ public class Criteria {
         default Predicate eq(AnyExpression<E, ?> y) { return builder().equal(get(), y.get()); }
         default Predicate eq(Expression<?> y) { return builder().equal(get(), y); }
         default Predicate eq(Object y) { return isEmpty(y) ? null : builder().equal(get(), y); }
-        default Predicate ne(AnyExpression<E, T> y) { return builder().notEqual(get(), y.get()); }
+        default Predicate ne(AnyExpression<E, ?> y) { return builder().notEqual(get(), y.get()); }
         default Predicate ne(Expression<?> y) { return builder().notEqual(get(), y); }
         default Predicate ne(Object y) { return isEmpty(y) ? null : builder().notEqual(get(), y); }
         default Predicate isNull(Expression<?> x) { return builder().isNull(get()); }

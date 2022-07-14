@@ -16,10 +16,16 @@
 package com.mammb.code.jpa.core;
 
 /**
- *
- * @param <E>
+ * Typed.
+ * @param <E> type of element
  * @author Naotsugu Kobayashi
  */
 public interface Typed<E> {
+
+    /**
+     * Get the type.
+     * @return the type
+     */
     Class<E> type();
+    
 }
