@@ -1,5 +1,7 @@
 plugins {
     `java-library`
+    `maven-publish`
+    signing
 }
 
 repositories {
@@ -32,4 +34,71 @@ java {
     }
     withJavadocJar()
     withSourcesJar()
+}
+
+tasks.javadoc {
+    if (JavaVersion.current().isJava9Compatible) {
+        (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
+    }
+}
+
+group = "com.mammb"
+version = "0.5.0"
+
+val sonatypeUsername: String? by project
+val sonatypePassword: String? by project
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            artifactId = "jpa-fluent-query"
+            from(components["java"])
+            versionMapping {
+                usage("java-api") {
+                    fromResolutionOf("runtimeClasspath")
+                }
+                usage("java-runtime") {
+                    fromResolutionResult()
+                }
+            }
+            pom {
+                name.set("jpa fluent query")
+                description.set("JPA fluent query library")
+                url.set("https://github.com/naotsugu/jpa-fluent-query")
+                licenses {
+                    license {
+                        name.set("The Apache License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("naotsugu")
+                        name.set("Naotsugu Kobayashi")
+                        email.set("naotsugukobayashi@gmail.com")
+                    }
+                }
+                scm {
+                    connection.set("git@github.com:naotsugu/jpa-fluent-query.git")
+                    developerConnection.set("git@github.com:naotsugu/jpa-fluent-query.git")
+                    url.set("https://github.com/naotsugu/jpa-fluent-query")
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            val releasesRepoUrl = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2")
+            val snapshotsRepoUrl = uri("https://oss.sonatype.org/content/repositories/snapshots")
+            url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
+            credentials {
+                username = sonatypeUsername
+                password = sonatypePassword
+            }
+        }
+    }
+}
+
+signing {
+    sign(publishing.publications["mavenJava"])
 }

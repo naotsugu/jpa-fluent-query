@@ -8,6 +8,8 @@ import java.util.List;
 public class IssueRepository implements IssueRepository_ {
 
     EntityManager em;
+
+    @Override
     public EntityManager em() {
         return em;
     }
@@ -15,6 +17,11 @@ public class IssueRepository implements IssueRepository_ {
     public List<Issue> findByName(String title) {
         return findAll(issue -> issue.getTitle().eq(title),
             sort(issue -> issue.getId().desc()));
+    }
+
+    public List<Issue> findByProjectName(String name) {
+        return findAll(issue -> issue.getProject().getName().eq("name"),
+                       sort(issue -> issue.getId().desc()));
     }
 
     public List<Issue> findByTitleAndProjectName(String title, String name) {

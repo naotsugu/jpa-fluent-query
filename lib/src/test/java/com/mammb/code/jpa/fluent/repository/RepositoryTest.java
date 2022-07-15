@@ -54,6 +54,8 @@ public class RepositoryTest {
 
         var list = repository.findAll(r -> r.getTitle().eq("issueTitle"));
         assertEquals(1L, list.size());
+
+        list = repository.findAll(r -> r.getProject().getName().eq("ma,e"));
     }
 
 
