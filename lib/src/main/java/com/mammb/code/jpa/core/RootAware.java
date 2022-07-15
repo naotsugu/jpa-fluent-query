@@ -31,6 +31,12 @@ public interface RootAware<E> extends
         Criteria.AnyExpression<E, Root<E>>,
         Typed<E> {
 
+    /**
+     * Create a new {@link RootAware} with the given arguments.
+     * @param root the entity root
+     * @param query the {@link AbstractQuery}
+     * @return a new {@link RootAware}
+     */
     RootAware<E> with(Root<E> root, AbstractQuery<?> query);
 
 }

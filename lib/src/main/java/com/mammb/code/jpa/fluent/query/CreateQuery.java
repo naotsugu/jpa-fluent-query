@@ -83,6 +83,7 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
 
     /**
      * Get the {@link Slice} result.
+     * @param slicePoint the slice point
      * @return the {@link Slice} result
      */
     default Query<Slice<U>> toSlice(SlicePoint slicePoint) {
@@ -92,6 +93,7 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
 
     /**
      * Get the {@link Page} result.
+     * @param slicePoint the slice point
      * @return the {@link Page} result
      */
     default Query<Page<U>> toPage(SlicePoint slicePoint) {

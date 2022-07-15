@@ -31,14 +31,31 @@ import java.util.Optional;
  */
 public interface GetTrait<PK extends Serializable, E, R extends RootAware<E>> extends EntityManagerAware, RootSourceAware<E, R> {
 
+    /**
+     * Get the entity reference for the given id.
+     * @param id id
+     * @return the reference
+     */
     default Optional<E> getReference(PK id) {
         return Optional.ofNullable(em().getReference(rootSource().rootClass(), id));
     }
 
+
+    /**
+     * Get the entity for the given id.
+     * @param id id
+     * @return the entity
+     */
     default Optional<E> get(PK id) {
         return Optional.ofNullable(em().find(rootSource().rootClass(), id));
     }
 
+
+    /**
+     * Get the entity for the given entity.
+     * @param entity the entity
+     * @return the entity
+     */
     default E get(E entity) {
         return em().find(rootSource().rootClass(),
             em().getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(entity));

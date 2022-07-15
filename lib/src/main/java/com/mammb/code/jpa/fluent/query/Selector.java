@@ -40,6 +40,14 @@ public interface Selector<E, R extends RootAware<E>, U> {
     Selection<? extends U> apply(R root);
 
 
+    /**
+     * Create a {@link Selector} from the given source.
+     * @param source the source of selector
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @param <U> the type of result
+     * @return a {@link Selector}
+     */
     static <E, R extends RootAware<E>, U> Selector<E, R, U> of(Criteria.Selector<E, R, U> source) {
         return r -> source.apply(r).get();
     }

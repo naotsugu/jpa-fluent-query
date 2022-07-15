@@ -18,10 +18,24 @@ package com.mammb.code.jpa.entity;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * Identifiable.
+ * @param <ID> tye type of id
+ * @author Naotsugu Kobayashi
+ */
 public interface Identifiable<ID extends Serializable> {
 
+    /**
+     * Get id.
+     * @return id
+     */
     ID getId();
 
+
+    /**
+     * has id ?
+     * @return {@code true} if the id is retained
+     */
     default boolean hasId() {
         return Objects.isNull(getId());
     }

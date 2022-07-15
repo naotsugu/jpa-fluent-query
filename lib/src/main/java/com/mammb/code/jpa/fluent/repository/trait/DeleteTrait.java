@@ -24,10 +24,18 @@ import com.mammb.code.jpa.core.EntityManagerAware;
  */
 public interface DeleteTrait<E> extends EntityManagerAware {
 
+    /**
+     * Delete the given entity.
+     * @param entity to be deleted
+     */
     default void delete(E entity) {
         em().remove(entity);
     }
 
+    /**
+     * Delete the given entity and flash.
+     * @param entity to be deleted
+     */
     default void deleteAndFlash(E entity) {
         delete(entity);
         em().flush();

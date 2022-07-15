@@ -66,6 +66,7 @@ public interface QueryBuilder {
      * @param sorts {@link Sorts}
      * @param <E> the type of entity
      * @param <R> the type of root
+     * @param <U> the type of result value
      * @return a query
      */
     static <E, R extends RootAware<E>, U> TypedQuery<U> query(
@@ -123,6 +124,7 @@ public interface QueryBuilder {
      * @param slicePoint  {@link SlicePoint}
      * @param <E> the type of entity
      * @param <R> the type of root
+     * @param <U> the type of result value
      * @return a slice
      */
     static <E, R extends RootAware<E>, U> Slice<U> slice(
@@ -148,6 +150,7 @@ public interface QueryBuilder {
      * @param slicePoint  {@link SlicePoint}
      * @param <E> the type of entity
      * @param <R> the type of root
+     * @param <U> the type of result value
      * @return a page
      */
     static <E, R extends RootAware<E>, U> Page<U> page(

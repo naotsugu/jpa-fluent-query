@@ -16,6 +16,7 @@
 package com.mammb.code.jpa.fluent.query;
 
 import com.mammb.code.jpa.core.RootAware;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Order;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +24,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Sorts.
+ * Represents a sort specification.
  * @param <E> the type of entity
  * @param <R> the type of root
  * @author Naotsugu Kobayashi
@@ -31,30 +32,73 @@ import java.util.Objects;
 @FunctionalInterface
 public interface Sorts<E, R extends RootAware<E>> {
 
+    /**
+     * Create the {@link Order} condition.
+     * @param root the root fo sort target
+     * @return an {@link Order} list
+     */
     List<Order> apply(R root);
 
+
+    /**
+     * AND composite the specified sort condition to the current one.
+     * @param other a {@link Sort} for AND target
+     * @return the {@link Sorts} after composite
+     */
     default Sorts<E, R> and(Sort<E, R> other) {
         return Sorts.add(this, other);
     }
 
 
+    /**
+     * Create an empty {@link Sorts}.
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @return an empty {@link Sorts}
+     */
     static <E, R extends RootAware<E>> Sorts<E, R> empty() {
         return root -> List.of();
     }
 
 
+    /**
+     * Create a {@link Sorts} from the given {@link Sort}.
+     * @param sort the source of sort
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @return a {@link Sorts}
+     */
     static <E, R extends RootAware<E>> Sorts<E, R> of(Sort<E, R> sort) {
         return root -> List.of(sort.apply(root));
     }
 
+
+    /**
+     * Create a {@link Sorts} from the given {@link Sort}.
+     * @param lhs the left hands of sort
+     * @param rhs the right hands of sort
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @return a {@link Sorts}
+     */
     static <E, R extends RootAware<E>> Sorts<E, R> of(Sort<E, R> lhs, Sort<E, R> rhs) {
         return root -> List.of(lhs.apply(root), rhs.apply(root));
     }
 
+
+    /**
+     * Create a {@link Sorts} from the given {@link Sort}s.
+     * @param sort the source of sort
+     * @param sorts the remaining sort
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @return a {@link Sorts}
+     */
     @SafeVarargs
     static <E, R extends RootAware<E>> Sorts<E, R> of(Sort<E, R> sort, Sort<E, R>... sorts) {
         return root -> Arrays.stream(sorts).reduce(Sorts.of(sort), Sorts::and, Sorts::plus).apply(root);
     }
+
 
     private static <E, R extends RootAware<E>> Sorts<E, R> add(Sorts<E, R> lhs, Sort<E, R> rhs) {
         return root -> {
@@ -64,6 +108,7 @@ public interface Sorts<E, R extends RootAware<E>> {
             return orders;
         };
     }
+
 
     private static <E, R extends RootAware<E>> Sorts<E, R> plus(Sorts<E, R> lhs, Sorts<E, R> rhs) {
         return root -> {

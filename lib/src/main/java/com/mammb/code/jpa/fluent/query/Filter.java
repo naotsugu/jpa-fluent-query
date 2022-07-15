@@ -63,6 +63,8 @@ public interface Filter<E, R extends RootAware<E>> {
     /**
      * Create filter by the given {@link Filter}.
      * @param filter the {@link Filter}
+     * @param <E> the type of entity
+     * @param <R> the type of root
      * @return a {@link Filter}
      */
     static <E, R extends RootAware<E>> Filter<E, R> of(Filter<E, R> filter) {
@@ -74,6 +76,8 @@ public interface Filter<E, R extends RootAware<E>> {
      * Create filter by the given {@link Filter}.
      * @param filter1 the {@link Filter}
      * @param filter2 the {@link Filter}
+     * @param <E> the type of entity
+     * @param <R> the type of root
      * @return a {@link Filter}
      */
     static <E, R extends RootAware<E>> Filter<E, R> of(Filter<E, R> filter1, Filter<E, R> filter2) {
@@ -85,6 +89,8 @@ public interface Filter<E, R extends RootAware<E>> {
      * Create filter by the given {@link Filter}.
      * @param filter1 the {@link Filter}
      * @param filters the {@link Filter}s
+     * @param <E> the type of entity
+     * @param <R> the type of root
      * @return a {@link Filter}
      */
     @SafeVarargs
@@ -112,6 +118,8 @@ public interface Filter<E, R extends RootAware<E>> {
         interface Combiner extends Serializable {
             Predicate combine(CriteriaBuilder builder, Predicate lhs, Predicate rhs);
         }
+
+        private Composition() { }
 
         static <E, R extends RootAware<E>> Filter<E, R> composed(
             Filter<E, R> lhs, Filter<E, R> rhs, Combiner combiner) {

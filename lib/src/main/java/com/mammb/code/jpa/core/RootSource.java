@@ -29,6 +29,7 @@ public interface RootSource<E, R extends RootAware<E>> {
 
     /**
      * Create the root from the given query.
+     * @param source the Source {@link Root}
      * @param query {@link AbstractQuery}
      * @param builder {@link CriteriaBuilder}
      * @return the {@link RootAware}
@@ -43,6 +44,14 @@ public interface RootSource<E, R extends RootAware<E>> {
     Class<E> rootClass();
 
 
+    /**
+     * Create a new {@link RootSource} to generate the given {@link RootAware}.
+     * @param root the source {@link RootAware}
+     * @param rootClass the class of entity type
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @return the {@link RootSource} to generate the given root
+     */
     static <E, R extends RootAware<E>> RootSource<E, R> directly(R root, Class<E> rootClass) {
         return new RootSource<>() {
             @Override

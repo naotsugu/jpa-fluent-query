@@ -24,7 +24,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * The Filter wrapper for SubQuery.
+ * Filter interface for subquery.
+ * Representation a Where clause to be applied to a subquery.
  * @param <E> the type of entity
  * @param <R> the type of root
  * @author Naotsugu Kobayashi
@@ -42,7 +43,7 @@ interface SubQueryFilter<E, R extends RootAware<E>> {
 
 
     /**
-     * Creates a {@link SubQueryFilter} from the given {@link Filter}.
+     * Creates a {@link SubQueryFilter} for the given {@link Filter}.
      * @param filter the source of {@link Filter}
      * @param <E> the type of entity
      * @param <R> the type of root

@@ -19,22 +19,54 @@ import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSource;
 
 /**
- * Querying.
+ * Represents a query that should be executed.
  * @param <E> the type of entity
  * @param <R> the type of root
  * @author Naotsugu Kobayashi
  */
 public interface Querying<E, R extends RootAware<E>, U> extends CreateQuery<E, R, U> {
 
+    /**
+     * Apply the given {@link Filter} to the current {@link Querying}.
+     * @param filter the {@link Filter} to apply
+     * @return a filter applied {@link Querying}
+     */
     Querying<E, R, U> filter(Filter<E, R> filter);
 
+
+    /**
+     * Apply the given {@link Sort} to the current {@link Querying}.
+     * @param sort the {@link Sort} to apply
+     * @return a sort applied {@link Querying}
+     */
     Querying<E, R, U> sorted(Sort<E, R> sort);
 
+
+    /**
+     * Apply the given sort to the current {@link Querying}.
+     * @param sort1 the {@link Sort} to apply
+     * @param sort2 the {@link Sort} to apply
+     * @return a sort applied {@link Querying}
+     */
     Querying<E, R, U> sorted(Sort<E, R> sort1, Sort<E, R> sort2);
 
+
+    /**
+     * Apply the given {@link Mapper} to the current {@link Querying}.
+     * @param mapper the {@link Mapper} to apply
+     * @param <Y> type of query result
+     * @return a {@link Mapper} applied {@link Querying}
+     */
     <Y> Querying<E, R, Y> map(Mapper<E, R, Y> mapper);
 
 
+    /**
+     * Create a {@link Querying} for given root source.
+     * @param rootSource the root source
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @return a {@link Querying}
+     */
     static <E, R extends RootAware<E>> Querying<E, R, E> of(RootSource<E, R> rootSource) {
         return Querying.of(rootSource, Mapper.of(), Filter.empty(), Sorts.empty());
     }
@@ -63,7 +95,6 @@ public interface Querying<E, R extends RootAware<E>, U> extends CreateQuery<E, R
             @Override
             public Mapper<E, R, U> mapper() { return mapper; }
         };
-
     }
 
 }

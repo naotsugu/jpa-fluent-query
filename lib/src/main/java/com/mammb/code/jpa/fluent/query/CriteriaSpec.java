@@ -31,30 +31,59 @@ import java.util.Objects;
 @FunctionalInterface
 public interface CriteriaSpec<E> extends Serializable {
 
+    /**
+     * Creates a Predicate for given {@link Root} and {@link CriteriaQuery}.
+     * @param root the entity root
+     * @param query the {@link CriteriaQuery}
+     * @param builder the {@link CriteriaBuilder}
+     * @return a {@link Predicate}
+     */
     Predicate toPredicate(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder builder);
 
 
+    /**
+     * ANDs the given {@link CriteriaSpec} to the current one.
+     * @param other the other {@link CriteriaSpec}
+     * @return a {@link CriteriaSpec}
+     */
     default CriteriaSpec<E> and(CriteriaSpec<E> other) {
         return SpecComposition.composed(this, other, CriteriaBuilder::and);
     }
 
 
+    /**
+     * ORs the given {@link CriteriaSpec} to the current one.
+     * @param other the other {@link CriteriaSpec}
+     * @return a {@link CriteriaSpec}
+     */
     default CriteriaSpec<E> or(CriteriaSpec<E> other) {
         return SpecComposition.composed(this, other, CriteriaBuilder::or);
     }
 
 
+    /**
+     * Negates the given {@link CriteriaSpec}.
+     * @param spec the target {@link CriteriaSpec}
+     * @param <E> the type of entity
+     * @return a {@link CriteriaSpec}
+     */
     static <E> CriteriaSpec<E> not(CriteriaSpec<E> spec) {
         return Objects.isNull(spec)
                 ? (root, query, builder) -> null
                 : (root, query, builder) -> builder.not(spec.toPredicate(root, query, builder));
     }
 
+
+    /**
+     * SpecComposition.
+     */
     class SpecComposition {
 
         interface Combiner extends Serializable {
             Predicate combine(CriteriaBuilder builder, Predicate lhs, Predicate rhs);
         }
+
+        private SpecComposition() { }
 
         static <E> CriteriaSpec<E> composed(CriteriaSpec<E> lhs, CriteriaSpec<E> rhs, Combiner combiner) {
 

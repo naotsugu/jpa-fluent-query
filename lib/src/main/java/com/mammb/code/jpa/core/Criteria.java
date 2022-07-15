@@ -33,17 +33,32 @@ import java.util.regex.Pattern;
  * The criteria utilities.
  * @author Naotsugu Kobayashi
  */
+@SuppressWarnings("doclint")
 public class Criteria {
 
+    /**
+     * The selector that returns an selection.
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @param <U> the type of query result
+     */
     public interface Selector<E, R extends RootAware<E>, U> {
         Criteria.AnyExpression<U, ? extends Selection<U>> apply(R root);
     }
+
+
+    /**
+     * The selector that returns an expression.
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @param <U> the type of query result
+     */
     public interface ExpressionSelector<E, R extends RootAware<E>, U> {
         Criteria.AnyExpression<U, ? extends Expression<U>> apply(R root);
     }
 
-    interface CommonType extends BuilderAware {}
 
+    interface CommonType extends BuilderAware {}
 
     public static class AnyPath<E> implements AnyExpression<E, Path<E>>, CommonType {
         private final Supplier<Path<E>> path;
@@ -113,7 +128,6 @@ public class Criteria {
             super(expression, builder);
         }
     }
-
 
     public static class AnyCollectionExp<C extends Collection<?>, T extends Expression<C>> implements AnyCollectionExpression<C, T>, CommonType {
         private final Supplier<T> expression;

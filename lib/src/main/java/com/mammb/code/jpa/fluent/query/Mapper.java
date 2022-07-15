@@ -35,9 +35,21 @@ import java.util.List;
 @FunctionalInterface
 public interface Mapper<E, R extends RootAware<E>, U> {
 
+    /**
+     * Apply the this {@link Mapper}.
+     * @param rootSource the root source
+     * @param builder the {@link CriteriaBuilder}
+     * @return the {@link RootAware} with mapper applied
+     */
     R apply(RootSource<E, R> rootSource, CriteriaBuilder builder);
 
 
+    /**
+     * Create a general {@link Mapper}.
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @return a general {@link Mapper}
+     */
     static <E, R extends RootAware<E>> Mapper<E, R, E> of() {
         return (RootSource<E, R> rootSource, CriteriaBuilder builder) ->  {
             CriteriaQuery<E> query = builder.createQuery(rootSource.rootClass());
@@ -49,6 +61,13 @@ public interface Mapper<E, R extends RootAware<E>, U> {
     }
 
 
+    /**
+     * Create a {@link Tuple} {@link Mapper}.
+     * @param selectors the {@link Tuple} selector.
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @return a tuple {@link Mapper}
+     */
     static <E, R extends RootAware<E>> Mapper<E, R, Tuple> tuple(
             List<Selector<E, R, ?>> selectors) {
         return (RootSource<E, R> rootSource, CriteriaBuilder builder) ->  {
@@ -63,6 +82,15 @@ public interface Mapper<E, R extends RootAware<E>, U> {
     }
 
 
+    /**
+     * Create a Construct {@link Mapper}.
+     * @param result the class of query result
+     * @param selectors the selectors
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @param <U> the type of result
+     * @return a Construct {@link Mapper}
+     */
     static <E, R extends RootAware<E>, U> Mapper<E, R, U> construct(
             Class<U> result, List<Selector<E, R, ?>> selectors) {
         return (RootSource<E, R> rootSource, CriteriaBuilder builder) ->  {
@@ -77,6 +105,12 @@ public interface Mapper<E, R extends RootAware<E>, U> {
     }
 
 
+    /**
+     * Create a Subquery {@link Mapper}.
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @return a Subquery {@link Mapper}
+     */
     static <E, R extends RootAware<E>> Mapper<E, R, E> subQuery() {
         return (RootSource<E, R> subRootSource, CriteriaBuilder builder) ->  {
             Subquery<E> sq = QueryContext.query().subquery(subRootSource.rootClass());
@@ -87,6 +121,15 @@ public interface Mapper<E, R extends RootAware<E>, U> {
     }
 
 
+    /**
+     * Create a Subquery {@link Mapper}.
+     * @param resultType the class of query result
+     * @param selector the selectors
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @param <U> the type of result
+     * @return a Subquery {@link Mapper}
+     */
     static <E, R extends RootAware<E>, U> Mapper<E, R, U> subQuery(
             Class<U> resultType, ExpressionSelector<E, R, U> selector) {
         return (RootSource<E, R> subRootSource, CriteriaBuilder builder) ->  {
@@ -98,16 +141,20 @@ public interface Mapper<E, R extends RootAware<E>, U> {
     }
 
 
+    /**
+     * Create a self correlate Subquery {@link Mapper}.
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @return a self correlate Subquery {@link Mapper}
+     */
     static <E, R extends RootAware<E>> Mapper<E, R, E> correlate() {
         return (RootSource<E, R> rootSource, CriteriaBuilder builder) ->  {
             Subquery<E> sq = QueryContext.query().subquery(rootSource.rootClass());
-            //Root<E> raw = sq.from(rootSource.rootClass());
             Root<E> correlate = sq.correlate(QueryContext.root());
             R root = rootSource.root(correlate, sq, builder);
             sq.select(root.get());
             return root;
         };
     }
-
 
 }

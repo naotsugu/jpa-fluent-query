@@ -16,6 +16,7 @@
 package com.mammb.code.jpa.fluent.query;
 
 import com.mammb.code.jpa.core.RootAware;
+import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Selection;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,24 +32,59 @@ import java.util.Objects;
 @FunctionalInterface
 public interface Selectors<E, R extends RootAware<E>> {
 
+    /**
+     * Creates a {@link Selection} for the given {@link RootAware}.
+     * @param root a {@link RootAware}
+     * @return a {@link Selection} list
+     */
     List<Selection<?>> apply(R root);
 
+
+    /**
+     * composite the specified {@link Selector} to the current one.
+     * @param other a {@link Selector} for AND target
+     * @return the {@link Selectors} after composite
+     */
     default Selectors<E, R> and(Selector<E, R, ?> other) {
         return Selectors.add(this, other);
     }
 
+
+    /**
+     * Create the empty {@link Selectors}.
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @return a empty {@link Selectors}
+     */
     static <E, R extends RootAware<E>> Selectors<E, R> empty() {
         return root -> List.of();
     }
 
 
+    /**
+     * Create a {@link Selectors} from the given selector.
+     * @param selector a {@link Selector}
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @return a {@link Selectors}
+     */
     static <E, R extends RootAware<E>> Selectors<E, R> of(Selector<E, R, ?> selector) {
         return root -> List.of(selector.apply(root));
     }
 
+
+    /**
+     * Create a {@link Selectors} from the given selector.
+     * @param lhs left hands selector
+     * @param rhs right hands selector
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @return a {@link Selectors}
+     */
     static <E, R extends RootAware<E>> Selectors<E, R> of(Selector<E, R, ?> lhs, Selector<E, R, ?> rhs) {
         return root -> List.of(lhs.apply(root), rhs.apply(root));
     }
+
 
     private static <E, R extends RootAware<E>> Selectors<E, R> add(Selectors<E, R> lhs, Selector<E, R, ?> rhs) {
         return root -> {

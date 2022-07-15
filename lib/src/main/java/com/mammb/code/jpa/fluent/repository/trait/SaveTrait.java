@@ -25,6 +25,11 @@ import java.util.Objects;
  */
 public interface SaveTrait<E> extends EntityManagerAware {
 
+    /**
+     * Save the given entity.
+     * @param entity the entity to be saved
+     * @return the saved entity
+     */
     default E save(E entity) {
         if (Objects.isNull(em().getEntityManagerFactory()
             .getPersistenceUnitUtil().getIdentifier(entity))) {
@@ -35,6 +40,11 @@ public interface SaveTrait<E> extends EntityManagerAware {
         return entity;
     }
 
+    /**
+     * Save the given entity and flash.
+     * @param entity the entity to be saved
+     * @return the saved entity
+     */
     default E saveAndFlash(E entity) {
         entity = save(entity);
         em().flush();

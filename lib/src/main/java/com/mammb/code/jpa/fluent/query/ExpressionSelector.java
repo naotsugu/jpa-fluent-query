@@ -29,8 +29,22 @@ import jakarta.persistence.criteria.Expression;
 @FunctionalInterface
 public interface ExpressionSelector<E, R extends RootAware<E>, U> {
 
+    /**
+     * Apply the this {@link ExpressionSelector}.
+     * @param root the {@link RootAware}
+     * @return the {@link Expression} with {@link ExpressionSelector} applied
+     */
     Expression<U> apply(R root);
 
+
+    /**
+     * Create an {@link ExpressionSelector} for given source.
+     * @param source the source of {@link ExpressionSelector}
+     * @param <E> the type of entity
+     * @param <R> the type of root element
+     * @param <U> the type of query result
+     * @return an {@link ExpressionSelector}
+     */
     static <E, R extends RootAware<E>, U> ExpressionSelector<E, R, U> of(
             Criteria.ExpressionSelector<E, R, U> source) {
         return r -> source.apply(r).get();

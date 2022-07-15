@@ -22,7 +22,7 @@ import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
 
 /**
- * SubQuerying.
+ * Represents a subquery.
  * @param <E> the type of entity
  * @param <R> the type of root
  * @param <U> the type of query result
@@ -30,35 +30,101 @@ import jakarta.persistence.criteria.Predicate;
  */
 public interface SubQuery<E, R extends RootAware<E>, U> {
 
+    /**
+     * Apply the given filter to the current {@link SubQuery}.
+     * @param filter the filter to apply
+     * @return filter applied {@link SubQuery}
+     */
     SubQuery<E, R, U> filter(Filter<E, R> filter);
 
+
+    /**
+     * Apply the given filter to a {@link SubQuery} with correlate root.
+     * @param correlateRoot the correlate {@link RootAware}
+     * @param filter the filter to apply
+     * @param <E1> the type of parent entity
+     * @param <R1> the type of parent root
+     * @return filter applied {@link SubQuery}
+     */
     <E1, R1 extends RootAware<E1>> SubQuery<E, R, U> filter(R1 correlateRoot, BiFilter<E1, R1, E, R> filter);
 
+
+    /**
+     * Get the {@link RootSource} of this subquery.
+     * @return the {@link RootSource}
+     */
     RootSource<E, R> rootSource();
+
+
+    /**
+     * Get the {@link Mapper} of this subquery.
+     * @return the {@link Mapper}
+     */
     Mapper<E, R, U> mapper();
+
+
+    /**
+     * Get the {@link SubQueryFilter} of this subquery.
+     * @return the {@link SubQueryFilter}
+     */
     SubQueryFilter<E, R> filter();
 
+
+    /**
+     * Create an expression from this subquery.
+     * @param resultType class of subquery result type
+     * @param selector the expression selector
+     * @param <U> type of subquery result
+     * @return an expression
+     */
     default <U> Expression<U> to(Class<U> resultType, Criteria.ExpressionSelector<E, R, U> selector) {
         return QueryBuilder.subQuery(rootSource(), filter(),
             Mapper.subQuery(resultType, ExpressionSelector.of(selector)));
     }
 
+
+    /**
+     * Create a count expression from this subquery.
+     * @return a count expression
+     */
     default Expression<Long> count() {
         return QueryContext.builder().count(QueryBuilder.subQuery(rootSource(), filter(), mapper()));
     }
 
+
+    /**
+     * Create an exists predicate from this subquery.
+     * @return an exists predicate
+     */
     default Predicate exists() {
         return QueryContext.builder().exists(QueryBuilder.subQuery(rootSource(), filter(), mapper()));
     }
 
+
+    /**
+     * Create a {@link SubQuery} from the given root source.
+     * @param subRootSource root source of the subquery
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @return a {@link SubQuery}
+     */
     static <E, R extends RootAware<E>> SubQuery<E, R, E> of(RootSource<E, R> subRootSource) {
         return SubQuery.of(subRootSource, Mapper.subQuery(), SubQueryFilter.empty());
     }
 
-    static <E, R extends RootAware<E>> SubQuery<E, R, E> of(R correlate) {
-        return SubQuery.of(RootSource.directly(correlate, correlate.type()),
+
+    /**
+     * Create a {@link SubQuery} from the given correlate root.
+     * @param correlateRoot the correlate root
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @return a {@link SubQuery}
+     */
+    static <E, R extends RootAware<E>> SubQuery<E, R, E> of(R correlateRoot) {
+        return SubQuery.of(RootSource.directly(correlateRoot, correlateRoot.type()),
             Mapper.correlate(), SubQueryFilter.empty());
     }
+
 
     private static <E, R extends RootAware<E>, U> SubQuery<E, R, U> of(
             RootSource<E, R> subRootSource, Mapper<E, R, U> mapper, SubQueryFilter<E, R> filter) {
@@ -81,7 +147,6 @@ public interface SubQuery<E, R extends RootAware<E>, U> {
             @Override
             public Mapper<E, R, U> mapper() { return mapper; }
         };
-
     }
 
 }

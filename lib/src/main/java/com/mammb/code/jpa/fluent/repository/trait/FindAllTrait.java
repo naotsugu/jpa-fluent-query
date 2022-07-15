@@ -33,26 +33,60 @@ import java.util.List;
  */
 public interface FindAllTrait<E, R extends RootAware<E>> extends EntityManagerAware, RootSourceAware<E, R> {
 
+    /**
+     * Get the list of target entity.
+     * @return the list of target entity
+     */
     default List<E> findAll() {
         return findAll(Filter.empty(), Sorts.empty());
     }
 
+
+    /**
+     * Get the list of target entity by the given request.
+     * @param request the {@link Request}
+     * @return the list of target entity
+     */
     default List<E> findAll(Request<E, R> request) {
         return findAll(request.getFilter(), request.getSorts());
     }
 
+
+    /**
+     * Get the list of target entity by the given filter.
+     * @param filter the list of target entity
+     * @return the list of target entity
+     */
     default List<E> findAll(Filter<E, R> filter) {
         return findAll(filter, Sorts.empty());
     }
 
+
+    /**
+     * Get the list of target entity by the given filter and sort conditions.
+     * @param filter the list of target entity
+     * @param sorts the sort conditions
+     * @return the list of target entity
+     */
     default List<E> findAll(Filter<E, R> filter, Sorts<E, R> sorts) {
         return QueryBuilder.query(em(), rootSource(), Mapper.of(), filter, sorts).getResultList();
     }
 
+
+    /**
+     * Get the count of target entity.
+     * @return the count of target entity
+     */
     default long count() {
         return count(Filter.empty());
     }
 
+
+    /**
+     * Get the count of target entity by the given filter conditions.
+     * @param filter the list of target entity
+     * @return the count of target entity
+     */
     default long count(Filter<E, R> filter) {
         return QueryBuilder.countQuery(em(), rootSource(), filter).getSingleResult();
     }

@@ -23,15 +23,27 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Sort specification.
+ * Represents multiple sort specification.
  * @param <T> the type of entity
  * @author Naotsugu Kobayashi
  */
 @FunctionalInterface
 public interface SortSpec<T> {
 
+    /**
+     * Create {@link Order} condition.
+     * @param root the root fo sort target
+     * @param builder the {@link CriteriaBuilder}
+     * @return an {@link Order} list
+     */
     List<Order> toOrders(Root<T> root, CriteriaBuilder builder);
 
+
+    /**
+     * AND composite the specified sort condition.
+     * @param that the composite target
+     * @return the {@link SortSpec} after composite
+     */
     default SortSpec<T> and(SortSpec<T> that) {
 
         return (root, builder) -> {
@@ -46,9 +58,7 @@ public interface SortSpec<T> {
             if (Objects.nonNull(rhs)) {
                 orders.addAll(rhs);
             }
-
             return orders;
-
         };
     }
 
