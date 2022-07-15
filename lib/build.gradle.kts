@@ -16,7 +16,7 @@ dependencies {
     testAnnotationProcessor("org.hibernate:hibernate-jpamodelgen:6.1.1.Final")
     testAnnotationProcessor("com.mammb:jpa-fluent-modelgen:0.5.0")
     testImplementation("com.h2database:h2:2.1.212")
-    implementation("org.eclipse.persistence:eclipselink:4.0.0-M3")
+    testImplementation("org.eclipse.persistence:eclipselink:4.0.0-M3")
 }
 
 tasks.named<Test>("test") {
