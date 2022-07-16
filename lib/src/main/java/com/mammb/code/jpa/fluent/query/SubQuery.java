@@ -50,6 +50,13 @@ public interface SubQuery<E, R extends RootAware<E>, U> {
 
 
     /**
+     * Apply the consisting of the distinct elements to the current {@link Querying}.
+     * @return the new {@link Querying} applied distinct
+     */
+    SubQuery<E, R, U> distinct();
+
+
+    /**
      * Get the {@link RootSource} of this subquery.
      * @return the {@link RootSource}
      */
@@ -140,6 +147,8 @@ public interface SubQuery<E, R extends RootAware<E>, U> {
                 return SubQuery.of(rootSource(), mapper(),
                     filter().and(SubQueryFilter.correlateOf(QueryContext.root(), correlateRoot, filter)));
             }
+            @Override
+            public SubQuery<E, R, U> distinct() { return SubQuery.of(rootSource(), mapper().distinct(), filter()); }
             @Override
             public SubQueryFilter<E, R> filter() { return filter; }
             @Override

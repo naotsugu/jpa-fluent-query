@@ -10,6 +10,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import org.junit.jupiter.api.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -106,7 +108,6 @@ class QueryingTest {
         assertEquals(2, issues.size());
     }
 
-
     /**
      * <pre>
      * SELECT t1.* FROM PROJECT t0, ISSUE t1 WHERE ((t1.TITLE = ?) AND (t0.ID = t1.PROJECT_ID))
@@ -152,6 +153,7 @@ class QueryingTest {
         Slice<Issue> issues = Querying.of(IssueModel.root())
             .filter(issue -> issue.getTitle().eq("foo"))
             .toSlice(SlicePoint.of()).on(em);
+
         assertEquals(3, issues.getContent().size());
         assertFalse(issues.hasNext());
     }
@@ -228,8 +230,8 @@ class QueryingTest {
     void testSelfCorrelate() {
         Querying.of(IssueModel.root())
                 .filter(issue -> SubQuery.of(issue)
-                                            .filter(r -> r.getTitle().eq("foo"))
-                                            .exists())
+                                         .filter(r -> r.getTitle().eq("foo"))
+                                         .exists())
             .toList().on(em);
     }
 

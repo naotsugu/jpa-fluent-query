@@ -18,6 +18,7 @@ package com.mammb.code.jpa.fluent.query;
 import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSource;
 import jakarta.persistence.Tuple;
+import jakarta.persistence.criteria.AbstractQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
@@ -32,7 +33,6 @@ import java.util.List;
  * @param <U> the type of result
  * @author Naotsugu Kobayashi
  */
-@FunctionalInterface
 public interface Mapper<E, R extends RootAware<E>, U> {
 
     /**
@@ -45,18 +45,35 @@ public interface Mapper<E, R extends RootAware<E>, U> {
 
 
     /**
+     * Mark this Mapper as distinct.
+     * @return this Mapper
+     */
+    Mapper<E, R, U> distinct();
+
+
+    /**
      * Create a general {@link Mapper}.
      * @param <E> the type of entity
      * @param <R> the type of root
      * @return a general {@link Mapper}
      */
     static <E, R extends RootAware<E>> Mapper<E, R, E> of() {
-        return (RootSource<E, R> rootSource, CriteriaBuilder builder) ->  {
-            CriteriaQuery<E> query = builder.createQuery(rootSource.rootClass());
-            QueryContext.put(query);
-            R root = rootSource.root(query.from(rootSource.rootClass()), query, builder);
-            query.select(QueryContext.put(root.get()));
-            return root;
+        return new Mapper<>() {
+            private QueryDecorator<E> queryDecorator = QueryDecorator.empty();
+            @Override
+            public R apply(RootSource<E, R> rootSource, CriteriaBuilder builder) {
+                CriteriaQuery<E> query = builder.createQuery(rootSource.rootClass());
+                queryDecorator.decorate(query);
+                QueryContext.put(query);
+                R root = rootSource.root(query.from(rootSource.rootClass()), query, builder);
+                query.select(QueryContext.put(root.get()));
+                return root;
+            }
+            @Override
+            public Mapper<E, R, E> distinct() {
+                queryDecorator = query -> query.distinct(true);
+                return this;
+            }
         };
     }
 
@@ -70,14 +87,24 @@ public interface Mapper<E, R extends RootAware<E>, U> {
      */
     static <E, R extends RootAware<E>> Mapper<E, R, Tuple> tuple(
             List<Selector<E, R, ?>> selectors) {
-        return (RootSource<E, R> rootSource, CriteriaBuilder builder) ->  {
-            CriteriaQuery<Tuple> query = builder.createTupleQuery();
-            QueryContext.put(query);
-            R root = rootSource.root(query.from(rootSource.rootClass()), query, builder);
-            QueryContext.put(root.get());
-            query.select(builder.tuple(selectors.stream()
-                .map(sel -> sel.apply(root)).toArray(Selection[]::new)));
-            return root;
+        return new Mapper<>() {
+            private QueryDecorator<Tuple> queryDecorator = QueryDecorator.empty();
+            @Override
+            public R apply(RootSource<E, R> rootSource, CriteriaBuilder builder) {
+                CriteriaQuery<Tuple> query = builder.createTupleQuery();
+                queryDecorator.decorate(query);
+                QueryContext.put(query);
+                R root = rootSource.root(query.from(rootSource.rootClass()), query, builder);
+                QueryContext.put(root.get());
+                query.select(builder.tuple(selectors.stream()
+                    .map(sel -> sel.apply(root)).toArray(Selection[]::new)));
+                return root;
+            }
+            @Override
+            public Mapper<E, R, Tuple> distinct() {
+                queryDecorator = query -> query.distinct(true);
+                return this;
+            }
         };
     }
 
@@ -93,14 +120,24 @@ public interface Mapper<E, R extends RootAware<E>, U> {
      */
     static <E, R extends RootAware<E>, U> Mapper<E, R, U> construct(
             Class<U> result, List<Selector<E, R, ?>> selectors) {
-        return (RootSource<E, R> rootSource, CriteriaBuilder builder) ->  {
-            CriteriaQuery<U> query = builder.createQuery(result);
-            QueryContext.put(query);
-            R root = rootSource.root(query.from(rootSource.rootClass()), query, builder);
-            QueryContext.put(root.get());
-            query.select(builder.construct(result, selectors.stream()
-                    .map(sel -> sel.apply(root)).toArray(Selection[]::new)));
-            return root;
+        return new Mapper<>() {
+            private QueryDecorator<U> queryDecorator = QueryDecorator.empty();
+            @Override
+            public R apply(RootSource<E, R> rootSource, CriteriaBuilder builder) {
+                CriteriaQuery<U> query = builder.createQuery(result);
+                queryDecorator.decorate(query);
+                QueryContext.put(query);
+                R root = rootSource.root(query.from(rootSource.rootClass()), query, builder);
+                QueryContext.put(root.get());
+                query.select(builder.construct(result, selectors.stream()
+                        .map(sel -> sel.apply(root)).toArray(Selection[]::new)));
+                return root;
+            }
+            @Override
+            public Mapper<E, R, U> distinct() {
+                queryDecorator = query -> query.distinct(true);
+                return this;
+            }
         };
     }
 
@@ -112,11 +149,21 @@ public interface Mapper<E, R extends RootAware<E>, U> {
      * @return a Subquery {@link Mapper}
      */
     static <E, R extends RootAware<E>> Mapper<E, R, E> subQuery() {
-        return (RootSource<E, R> subRootSource, CriteriaBuilder builder) ->  {
-            Subquery<E> sq = QueryContext.query().subquery(subRootSource.rootClass());
-            R root = subRootSource.root(sq.from(subRootSource.rootClass()), sq, builder);
-            sq.select(root.get());
-            return root;
+        return new Mapper<>() {
+            private QueryDecorator<E> queryDecorator = QueryDecorator.empty();
+            @Override
+            public R apply(RootSource<E, R> subRootSource, CriteriaBuilder builder) {
+                Subquery<E> sq = QueryContext.query().subquery(subRootSource.rootClass());
+                queryDecorator.decorate(sq);
+                R root = subRootSource.root(sq.from(subRootSource.rootClass()), sq, builder);
+                sq.select(root.get());
+                return root;
+            }
+            @Override
+            public Mapper<E, R, E> distinct() {
+                queryDecorator = query -> query.distinct(true);
+                return this;
+            }
         };
     }
 
@@ -132,11 +179,21 @@ public interface Mapper<E, R extends RootAware<E>, U> {
      */
     static <E, R extends RootAware<E>, U> Mapper<E, R, U> subQuery(
             Class<U> resultType, ExpressionSelector<E, R, U> selector) {
-        return (RootSource<E, R> subRootSource, CriteriaBuilder builder) ->  {
-            Subquery<U> sq = QueryContext.query().subquery(resultType);
-            R root = subRootSource.root(sq.from(subRootSource.rootClass()), sq, builder);
-            sq.select(selector.apply(root));
-            return root;
+        return new Mapper<>() {
+            private QueryDecorator<U> queryDecorator = QueryDecorator.empty();
+            @Override
+            public R apply(RootSource<E, R> subRootSource, CriteriaBuilder builder) {
+                Subquery<U> sq = QueryContext.query().subquery(resultType);
+                queryDecorator.decorate(sq);
+                R root = subRootSource.root(sq.from(subRootSource.rootClass()), sq, builder);
+                sq.select(selector.apply(root));
+                return root;
+            }
+            @Override
+            public Mapper<E, R, U> distinct() {
+                queryDecorator = query -> query.distinct(true);
+                return this;
+            }
         };
     }
 
@@ -148,12 +205,22 @@ public interface Mapper<E, R extends RootAware<E>, U> {
      * @return a self correlate Subquery {@link Mapper}
      */
     static <E, R extends RootAware<E>> Mapper<E, R, E> correlate() {
-        return (RootSource<E, R> rootSource, CriteriaBuilder builder) ->  {
-            Subquery<E> sq = QueryContext.query().subquery(rootSource.rootClass());
-            Root<E> correlate = sq.correlate(QueryContext.root());
-            R root = rootSource.root(correlate, sq, builder);
-            sq.select(root.get());
-            return root;
+        return new Mapper<>() {
+            private QueryDecorator<E> queryDecorator = QueryDecorator.empty();
+            @Override
+            public R apply(RootSource<E, R> rootSource, CriteriaBuilder builder) {
+                Subquery<E> sq = QueryContext.query().subquery(rootSource.rootClass());
+                queryDecorator.decorate(sq);
+                Root<E> correlate = sq.correlate(QueryContext.root());
+                R root = rootSource.root(correlate, sq, builder);
+                sq.select(root.get());
+                return root;
+            }
+            @Override
+            public Mapper<E, R, E> distinct() {
+                queryDecorator = query -> query.distinct(true);
+                return this;
+            }
         };
     }
 

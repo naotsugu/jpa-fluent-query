@@ -18,6 +18,9 @@ package com.mammb.code.jpa.fluent.query;
 import com.mammb.code.jpa.core.RootAware;
 import com.mammb.code.jpa.core.RootSource;
 
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
 /**
  * Represents a query that should be executed.
  * @param <E> the type of entity
@@ -49,6 +52,13 @@ public interface Querying<E, R extends RootAware<E>, U> extends CreateQuery<E, R
      * @return a sort applied {@link Querying}
      */
     Querying<E, R, U> sorted(Sort<E, R> sort1, Sort<E, R> sort2);
+
+
+    /**
+     * Apply the consisting of the distinct elements to the current {@link Querying}.
+     * @return the new {@link Querying} applied distinct
+     */
+    Querying<E, R, U> distinct();
 
 
     /**
@@ -84,6 +94,8 @@ public interface Querying<E, R extends RootAware<E>, U> extends CreateQuery<E, R
             public Querying<E, R, U> sorted(Sort<E, R> sort) { return Querying.of(rootSource(), mapper(), filter(), sorts().and(sort)); }
             @Override
             public Querying<E, R, U> sorted(Sort<E, R> sort1, Sort<E, R> sort2) { return Querying.of(rootSource(), mapper(), filter(), sorts().and(sort1).and(sort2)); }
+            @Override
+            public Querying<E, R, U> distinct() { return Querying.of(rootSource(), mapper().distinct(), filter(), sorts()); }
             @Override
             public <Y> Querying<E, R, Y> map(Mapper<E, R, Y> mapper) { return Querying.of(rootSource(), mapper, filter(), sorts()); }
             @Override
