@@ -6,6 +6,7 @@ import com.mammb.code.jpa.fluent.test.IssueModel;
 import com.mammb.code.jpa.fluent.test.Mappers;
 import com.mammb.code.jpa.fluent.test.Project;
 import com.mammb.code.jpa.fluent.test.ProjectModel;
+import com.mammb.code.jpa.fluent.test.ProjectState;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -14,6 +15,9 @@ import org.junit.jupiter.api.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mammb.code.jpa.fluent.test.ProjectState.CLOSE;
+import static com.mammb.code.jpa.fluent.test.ProjectState.OPEN;
+import static com.mammb.code.jpa.fluent.test.ProjectState.PLAN;
 import static org.junit.jupiter.api.Assertions.*;
 
 class QueryingTest {
@@ -106,6 +110,19 @@ class QueryingTest {
             .filter(issue -> issue.getTitle().eq("foo"))
             .toList().on(em);
         assertEquals(2, issues.size());
+    }
+
+    /**
+     * <pre>
+     * SELECT t0.* FROM ISSUE t0, PROJECT t1 WHERE ((t1.STATE IN ('PLAN', 'OPEN')) AND (t1.ID = t0.PROJECT_ID)) ORDER BY t0.ID ASC
+     * </pre>
+     */
+    @Test
+    void testInFilter() {
+        List<Issue> issues = Querying.of(IssueModel.root())
+            .filter(issue -> issue.getProject().getState().in(PLAN, OPEN))
+            .toList().on(em);
+        assertEquals(3, issues.size());
     }
 
     /**
@@ -264,7 +281,9 @@ class QueryingTest {
     private void createIssues() {
 
         var project1 = new Project(); project1.setName("name1");
+        project1.setState(OPEN);
         var project2 = new Project(); project2.setName("name2");
+        project2.setState(CLOSE);
         em.persist(project1); em.persist(project2);
 
         var issue1 = new Issue(); issue1.setTitle("foo"); issue1.setProject(project1);

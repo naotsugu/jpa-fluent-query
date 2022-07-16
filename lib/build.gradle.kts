@@ -21,7 +21,7 @@ dependencies {
 
 tasks.named<Test>("test") {
     useJUnitPlatform()
-    // testLogging.showStandardStreams = true
+    //testLogging.showStandardStreams = true
 }
 
 tasks.withType<JavaCompile> {
