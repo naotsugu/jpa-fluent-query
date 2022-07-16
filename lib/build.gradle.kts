@@ -43,7 +43,7 @@ tasks.javadoc {
 }
 
 group = "com.mammb"
-version = "0.5.0"
+version = "0.6.0"
 
 val sonatypeUsername: String? by project
 val sonatypePassword: String? by project
