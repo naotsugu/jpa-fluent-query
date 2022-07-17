@@ -13,6 +13,7 @@
         <class>com.mammb.code.jpa.fluent.test.Journal</class>
         <class>com.mammb.code.jpa.fluent.test.Project</class>
         <class>com.mammb.code.jpa.fluent.test.ProjectState</class>
+        <class>com.mammb.code.jpa.fluent.test.ExternalProject</class>
         <class>com.mammb.code.jpa.fluent.test.SpecialTag</class>
         <class>com.mammb.code.jpa.fluent.test.Tag</class>
 

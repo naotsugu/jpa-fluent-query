@@ -1,5 +1,6 @@
 package com.mammb.code.jpa.fluent.query;
 
+import com.mammb.code.jpa.fluent.test.ExternalProject;
 import com.mammb.code.jpa.fluent.test.Issue;
 import com.mammb.code.jpa.fluent.test.IssueDto;
 import com.mammb.code.jpa.fluent.test.IssueModel;
@@ -123,6 +124,18 @@ class QueryingTest {
             .filter(issue -> issue.getProject().getState().in(PLAN, OPEN))
             .toList().on(em);
         assertEquals(3, issues.size());
+    }
+
+    /**
+     * <pre>
+     * SELECT t0.* FROM ISSUE t0, PROJECT t1 WHERE ((t1.CODE = 'code') AND ((t1.ID = t0.PROJECT_ID) AND (t1.DTYPE = 'ExternalProject'))) ORDER BY t0.ID ASC
+     * </pre>
+     */
+    @Test
+    void testTreatFilter() {
+        List<Issue> issues = Querying.of(IssueModel.root())
+            .filter(issue -> issue.getProject().asExternalProjectModel().getCode().eq("code"))
+            .toList().on(em);
     }
 
     /**

@@ -79,7 +79,7 @@ public class Criteria {
             this.expression = expression;
             this.builder = builder;
         }
-        @Override public Expression<E> get() { return expression.get(); };
+        @Override public Expression<E> get() { return expression.get(); }
         @Override public CriteriaBuilder builder() { return builder; }
     }
 
@@ -158,7 +158,7 @@ public class Criteria {
         default Predicate ne(AnyExpression<E, ?> y) { return builder().notEqual(get(), y.get()); }
         default Predicate ne(Expression<?> y) { return builder().notEqual(get(), y); }
         default Predicate ne(Object y) { return isEmpty(y) ? null : builder().notEqual(get(), y); }
-        default Predicate isNull(Expression<?> x) { return builder().isNull(get()); }
+        default Predicate isNull() { return builder().isNull(get()); }
         default Predicate nonNull() { return builder().isNotNull(get()); }
         default Predicate in(AnyExpression<E, ?>... values) {
             return get().in(Arrays.stream(values).map(AnyExpression::get).toArray(Expression<?>[]::new));
