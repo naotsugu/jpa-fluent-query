@@ -13,30 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mammb.code.jpa.core;
+package com.mammb.code.jpa.fluent.core;
 
-import jakarta.persistence.criteria.AbstractQuery;
-import jakarta.persistence.criteria.Root;
-import java.util.function.Supplier;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Root aware.
- * @param <E> the type of entity
+ * RepositoryTrait.
  * @author Naotsugu Kobayashi
  */
-public interface RootAware<E> extends
-        Supplier<Root<E>>,
-        BuilderAware,
-        QueryAware<AbstractQuery<?>>,
-        Criteria.AnyExpression<E, Root<E>>,
-        Typed<E> {
+@Documented
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface RepositoryTrait {
 
     /**
-     * Create a new {@link RootAware} with the given arguments.
-     * @param root the entity root
-     * @param query the {@link AbstractQuery}
-     * @return a new {@link RootAware}
+     * The trait target entity classes.
+     * @return the trait target entity classes
      */
-    RootAware<E> with(Root<E> root, AbstractQuery<?> query);
+    Class<?>[] value() default {};
 
 }

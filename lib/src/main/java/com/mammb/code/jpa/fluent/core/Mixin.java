@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mammb.code.jpa.core;
+package com.mammb.code.jpa.fluent.core;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * The builder aware.
+ * MixIn Annotation.
  * @author Naotsugu Kobayashi
  */
-public interface BuilderAware {
-
-    /**
-     * Get the {@link CriteriaBuilder}.
-     * @return the {@link CriteriaBuilder}
-     */
-    CriteriaBuilder builder();
-
+@Documented
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Mixin {
 }

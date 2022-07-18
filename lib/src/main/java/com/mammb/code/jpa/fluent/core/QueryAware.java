@@ -13,19 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mammb.code.jpa.core;
+package com.mammb.code.jpa.fluent.core;
+
+import jakarta.persistence.criteria.AbstractQuery;
 
 /**
- * Typed.
- * @param <E> type of element
+ * Query aware.
  * @author Naotsugu Kobayashi
  */
-public interface Typed<E> {
+public interface QueryAware<Q extends AbstractQuery<?>> {
 
     /**
-     * Get the type.
-     * @return the type
+     * Get the query.
+     * @return the query
      */
-    Class<E> type();
-    
+    Q query();
+
 }

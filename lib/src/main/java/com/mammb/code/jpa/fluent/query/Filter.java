@@ -15,7 +15,7 @@
  */
 package com.mammb.code.jpa.fluent.query;
 
-import com.mammb.code.jpa.core.RootAware;
+import com.mammb.code.jpa.fluent.core.RootAware;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 import java.io.Serializable;

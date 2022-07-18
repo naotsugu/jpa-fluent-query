@@ -13,8 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.mammb.code.jpa.fluent.core;
 
 /**
- * The core package.
+ * Typed.
+ * @param <E> type of element
+ * @author Naotsugu Kobayashi
  */
-package com.mammb.code.jpa.core;
+public interface Typed<E> {
+
+    /**
+     * Get the type.
+     * @return the type
+     */
+    Class<E> type();
+
+}

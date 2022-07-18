@@ -15,11 +15,8 @@
  */
 package com.mammb.code.jpa.fluent.query;
 
-import com.mammb.code.jpa.core.RootAware;
-import com.mammb.code.jpa.core.RootSource;
-
-import java.util.function.Supplier;
-import java.util.stream.Stream;
+import com.mammb.code.jpa.fluent.core.RootAware;
+import com.mammb.code.jpa.fluent.core.RootSource;
 
 /**
  * Represents a query that should be executed.

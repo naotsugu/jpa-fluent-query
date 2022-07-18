@@ -15,7 +15,7 @@
  */
 package com.mammb.code.jpa.fluent.repository;
 
-import com.mammb.code.jpa.core.RootAware;
+import com.mammb.code.jpa.fluent.core.RootAware;
 import java.io.Serializable;
 
 /**

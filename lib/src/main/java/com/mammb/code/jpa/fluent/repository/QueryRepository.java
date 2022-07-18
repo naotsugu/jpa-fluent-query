@@ -15,7 +15,7 @@
  */
 package com.mammb.code.jpa.fluent.repository;
 
-import com.mammb.code.jpa.core.RootAware;
+import com.mammb.code.jpa.fluent.core.RootAware;
 import com.mammb.code.jpa.fluent.query.Filter;
 import com.mammb.code.jpa.fluent.query.Sort;
 import com.mammb.code.jpa.fluent.query.Sorts;

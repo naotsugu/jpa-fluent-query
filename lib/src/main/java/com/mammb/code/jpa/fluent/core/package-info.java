@@ -13,20 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mammb.code.jpa.core;
-
-import jakarta.persistence.criteria.AbstractQuery;
 
 /**
- * Query aware.
- * @author Naotsugu Kobayashi
+ * The core package.
  */
-public interface QueryAware<Q extends AbstractQuery<?>> {
-
-    /**
-     * Get the query.
-     * @return the query
-     */
-    Q query();
-
-}
+package com.mammb.code.jpa.fluent.core;

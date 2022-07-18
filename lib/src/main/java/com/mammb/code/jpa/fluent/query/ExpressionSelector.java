@@ -15,12 +15,12 @@
  */
 package com.mammb.code.jpa.fluent.query;
 
-import com.mammb.code.jpa.core.Criteria;
-import com.mammb.code.jpa.core.RootAware;
+import com.mammb.code.jpa.fluent.core.Criteria;
+import com.mammb.code.jpa.fluent.core.RootAware;
 import jakarta.persistence.criteria.Expression;
 
 /**
- * ExpressionSelector
+ * ExpressionSelector.
  * @param <E> the type of entity
  * @param <R> the type of root element
  * @param <U> the type of query result

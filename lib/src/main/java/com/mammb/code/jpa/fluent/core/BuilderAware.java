@@ -13,26 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mammb.code.jpa.core;
+package com.mammb.code.jpa.fluent.core;
 
-import com.mammb.code.jpa.fluent.repository.QueryRepository;
-import java.io.Serializable;
+import jakarta.persistence.criteria.CriteriaBuilder;
 
 /**
- * Repository interface.
- *
- * @param <PK> the type of the id of the entity the repository manages
- * @param <E> the entity type the repository manages
- * @param <R> the entity type as root aware
+ * The builder aware.
  * @author Naotsugu Kobayashi
  */
-public interface Repository<PK extends Serializable, E, R extends RootAware<E>>
-        extends QueryRepository<PK, E, R> {
+public interface BuilderAware {
 
     /**
-     * Get the {@link RootSource}.
-     * @return the {@link RootSource}
+     * Get the {@link CriteriaBuilder}.
+     * @return the {@link CriteriaBuilder}
      */
-    RootSource<E, R> rootSource();
+    CriteriaBuilder builder();
 
 }

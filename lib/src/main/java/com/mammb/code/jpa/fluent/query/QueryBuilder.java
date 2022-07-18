@@ -15,8 +15,8 @@
  */
 package com.mammb.code.jpa.fluent.query;
 
-import com.mammb.code.jpa.core.RootAware;
-import com.mammb.code.jpa.core.RootSource;
+import com.mammb.code.jpa.fluent.core.RootAware;
+import com.mammb.code.jpa.fluent.core.RootSource;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -84,8 +84,11 @@ public interface QueryBuilder {
 
         List<Order> orders = new ArrayList<>();
         Optional.ofNullable(sorts.apply(root)).ifPresent(orders::addAll);
-        orders.addAll(getIdentifierName(root.get().getModel()).stream()
-            .map(name -> cb.asc(root.get().get(name))).toList());
+        if (!cq.getSelection().isCompoundSelection()) {
+            // id sorting is mandatory in the normal select
+            orders.addAll(getIdentifierName(root.get().getModel()).stream()
+                .map(name -> cb.asc(root.get().get(name))).toList());
+        }
         cq.orderBy(orders);
         QueryContext.close();
         return em.createQuery(cq);

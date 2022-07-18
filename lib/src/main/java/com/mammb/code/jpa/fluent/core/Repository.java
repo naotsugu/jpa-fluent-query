@@ -13,20 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mammb.code.jpa.core;
+package com.mammb.code.jpa.fluent.core;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.mammb.code.jpa.fluent.repository.QueryRepository;
+import java.io.Serializable;
 
 /**
- * MixIn Annotation.
+ * Repository interface.
+ *
+ * @param <PK> the type of the id of the entity the repository manages
+ * @param <E> the entity type the repository manages
+ * @param <R> the entity type as root aware
  * @author Naotsugu Kobayashi
  */
-@Documented
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Mixin {
+public interface Repository<PK extends Serializable, E, R extends RootAware<E>>
+        extends QueryRepository<PK, E, R> {
+
+    /**
+     * Get the {@link RootSource}.
+     * @return the {@link RootSource}
+     */
+    RootSource<E, R> rootSource();
+
 }

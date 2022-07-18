@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mammb.code.jpa.core;
+package com.mammb.code.jpa.fluent.core;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
@@ -238,12 +238,18 @@ public class Criteria {
         default Predicate le(Expression<? extends Number> y) { return builder().le(get(), y); }
         default Predicate le(Number y) { return Objects.isNull(y) ? null : builder().le(get(), y); }
 
+        default NumberExp<E> sum() { return new NumberExp<>(() -> builder().sum(get()), builder()); }
+        default NumberExp<E> max() { return new NumberExp<>(() -> builder().max(get()), builder()); }
+        default NumberExp<E> min() { return new NumberExp<>(() -> builder().min(get()), builder()); }
+        default NumberExp<Double> avg() { return new NumberExp<>(() -> builder().avg(get()), builder()); }
+
         default Expression<Long> toLong() { return builder().toLong(get()); }
         default Expression<Integer> toInteger() { return builder().toInteger(get()); }
         default Expression<Float> toFloat() { return builder().toFloat(get()); }
         default Expression<Double> toDouble() { return builder().toDouble(get()); }
         default Expression<BigDecimal> toBigDecimal() { return builder().toBigDecimal(get()); }
         default Expression<BigInteger> toBigInteger() { return builder().toBigInteger(get()); }
+
     }
 
     public interface AnyCollectionExpression<C extends Collection<?>, T extends Expression<C>>

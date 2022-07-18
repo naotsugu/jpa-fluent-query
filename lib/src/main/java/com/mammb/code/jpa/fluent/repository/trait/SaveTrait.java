@@ -15,7 +15,7 @@
  */
 package com.mammb.code.jpa.fluent.repository.trait;
 
-import com.mammb.code.jpa.core.EntityManagerAware;
+import com.mammb.code.jpa.fluent.core.EntityManagerAware;
 import java.util.Objects;
 
 /**

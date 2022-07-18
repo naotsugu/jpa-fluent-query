@@ -13,20 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mammb.code.jpa.core;
+package com.mammb.code.jpa.fluent.core;
+
+import jakarta.persistence.criteria.AbstractQuery;
+import jakarta.persistence.criteria.Root;
+import java.util.function.Supplier;
 
 /**
- * Root source aware.
+ * Root aware.
  * @param <E> the type of entity
- * @param <R> the type of root
  * @author Naotsugu Kobayashi
  */
-public interface RootSourceAware<E, R extends RootAware<E>> {
+public interface RootAware<E> extends
+        Supplier<Root<E>>,
+        BuilderAware,
+        QueryAware<AbstractQuery<?>>,
+        Criteria.AnyExpression<E, Root<E>>,
+        Typed<E> {
 
     /**
-     * Get the root source.
-     * @return the root source
+     * Create a new {@link RootAware} with the given arguments.
+     * @param root the entity root
+     * @param query the {@link AbstractQuery}
+     * @return a new {@link RootAware}
      */
-    RootSource<E, R> rootSource();
+    RootAware<E> with(Root<E> root, AbstractQuery<?> query);
 
 }

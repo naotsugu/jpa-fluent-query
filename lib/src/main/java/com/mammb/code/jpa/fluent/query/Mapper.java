@@ -15,15 +15,17 @@
  */
 package com.mammb.code.jpa.fluent.query;
 
-import com.mammb.code.jpa.core.RootAware;
-import com.mammb.code.jpa.core.RootSource;
+import com.mammb.code.jpa.fluent.core.RootAware;
+import com.mammb.code.jpa.fluent.core.RootSource;
 import jakarta.persistence.Tuple;
-import jakarta.persistence.criteria.AbstractQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Selection;
 import jakarta.persistence.criteria.Subquery;
+
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -81,12 +83,13 @@ public interface Mapper<E, R extends RootAware<E>, U> {
     /**
      * Create a {@link Tuple} {@link Mapper}.
      * @param selectors the {@link Tuple} selector.
+     * @param grouping the grouping
      * @param <E> the type of entity
      * @param <R> the type of root
      * @return a tuple {@link Mapper}
      */
     static <E, R extends RootAware<E>> Mapper<E, R, Tuple> tuple(
-            List<Selector<E, R, ?>> selectors) {
+            List<Selector<E, R, ?>> selectors, Grouping<E, R> grouping) {
         return new Mapper<>() {
             private QueryDecorator<Tuple> queryDecorator = QueryDecorator.empty();
             @Override
@@ -113,13 +116,16 @@ public interface Mapper<E, R extends RootAware<E>, U> {
      * Create a Construct {@link Mapper}.
      * @param result the class of query result
      * @param selectors the selectors
+     * @param grouping the grouping
      * @param <E> the type of entity
      * @param <R> the type of root
      * @param <U> the type of result
      * @return a Construct {@link Mapper}
      */
     static <E, R extends RootAware<E>, U> Mapper<E, R, U> construct(
-            Class<U> result, List<Selector<E, R, ?>> selectors) {
+            Class<U> result,
+            List<Selector<E, R, ?>> selectors,
+            Grouping<E, R> grouping) {
         return new Mapper<>() {
             private QueryDecorator<U> queryDecorator = QueryDecorator.empty();
             @Override
@@ -131,6 +137,7 @@ public interface Mapper<E, R extends RootAware<E>, U> {
                 QueryContext.put(root.get());
                 query.select(builder.construct(result, selectors.stream()
                         .map(sel -> sel.apply(root)).toArray(Selection[]::new)));
+                query.groupBy(grouping.apply(root));
                 return root;
             }
             @Override

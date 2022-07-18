@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mammb.code.jpa.core;
-
-import jakarta.persistence.EntityManager;
+package com.mammb.code.jpa.fluent.core;
 
 /**
- * The entity manager aware.
+ * Root source aware.
+ * @param <E> the type of entity
+ * @param <R> the type of root
  * @author Naotsugu Kobayashi
  */
-public interface EntityManagerAware {
+public interface RootSourceAware<E, R extends RootAware<E>> {
 
     /**
-     * Get the {@link EntityManager}.
-     * @return the {@link EntityManager}
+     * Get the root source.
+     * @return the root source
      */
-    EntityManager em();
+    RootSource<E, R> rootSource();
 
 }

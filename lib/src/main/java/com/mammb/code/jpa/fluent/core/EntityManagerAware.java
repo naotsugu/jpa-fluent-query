@@ -13,27 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mammb.code.jpa.core;
+package com.mammb.code.jpa.fluent.core;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import jakarta.persistence.EntityManager;
 
 /**
- * RepositoryTrait.
+ * The entity manager aware.
  * @author Naotsugu Kobayashi
  */
-@Documented
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface RepositoryTrait {
+public interface EntityManagerAware {
 
     /**
-     * The trait target entity classes.
-     * @return the trait target entity classes
+     * Get the {@link EntityManager}.
+     * @return the {@link EntityManager}
      */
-    Class<?>[] value() default {};
+    EntityManager em();
 
 }
