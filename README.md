@@ -19,7 +19,7 @@ If you use Gradle Kotlin DSL, define annotation processors and `jpa-fluent-query
 dependencies {
   annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen:6.1.0.Final")
   annotationProcessor("com.mammb:jpa-fluent-modelgen:0.6.0")
-  testImplementation("com.mammb:jpa-fluent-query:0.6.0")
+  implementation("com.mammb:jpa-fluent-query:0.6.0")
 }
 ```
 
@@ -41,7 +41,7 @@ public class Issue extends BaseEntity {
 }
 ```
 
-You can get a list as follows
+You can get the issue list as follows
 
 ```java
 List<Issue> issues = Querying.of(IssueModel.root())

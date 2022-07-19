@@ -14,6 +14,8 @@ public class Issue extends BaseEntity {
     @ManyToOne
     Project project;
 
+    Integer priority;
+
     String title;
 
     String description;
@@ -31,6 +33,14 @@ public class Issue extends BaseEntity {
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
     }
 
     public String getTitle() {

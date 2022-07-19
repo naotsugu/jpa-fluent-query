@@ -1,5 +1,6 @@
 package com.mammb.code.jpa.fluent.query;
 
+import com.mammb.code.jpa.fluent.test.ExternalProject;
 import com.mammb.code.jpa.fluent.test.Issue;
 import com.mammb.code.jpa.fluent.test.IssueDto;
 import com.mammb.code.jpa.fluent.test.IssueModel;
@@ -10,7 +11,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import org.junit.jupiter.api.*;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -55,7 +55,7 @@ class QueryingTest {
     @Test
     void testCount() {
         var count = Querying.of(IssueModel.root()).count().on(em);
-        assertEquals(6L, count);
+        assertEquals(8L, count);
     }
 
     /**
@@ -80,7 +80,7 @@ class QueryingTest {
     void testSimpleQuery() {
         List<Issue> issues = Querying.of(IssueModel.root())
             .toList().on(em);
-        assertEquals(6, issues.size());
+        assertEquals(8, issues.size());
     }
 
 
@@ -121,7 +121,7 @@ class QueryingTest {
         List<Issue> issues = Querying.of(IssueModel.root())
             .filter(issue -> issue.getProject().getState().in(PLAN, OPEN))
             .toList().on(em);
-        assertEquals(3, issues.size());
+        assertEquals(5, issues.size());
     }
 
     /**
@@ -134,6 +134,7 @@ class QueryingTest {
         List<Issue> issues = Querying.of(IssueModel.root())
             .filter(issue -> issue.getProject().asExternalProjectModel().getCode().eq("code"))
             .toList().on(em);
+        assertEquals(2, issues.size());
     }
 
     /**
@@ -153,7 +154,6 @@ class QueryingTest {
         assertEquals("name2", issues.get(0).getProject().getName());
         assertEquals("name1", issues.get(1).getProject().getName());
         assertEquals("name1", issues.get(2).getProject().getName());
-
     }
 
     /**
@@ -172,15 +172,16 @@ class QueryingTest {
 
     /**
      * <pre>
-     * SELECT MIN(ID) FROM ISSUE WHERE (TITLE = 'foo')
+     * SELECT MAX(ID) FROM ISSUE WHERE (TITLE = 'foo')
      * </pre>
      */
     @Test
-    void testAggregateMin() {
-        Optional<Mappers.LongResult> result = Querying.of(IssueModel.root())
+    void testAggregateMax() {
+        Optional<Mappers.IntegerResult> result = Querying.of(IssueModel.root())
             .filter(r -> r.getTitle().eq("foo"))
-            .map(Mappers.longResult(issue -> issue.getId().min()))
+            .map(Mappers.integerResult(issue -> issue.getPriority().max()))
             .toOptionalOne().on(em);
+        assertEquals(3, result.get().value());
     }
 
     /**
@@ -243,7 +244,7 @@ class QueryingTest {
      */
     @Test
     void testSubQuery() {
-        Querying.of(IssueModel.root())
+        List<Issue> issues = Querying.of(IssueModel.root())
             .filter(issue -> issue.getId().gt(
                     SubQuery.of(ProjectModel.root())
                                .filter(prj -> prj.getName().eq("name1"))
@@ -273,7 +274,7 @@ class QueryingTest {
                 .filter(issue -> SubQuery.of(issue)
                                          .filter(r -> r.getTitle().eq("foo"))
                                          .exists())
-            .toList().on(em);
+                .toList().on(em);
     }
 
     /**
@@ -308,16 +309,21 @@ class QueryingTest {
         project1.setState(OPEN);
         var project2 = new Project(); project2.setName("name2");
         project2.setState(CLOSE);
-        em.persist(project1); em.persist(project2);
+        var project3 = new ExternalProject(); project3.setName("ext");
+        project3.setState(OPEN);
+        project3.setCode("code");
+        em.persist(project1); em.persist(project2); em.persist(project3);
 
-        var issue1 = new Issue(); issue1.setTitle("foo"); issue1.setProject(project1);
-        var issue2 = new Issue(); issue2.setTitle("foo"); issue2.setProject(project2);
-        var issue3 = new Issue(); issue3.setTitle("foo"); issue3.setProject(project1);
-        var issue4 = new Issue(); issue4.setTitle("bar"); issue4.setProject(project2);
-        var issue5 = new Issue(); issue5.setTitle("bar"); issue5.setProject(project1);
-        var issue6 = new Issue(); issue6.setTitle("bar"); issue6.setProject(project2);
-        em.persist(issue1); em.persist(issue2); em.persist(issue3);
-        em.persist(issue4); em.persist(issue5); em.persist(issue6);
+        var issue1 = new Issue(); issue1.setTitle("foo"); issue1.setProject(project1); issue1.setPriority(1);
+        var issue2 = new Issue(); issue2.setTitle("foo"); issue2.setProject(project2); issue2.setPriority(2);
+        var issue3 = new Issue(); issue3.setTitle("foo"); issue3.setProject(project1); issue3.setPriority(3);
+        var issue4 = new Issue(); issue4.setTitle("bar"); issue4.setProject(project2); issue4.setPriority(4);
+        var issue5 = new Issue(); issue5.setTitle("bar"); issue5.setProject(project1); issue5.setPriority(5);
+        var issue6 = new Issue(); issue6.setTitle("bar"); issue6.setProject(project2); issue6.setPriority(6);
+        var issue7 = new Issue(); issue7.setTitle("baz"); issue7.setProject(project3); issue7.setPriority(7);
+        var issue8 = new Issue(); issue8.setTitle("baz"); issue8.setProject(project3); issue8.setPriority(8);
+        em.persist(issue1); em.persist(issue2); em.persist(issue3); em.persist(issue4);
+        em.persist(issue5); em.persist(issue6); em.persist(issue7); em.persist(issue8);
 
     }
 
