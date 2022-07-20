@@ -1,0 +1,14 @@
+== Introduction
+
+=== What is JPA Fluent Query?
+
+JPA Fluent Query is Query library for Jakarta Persistence.
+
+Generate a fluent API from a static metamodel class using an annotation processor with https://github.com/naotsugu/jpa-fluent-modelgen[jpa-fluent-modelgen].
+
+
+=== Release Notes
+
+Current version is v0.6.0.
+
+This version is under development.

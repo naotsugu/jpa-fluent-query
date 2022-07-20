@@ -2,6 +2,7 @@ plugins {
     `java-library`
     `maven-publish`
     signing
+    id("org.asciidoctor.jvm.convert") version "3.3.2"
 }
 
 repositories {
@@ -101,4 +102,18 @@ publishing {
 
 signing {
     sign(publishing.publications["mavenJava"])
+}
+
+
+// asciidoctor config
+val asciidoctorExtensions: Configuration by configurations.creating
+tasks.asciidoctor {
+    baseDirFollowsSourceFile()
+    sources(delegateClosureOf<PatternSet> {
+        include("index.adoc")
+    })
+    forkOptions {
+        jvmArgs("--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED")
+        jvmArgs("--add-opens", "java.base/java.io=ALL-UNNAMED")
+    }
 }

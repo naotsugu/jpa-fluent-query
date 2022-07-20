@@ -72,7 +72,7 @@ public class IssueRepository implements IssueRepository_ {
 Using the predefined methods, you can retrieve the listings as follows
 
 ```java
-var list = repository.findAll(issue -> issue.getProject().getName().eq("name));
+var list = repository.findAll(issue -> issue.getProject().getName().eq("name"));
 ```
 
 ## Using typesafe mapping

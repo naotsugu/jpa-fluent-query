@@ -1,0 +1,8 @@
+:encoding: utf-8
+:backend: html5
+:doctype: article
+:toc: left
+:toclevels: 3
+:source-highlighter: rouge
+:icons: font
+:sectanchors:

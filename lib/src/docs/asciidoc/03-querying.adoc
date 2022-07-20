@@ -1,0 +1,12 @@
+== Querying
+
+Querying is used to construct the query.
+
+[source, java]
+----
+List<Issue> issues = Querying.of(IssueModel.root())
+    .filter(issue -> issue.getProject().getName().eq("name"))
+    .filter(issue -> issue.getTitle().eq("foo"))
+    .toList().on(em);
+----
+
