@@ -213,6 +213,7 @@ class QueryingTest {
             .filter(issue -> issue.getTitle().eq("foo"))
             .toPage(SlicePoint.of()).on(em);
         assertEquals(1, issues.getTotalPages());
+        issues.getContent()
         assertEquals(3, issues.getTotalElements());
     }
 

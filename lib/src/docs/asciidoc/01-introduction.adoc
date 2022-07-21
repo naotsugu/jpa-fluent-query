@@ -1,5 +1,8 @@
 == Introduction
 
+This project is currently under development.
+
+
 === What is JPA Fluent Query?
 
 JPA Fluent Query is Query library for Jakarta Persistence.
@@ -7,8 +10,106 @@ JPA Fluent Query is Query library for Jakarta Persistence.
 Generate a fluent API from a static metamodel class using an annotation processor with https://github.com/naotsugu/jpa-fluent-modelgen[jpa-fluent-modelgen].
 
 
+=== JPA Fluent Modelgen & JPA Fluent Query
+
+JPA Fluent Query uses `JPA Fluent Modelgen`.
+
+`JPA Fluent Modelgen` generates helper classes for queries from JAP Static Metamodel.
+
+
+As an example, suppose we define the following entities
+
+[source, java]
+----
+@Entity
+public class Issue extends BaseEntity {
+  @ManyToOne
+  private Project project;
+  private String title;
+  // ...
+}
+----
+
+In this case, the JPA Static Metamodel would look like this
+
+[source, java]
+----
+@Generated(value = "org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor")
+@StaticMetamodel(Issue.class)
+public abstract class Issue_ {
+
+  public static volatile SingularAttribute<Issue, Project> project;
+  public static volatile SingularAttribute<Issue, String> title;
+
+  public static final String PROJECT = "project";
+  public static final String TITLE = "title";
+}
+----
+
+`JPA Fluent Modelgen` generates the following classes from this JPA Static Metamodel.
+
+
+[source, java]
+----
+@Generated(value = "com.mammb.code.jpa.fluent.modelgen.JpaModelProcessor")
+public class IssueModel {
+
+  public static Root_ root(Root<Issue> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+      return new Root_(root, query, builder);
+  }
+  public static RootSource<Issue, Root_> root() {
+    return new RootSource<Issue, Root_>() {
+      // ...
+  }
+  // ...
+}
+----
+
+[source, java]
+----
+@Generated(value = "com.mammb.code.jpa.fluent.modelgen.JpaModelProcessor")
+public interface IssueRepository_ extends Repository<Long, Issue, IssueModel.Root_> {
+    default RootSource<Issue, IssueModel.Root_> rootSource() {
+        return IssueModel.root();
+    }
+}
+----
+
+`JPA Fluent Query` can use the classes generated here to construct queries as follows
+
+[source, java]
+----
+List<Issue> issues = Querying.of(IssueModel.root())
+  .filter(issue -> issue.getProject().getName().eq("name"))
+  .filter(issue -> issue.getTitle().eq("foo"))
+  .toList().on(em);
+----
+
+You can get the `IssueModel.rout()` and use the IDE's code completion to build the query in a fluent manner.
+
+
+When using the repository pattern, use the generated `IssueRepository_` to define the repository as follows
+
+[source, java]
+----
+public class IssueRepository implements IssueRepository_ {
+
+  @Inject
+  private EntityManager em;
+
+  @Override
+  public EntityManager em() { return em; }
+----
+
+The `IssueRepository_` has default query methods for common uses, So it can be queried as follows
+
+[source, java]
+----
+var list = repository.findAll(issue -> issue.getProject().getName().eq("name"));
+----
+
+
 === Release Notes
 
-Current version is v0.6.0.
+Current version is v0.6.0(under development).
 
-This version is under development.

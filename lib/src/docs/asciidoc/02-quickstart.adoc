@@ -13,10 +13,10 @@ dependencies {
 }
 ----
 <1> jpa static metamodel generator. In this example we will use hibernate-jpamodelgen, but other model processors can be used.
-<2> Co generate APIs for queries from static metamodel classes
+<2> To generate APIs for queries from static metamodel classes
 <3> Contains a fluent API for query construction
 
-If you are using Groovy DSL, then use fallowing :
+If you are using Groovy DSL, then use fallowing
 
 [source, groovy]
 ----
@@ -26,6 +26,30 @@ dependencies {
   implementation 'com.mammb:jpa-fluent-query:0.6.0'
 }
 ----
+
+In Maven, use the following
+
+[source, xml]
+----
+  <dependency>
+    <groupId>org.hibernate</groupId>
+    <artifactId>hibernate-jpamodelgen</artifactId>
+    <version>6.1.0.Final</version>
+    <optional>true</optional>
+  </dependency>
+  <dependency>
+    <groupId>com.mammb</groupId>
+    <artifactId>jpa-fluent-modelgen</artifactId>
+    <version>0.6.0</version>
+    <optional>true</optional>
+  </dependency>
+  <dependency>
+    <groupId>com.mammb</groupId>
+    <artifactId>jpa-fluent-query</artifactId>
+    <version>0.6.0</version>
+  </dependency>
+----
+
 
 ==== Building Queries
 
@@ -42,15 +66,79 @@ public class Issue extends BaseEntity {
 }
 ----
 
-
 You can get the issue list as follows
 
 [source, java]
 ----
-List<Issue> issues = Querying.of(IssueModel.root())
-  .filter(issue -> issue.getProject().getName().eq("name"))
-  .toList().on(em);
+@Transactional
+@RequestScoped
+public class IssueService {
+
+  @PersistenceContext
+  private EntityManager em;
+
+  public List<Issue> findIssues(String name) {
+    return Querying.of(IssueModel.root())
+        .filter(issue -> issue.getProject().getName().eq(name))
+        .toList().on(em);
+  }
+}
 ----
+
+The count of records can be obtained as follows
+
+[source, java]
+----
+var count = Querying.of(IssueModel.root())
+    .filter(issue -> issue.getTitle().eq("foo"))
+    .count().on(em);
+----
+
+Order By specifies `sorted()` as follows.
+
+[source, java]
+----
+List<Issue> issues = Querying.of(IssueModel.root())
+    .filter(issue -> issue.getTitle().eq("foo"))
+    .sorted(issue -> issue.getProject().getName().desc(),
+            issue -> issue.getId().asc())
+    .toList().on(em);
+----
+
+If paging is required, the following can be done
+
+[source, java]
+----
+Page<Issue> page = Querying.of(IssueModel.root())
+    .filter(issue -> issue.getTitle().eq("foo"))
+    .toPage(SlicePoint.of()).on(em);
+----
+
+The query results can be obtained from the retrieved page as follows
+
+
+[source, java]
+----
+int pageCount = page.getTotalPages();
+long totalElements = page.getTotalElements();
+List<Issue> issues = page.getContent();
+----
+
+Note that the default page size is 15 results.
+
+
+If a subquery is needed, use `SubQuery` as follows
+
+[source, java]
+----
+List<Issue> issues = Querying.of(IssueModel.root())
+    .filter(issue -> SubQuery.of(ProjectModel.root())
+                             .filter(prj -> prj.getName().eq("name1"))
+                             .filter(prj -> prj.getId().eq(issue.getProject().getId()))
+                             .exists())
+    .toList().on(em);
+----
+
 
 
 ==== Using Repository
