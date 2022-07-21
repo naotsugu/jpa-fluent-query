@@ -9,6 +9,7 @@ Query library for Jakarta Persistence.
 
 Generate a fluent API from a static metamodel class using an annotation processor.
 
+**For more information, get familiar with the [JPA Fluent Query User Manual](https://naotsugu.github.io/jpa-fluent-query/).**
 
 
 ## Usage
@@ -95,67 +96,4 @@ List<IssueDto> issues = Querying.of(IssueModel.root())
 ```
 
 The type and number of arguments can be detected at build time.
-
-
-## Querying example
-
-
-### Filter(Where)
-
-```java
-List<Issue> issues = Querying.of(IssueModel.root())
-    .filter(issue -> issue.getProject().getName().eq("name"))
-    .filter(issue -> issue.getTitle().eq("foo"))
-    .toList().on(em);
-```
-
-
-### Count
-
-```java
-var count = Querying.of(IssueModel.root())
-    .filter(issue -> issue.getTitle().eq("foo"))
-    .count().on(em);
-```
-
-
-### Sort(OrderBy)
-
-```java
-List<Issue> issues = Querying.of(IssueModel.root())
-    .filter(issue -> issue.getTitle().eq("name"))
-    .sorted(issue -> issue.getProject().getName().desc(),
-            issue -> issue.getId().asc())
-    .toList().on(em);
-```
-
-
-### Slice
-
-```java
-Slice<Issue> issues = Querying.of(IssueModel.root())
-    .filter(issue -> issue.getTitle().eq("title"))
-    .toSlice(SlicePoint.of()).on(em);
-```
-
-
-### Page
-
-```java
-Page<Issue> issues = Querying.of(IssueModel.root())
-    .filter(issue -> issue.getTitle().eq("title"))
-    .toPage(SlicePoint.of()).on(em);
-```
-
-
-### SubQuery
-
-```java
-List<Issue> issues = Querying.of(IssueModel.root())
-    .filter(issue -> SubQuery.of(ProjectModel.subRoot())
-                             .filter(prj -> prj.getName().eq("name"))
-                             .filter(prj -> prj.getId().eq(issue.getProject().getId()))
-                             .exists())
-    .toList().on(em);
-```
 
