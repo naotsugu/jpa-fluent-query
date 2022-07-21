@@ -457,15 +457,17 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_quick_start">Quick Start</a>
 <ul class="sectlevel2">
-<li><a href="#_getting_started">Getting Started</a>
-<ul class="sectlevel3">
+<li><a href="#_getting_started">Getting Started</a></li>
 <li><a href="#_building_queries">Building Queries</a></li>
+<li><a href="#_count_query">Count Query</a></li>
+<li><a href="#_order_by_query">Order By Query</a></li>
+<li><a href="#_paging_query">Paging Query</a></li>
+<li><a href="#_slicing_query">Slicing Query</a></li>
+<li><a href="#_subquery">Subquery</a></li>
+</ul>
+</li>
 <li><a href="#_using_repository">Using Repository</a></li>
 <li><a href="#_using_typesafe_mapping">Using typesafe mapping</a></li>
-</ul>
-</li>
-</ul>
-</li>
 <li><a href="#_querying">Querying</a></li>
 </ul>
 </div>
@@ -673,8 +675,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
   <span class="nt">&lt;/dependency&gt;</span></code></pre>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_building_queries"><a class="anchor" href="#_building_queries"></a>Building Queries</h4>
+</div>
+<div class="sect2">
+<h3 id="_building_queries"><a class="anchor" href="#_building_queries"></a>Building Queries</h3>
 <div class="paragraph">
 <p>If you have an Issue entity like the following</p>
 </div>
@@ -709,6 +712,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <span class="o">}</span></code></pre>
 </div>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_count_query"><a class="anchor" href="#_count_query"></a>Count Query</h3>
 <div class="paragraph">
 <p>The count of records can be obtained as follows</p>
 </div>
@@ -719,6 +725,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
     <span class="o">.</span><span class="na">count</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
 </div>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_order_by_query"><a class="anchor" href="#_order_by_query"></a>Order By Query</h3>
 <div class="paragraph">
 <p>Order By specifies <code>sorted()</code> as follows.</p>
 </div>
@@ -731,6 +740,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
     <span class="o">.</span><span class="na">toList</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
 </div>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_paging_query"><a class="anchor" href="#_paging_query"></a>Paging Query</h3>
 <div class="paragraph">
 <p>If paging is required, the following can be done</p>
 </div>
@@ -754,6 +766,31 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>Note that the default page size is 15 results.</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_slicing_query"><a class="anchor" href="#_slicing_query"></a>Slicing Query</h3>
+<div class="paragraph">
+<p>If you do not need the total number of records, you can use <code>Slice</code> instead of <code>Page</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nc">Slice</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">&gt;</span> <span class="n">slice</span> <span class="o">=</span> <span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
+    <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getTitle</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"foo"</span><span class="o">))</span>
+    <span class="o">.</span><span class="na">toSlice</span><span class="o">(</span><span class="nc">SlicePoint</span><span class="o">.</span><span class="na">of</span><span class="o">()).</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The query results can be obtained from the retrieved slice as follows</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">&gt;</span> <span class="n">issues</span> <span class="o">=</span> <span class="n">slice</span><span class="o">.</span><span class="na">getContent</span><span class="o">();</span>
+<span class="kt">boolean</span> <span class="n">hasNext</span> <span class="o">=</span> <span class="n">slice</span><span class="o">.</span><span class="na">hasNext</span><span class="o">();</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_subquery"><a class="anchor" href="#_subquery"></a>Subquery</h3>
 <div class="paragraph">
 <p>If a subquery is needed, use <code>SubQuery</code> as follows</p>
 </div>
@@ -768,8 +805,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_using_repository"><a class="anchor" href="#_using_repository"></a>Using Repository</h4>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_using_repository"><a class="anchor" href="#_using_repository"></a>Using Repository</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>For entities, the base class of the repository is automatically generated by the annotation processor.</p>
 </div>
@@ -799,8 +839,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_using_typesafe_mapping"><a class="anchor" href="#_using_typesafe_mapping"></a>Using typesafe mapping</h4>
+</div>
+<div class="sect1">
+<h2 id="_using_typesafe_mapping"><a class="anchor" href="#_using_typesafe_mapping"></a>Using typesafe mapping</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>If you use constructor expressions to map query results to DTOs, mapping errors can only be detected at run-time.</p>
 </div>
@@ -828,8 +870,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 </div>
-</div>
-</div>
 <div class="sect1">
 <h2 id="_querying"><a class="anchor" href="#_querying"></a>Querying</h2>
 <div class="sectionbody">
@@ -850,7 +890,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="footer">
 <div id="footer-text">
 Version 0.6.0<br>
-Last updated 2022-07-21 13:54:38 UTC
+Last updated 2022-07-21 14:17:36 UTC
 </div>
 </div>
 <style>
