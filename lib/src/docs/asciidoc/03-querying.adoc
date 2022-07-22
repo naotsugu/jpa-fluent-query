@@ -1,12 +1,35 @@
-== Querying
+== How to use Querying
 
-Querying is used to construct the query.
+`Querying` is used to construct the query.
 
 [source, java]
 ----
 List<Issue> issues = Querying.of(IssueModel.root())
     .filter(issue -> issue.getProject().getName().eq("name"))
-    .filter(issue -> issue.getTitle().eq("foo"))
     .toList().on(em);
 ----
+
+`Querying` provides the following methods.
+
+* `Querying<E, R, U> filter(Filter<E, R> filter)`
+* `Querying<E, R, U> sorted(Sort<E, R> sort)`
+* `Querying<E, R, U> sorted(Sort<E, R> sort1, ...)`
+* `Querying<E, R, U> distinct()`
+* `<Y> Querying<E, R, Y> map(Mapper<E, R, Y> mapper)`
+
+
+=== Filter
+T.B.D
+
+=== Sorted
+T.B.D
+
+=== Distinct
+T.B.D
+
+=== Map
+T.B.D
+
+== How to use SubQuery
+T.B.D
 

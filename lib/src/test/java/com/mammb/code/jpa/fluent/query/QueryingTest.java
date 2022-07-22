@@ -156,6 +156,7 @@ class QueryingTest {
         assertEquals("name1", issues.get(2).getProject().getName());
     }
 
+
     /**
      * <pre>
      * SELECT ID, TITLE FROM ISSUE WHERE (TITLE = ?) ORDER BY ID ASC

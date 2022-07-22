@@ -3,6 +3,7 @@
 This project is currently under development.
 
 
+
 === What is JPA Fluent Query?
 
 JPA Fluent Query is Query library for Jakarta Persistence.
@@ -23,10 +24,14 @@ As an example, suppose we define the following entities
 ----
 @Entity
 public class Issue extends BaseEntity {
+
+  private String title;
+
   @ManyToOne
   private Project project;
-  private String title;
+
   // ...
+
 }
 ----
 
@@ -36,18 +41,21 @@ In this case, the JPA Static Metamodel would look like this
 ----
 @Generated(value = "org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor")
 @StaticMetamodel(Issue.class)
-public abstract class Issue_ {
+public abstract class Issue_ extends BaseEntity_ {
 
-  public static volatile SingularAttribute<Issue, Project> project;
   public static volatile SingularAttribute<Issue, String> title;
+  public static volatile SingularAttribute<Issue, Project> project;
 
-  public static final String PROJECT = "project";
   public static final String TITLE = "title";
+  public static final String PROJECT = "project";
+
 }
 ----
 
 `JPA Fluent Modelgen` generates the following classes from this JPA Static Metamodel.
 
+
+The first is the model class of the entity.
 
 [source, java]
 ----
@@ -60,22 +68,31 @@ public class IssueModel {
   public static RootSource<Issue, Root_> root() {
     return new RootSource<Issue, Root_>() {
       // ...
+    };
   }
   // ...
 }
 ----
 
+
+The second is the repository interface.
+
+
 [source, java]
 ----
 @Generated(value = "com.mammb.code.jpa.fluent.modelgen.JpaModelProcessor")
-public interface IssueRepository_ extends Repository<Long, Issue, IssueModel.Root_> {
+public interface IssueRepository_ extends Repository<Long, Issue, IssueModel.Root_>, BaseRepository<Long, Issue> {
+
     default RootSource<Issue, IssueModel.Root_> rootSource() {
         return IssueModel.root();
     }
+
 }
 ----
 
+
 `JPA Fluent Query` can use the classes generated here to construct queries as follows
+
 
 [source, java]
 ----
