@@ -1,5 +1,6 @@
-package com.mammb.code.jpa.fluent.test;
+package com.mammb.code.jpa.fluent.test.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,7 +18,7 @@ public class Project extends BaseEntity {
     @Embedded
     Duration duration;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     Project parent;
 
     public String getName() {

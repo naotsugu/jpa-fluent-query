@@ -1,4 +1,4 @@
-package com.mammb.code.jpa.fluent.test;
+package com.mammb.code.jpa.fluent.test.entity;
 
 import jakarta.persistence.Entity;
 

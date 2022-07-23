@@ -4,8 +4,8 @@ import com.mammb.code.jpa.fluent.query.Filter;
 import com.mammb.code.jpa.fluent.query.Request;
 import com.mammb.code.jpa.fluent.query.SlicePoint;
 import com.mammb.code.jpa.fluent.query.Sorts;
-import com.mammb.code.jpa.fluent.test.Issue;
-import com.mammb.code.jpa.fluent.test.IssueModel.*;
+import com.mammb.code.jpa.fluent.test.entity.Issue;
+import com.mammb.code.jpa.fluent.test.entity.IssueModel.*;
 
 public class IssueRequest implements Request<Issue, Root_> {
 

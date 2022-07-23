@@ -134,6 +134,18 @@ public interface QueryBuilder {
             EntityManager em, RootSource<E, R> rootSource, Mapper<E, R, U> mapper,
             Filter<E, R> filter, Sorts<E, R> sorts, SlicePoint slicePoint) {
         var query = QueryBuilder.query(em, rootSource, mapper, filter, sorts);
+        return slice(query, slicePoint);
+    }
+
+
+    /**
+     * Get the slice of entity for given conditions.
+     * @param query The {@link TypedQuery}
+     * @param slicePoint The {@link SlicePoint}
+     * @param <U> The type of query result
+     * @return the {@link Slice}
+     */
+    static <U> Slice<U> slice(TypedQuery<U> query, SlicePoint slicePoint) {
         query.setFirstResult(Math.toIntExact(slicePoint.getOffset()));
         query.setMaxResults(slicePoint.getSize() + 1);
         List<U> result = query.getResultList();

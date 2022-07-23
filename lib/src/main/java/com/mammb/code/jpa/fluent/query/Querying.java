@@ -52,10 +52,38 @@ public interface Querying<E, R extends RootAware<E>, U> extends CreateQuery<E, R
 
 
     /**
+     * Apply the given sort to the current {@link Querying}.
+     * @param sort1 the {@link Sort} to apply
+     * @param sort2 the {@link Sort} to apply
+     * @param sort3 the {@link Sort} to apply
+     * @return a sort applied {@link Querying}
+     */
+    Querying<E, R, U> sorted(Sort<E, R> sort1, Sort<E, R> sort2, Sort<E, R> sort3);
+
+
+    /**
+     * Apply the given sort to the current {@link Querying}.
+     * @param sort1 the {@link Sort} to apply
+     * @param sort2 the {@link Sort} to apply
+     * @param sort3 the {@link Sort} to apply
+     * @param sort4 the {@link Sort} to apply
+     * @return a sort applied {@link Querying}
+     */
+    Querying<E, R, U> sorted(Sort<E, R> sort1, Sort<E, R> sort2, Sort<E, R> sort3, Sort<E, R> sort4);
+
+
+    /**
      * Apply the consisting of the distinct elements to the current {@link Querying}.
      * @return the new {@link Querying} applied distinct
      */
     Querying<E, R, U> distinct();
+
+
+    /**
+     * Apply the consisting of the un distinct elements to the current {@link Querying}.
+     * @return the new {@link Querying} applied un distinct
+     */
+    Querying<E, R, U> unDistinct();
 
 
     /**
@@ -92,7 +120,13 @@ public interface Querying<E, R extends RootAware<E>, U> extends CreateQuery<E, R
             @Override
             public Querying<E, R, U> sorted(Sort<E, R> sort1, Sort<E, R> sort2) { return Querying.of(rootSource(), mapper(), filter(), sorts().and(sort1).and(sort2)); }
             @Override
-            public Querying<E, R, U> distinct() { return Querying.of(rootSource(), mapper().distinct(), filter(), sorts()); }
+            public Querying<E, R, U> sorted(Sort<E, R> sort1, Sort<E, R> sort2, Sort<E, R> sort3) { return Querying.of(rootSource(), mapper(), filter(), sorts().and(sort1).and(sort2).and(sort3)); }
+            @Override
+            public Querying<E, R, U> sorted(Sort<E, R> sort1, Sort<E, R> sort2, Sort<E, R> sort3, Sort<E, R> sort4) { return Querying.of(rootSource(), mapper(), filter(), sorts().and(sort1).and(sort2).and(sort3).and(sort4)); }
+            @Override
+            public Querying<E, R, U> distinct() { return Querying.of(rootSource(), mapper().distinct(true), filter(), sorts()); }
+            @Override
+            public Querying<E, R, U> unDistinct() { return Querying.of(rootSource(), mapper().distinct(false), filter(), sorts()); }
             @Override
             public <Y> Querying<E, R, Y> map(Mapper<E, R, Y> mapper) { return Querying.of(rootSource(), mapper, filter(), sorts()); }
             @Override

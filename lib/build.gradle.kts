@@ -22,7 +22,7 @@ dependencies {
 
 tasks.named<Test>("test") {
     useJUnitPlatform()
-    //testLogging.showStandardStreams = true
+    // testLogging.showStandardStreams = true
 }
 
 tasks.withType<JavaCompile> {
@@ -44,7 +44,7 @@ tasks.javadoc {
 }
 
 group = "com.mammb"
-version = "0.6.0"
+version = "0.7.0"
 
 val sonatypeUsername: String? by project
 val sonatypePassword: String? by project

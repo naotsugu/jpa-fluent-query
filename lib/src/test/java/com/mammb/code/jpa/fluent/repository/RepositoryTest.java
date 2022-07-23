@@ -1,6 +1,6 @@
 package com.mammb.code.jpa.fluent.repository;
 
-import com.mammb.code.jpa.fluent.test.Issue;
+import com.mammb.code.jpa.fluent.test.entity.Issue;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;

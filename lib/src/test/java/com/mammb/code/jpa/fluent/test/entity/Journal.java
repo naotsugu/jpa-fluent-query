@@ -1,5 +1,6 @@
-package com.mammb.code.jpa.fluent.test;
+package com.mammb.code.jpa.fluent.test.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 
@@ -12,7 +13,7 @@ public class Journal extends BaseEntity {
     private LocalDateTime postedOn;
     private String postedBy;
     private String content;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Comment> comments;
 
     public LocalDateTime getPostedOn() {

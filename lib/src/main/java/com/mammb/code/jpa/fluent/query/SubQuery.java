@@ -148,7 +148,7 @@ public interface SubQuery<E, R extends RootAware<E>, U> {
                     filter().and(SubQueryFilter.correlateOf(QueryContext.root(), correlateRoot, filter)));
             }
             @Override
-            public SubQuery<E, R, U> distinct() { return SubQuery.of(rootSource(), mapper().distinct(), filter()); }
+            public SubQuery<E, R, U> distinct() { return SubQuery.of(rootSource(), mapper().distinct(true), filter()); }
             @Override
             public SubQueryFilter<E, R> filter() { return filter; }
             @Override

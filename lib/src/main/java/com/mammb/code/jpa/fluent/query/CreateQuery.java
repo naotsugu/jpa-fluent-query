@@ -17,8 +17,10 @@ package com.mammb.code.jpa.fluent.query;
 
 import com.mammb.code.jpa.fluent.core.RootAware;
 import com.mammb.code.jpa.fluent.core.RootSource;
+
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * Create Query helper interface.
@@ -98,6 +100,49 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
      */
     default Query<Page<U>> toPage(SlicePoint slicePoint) {
         return em -> QueryBuilder.page(em, rootSource(), mapper(), filter(), sorts(), slicePoint);
+    }
+
+
+    /**
+     * Get the {@link Stream} result.
+     * This Stream reads records by page.
+     * This {@link Stream} is descending order.
+     * @return the {@link Stream} result
+     */
+    default Query<Stream<U>> toStream() {
+        return toStream(100);
+    }
+
+
+    /**
+     * Get the {@link Stream} result.
+     * This Stream reads records by page.
+     * This {@link Stream} is descending order.
+     * @param pageSize The size of page
+     * @return the {@link Stream} result
+     */
+    default Query<Stream<U>> toStream(int pageSize) {
+        return em -> SliceStream.of(
+            QueryBuilder.countQuery(em, rootSource(), filter()),
+            QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts()),
+            pageSize
+        ).stream();
+    }
+
+
+    /**
+     * Get the {@link Stream} result.
+     * This Stream reads records by page.
+     * It is recommended that {@code toStream()} be used when updating a record that has already been read,
+     * since there is a possibility of missing processing.
+     * @param pageSize The size of page
+     * @return the {@link Stream} result
+     */
+    default Query<Stream<U>> toForwardingStream(int pageSize) {
+        return em -> SliceStream.forwardOf(
+            QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts()),
+            pageSize
+        ).stream();
     }
 
 }

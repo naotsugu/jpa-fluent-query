@@ -47,10 +47,14 @@ public interface Mapper<E, R extends RootAware<E>, U> {
 
 
     /**
-     * Mark this Mapper as distinct.
+     * Specify whether duplicate query results will be eliminated.
+     * A true value will cause duplicates to be eliminated.
+     * A false value will cause duplicates to be retained.
+     * @param distinct boolean value specifying whether duplicate results must be eliminated
+     *        from the query result or whether they must be retained
      * @return this Mapper
      */
-    Mapper<E, R, U> distinct();
+    Mapper<E, R, U> distinct(boolean distinct);
 
 
     /**
@@ -61,7 +65,8 @@ public interface Mapper<E, R extends RootAware<E>, U> {
      */
     static <E, R extends RootAware<E>> Mapper<E, R, E> of() {
         return new Mapper<>() {
-            private QueryDecorator<E> queryDecorator = QueryDecorator.empty();
+            // distinct true by default
+            private QueryDecorator<E> queryDecorator = query -> query.distinct(true);
             @Override
             public R apply(RootSource<E, R> rootSource, CriteriaBuilder builder) {
                 CriteriaQuery<E> query = builder.createQuery(rootSource.rootClass());
@@ -72,8 +77,8 @@ public interface Mapper<E, R extends RootAware<E>, U> {
                 return root;
             }
             @Override
-            public Mapper<E, R, E> distinct() {
-                queryDecorator = query -> query.distinct(true);
+            public Mapper<E, R, E> distinct(boolean distinct) {
+                queryDecorator = query -> query.distinct(distinct);
                 return this;
             }
         };
@@ -101,11 +106,12 @@ public interface Mapper<E, R extends RootAware<E>, U> {
                 QueryContext.put(root.get());
                 query.select(builder.tuple(selectors.stream()
                     .map(sel -> sel.apply(root)).toArray(Selection[]::new)));
+                query.groupBy(grouping.apply(root));
                 return root;
             }
             @Override
-            public Mapper<E, R, Tuple> distinct() {
-                queryDecorator = query -> query.distinct(true);
+            public Mapper<E, R, Tuple> distinct(boolean distinct) {
+                queryDecorator = query -> query.distinct(distinct);
                 return this;
             }
         };
@@ -141,8 +147,8 @@ public interface Mapper<E, R extends RootAware<E>, U> {
                 return root;
             }
             @Override
-            public Mapper<E, R, U> distinct() {
-                queryDecorator = query -> query.distinct(true);
+            public Mapper<E, R, U> distinct(boolean distinct) {
+                queryDecorator = query -> query.distinct(distinct);
                 return this;
             }
         };
@@ -167,8 +173,8 @@ public interface Mapper<E, R extends RootAware<E>, U> {
                 return root;
             }
             @Override
-            public Mapper<E, R, E> distinct() {
-                queryDecorator = query -> query.distinct(true);
+            public Mapper<E, R, E> distinct(boolean distinct) {
+                queryDecorator = query -> query.distinct(distinct);
                 return this;
             }
         };
@@ -197,8 +203,8 @@ public interface Mapper<E, R extends RootAware<E>, U> {
                 return root;
             }
             @Override
-            public Mapper<E, R, U> distinct() {
-                queryDecorator = query -> query.distinct(true);
+            public Mapper<E, R, U> distinct(boolean distinct) {
+                queryDecorator = query -> query.distinct(distinct);
                 return this;
             }
         };
@@ -224,8 +230,8 @@ public interface Mapper<E, R extends RootAware<E>, U> {
                 return root;
             }
             @Override
-            public Mapper<E, R, E> distinct() {
-                queryDecorator = query -> query.distinct(true);
+            public Mapper<E, R, E> distinct(boolean distinct) {
+                queryDecorator = query -> query.distinct(distinct);
                 return this;
             }
         };

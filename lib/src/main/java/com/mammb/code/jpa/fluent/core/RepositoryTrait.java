@@ -34,6 +34,6 @@ public @interface RepositoryTrait {
      * The trait target entity classes.
      * @return the trait target entity classes
      */
-    Class<?>[] value() default {};
+    Class<?>[] targets() default {};
 
 }

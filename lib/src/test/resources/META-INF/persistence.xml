@@ -6,16 +6,16 @@
 
     <persistence-unit name="testUnit" transaction-type="RESOURCE_LOCAL">
 
-        <class>com.mammb.code.jpa.fluent.test.BaseEntity</class>
-        <class>com.mammb.code.jpa.fluent.test.Comment</class>
-        <class>com.mammb.code.jpa.fluent.test.Duration</class>
-        <class>com.mammb.code.jpa.fluent.test.Issue</class>
-        <class>com.mammb.code.jpa.fluent.test.Journal</class>
-        <class>com.mammb.code.jpa.fluent.test.Project</class>
-        <class>com.mammb.code.jpa.fluent.test.ProjectState</class>
-        <class>com.mammb.code.jpa.fluent.test.ExternalProject</class>
-        <class>com.mammb.code.jpa.fluent.test.SpecialTag</class>
-        <class>com.mammb.code.jpa.fluent.test.Tag</class>
+        <class>com.mammb.code.jpa.fluent.test.entity.BaseEntity</class>
+        <class>com.mammb.code.jpa.fluent.test.entity.Comment</class>
+        <class>com.mammb.code.jpa.fluent.test.entity.Duration</class>
+        <class>com.mammb.code.jpa.fluent.test.entity.Issue</class>
+        <class>com.mammb.code.jpa.fluent.test.entity.Journal</class>
+        <class>com.mammb.code.jpa.fluent.test.entity.Project</class>
+        <class>com.mammb.code.jpa.fluent.test.entity.ProjectState</class>
+        <class>com.mammb.code.jpa.fluent.test.entity.ExternalProject</class>
+        <class>com.mammb.code.jpa.fluent.test.entity.SpecialTag</class>
+        <class>com.mammb.code.jpa.fluent.test.entity.Tag</class>
 
         <properties>
             <property name="jakarta.persistence.schema-generation.database.action" value="create"/>

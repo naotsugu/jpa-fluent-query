@@ -1,5 +1,6 @@
-package com.mammb.code.jpa.fluent.test;
+package com.mammb.code.jpa.fluent.test.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
@@ -11,7 +12,7 @@ import java.util.Set;
 @Entity
 public class Issue extends BaseEntity {
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     Project project;
 
     Integer priority;
@@ -20,10 +21,10 @@ public class Issue extends BaseEntity {
 
     String description;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     List<Journal> journals;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     Set<Tag> tags;
 
 

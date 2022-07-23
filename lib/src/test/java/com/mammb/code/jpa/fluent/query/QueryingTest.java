@@ -1,12 +1,12 @@
 package com.mammb.code.jpa.fluent.query;
 
-import com.mammb.code.jpa.fluent.test.ExternalProject;
-import com.mammb.code.jpa.fluent.test.Issue;
+import com.mammb.code.jpa.fluent.test.entity.ExternalProject;
+import com.mammb.code.jpa.fluent.test.entity.Issue;
 import com.mammb.code.jpa.fluent.test.IssueDto;
-import com.mammb.code.jpa.fluent.test.IssueModel;
+import com.mammb.code.jpa.fluent.test.entity.IssueModel;
 import com.mammb.code.jpa.fluent.test.Mappers;
-import com.mammb.code.jpa.fluent.test.Project;
-import com.mammb.code.jpa.fluent.test.ProjectModel;
+import com.mammb.code.jpa.fluent.test.entity.Project;
+import com.mammb.code.jpa.fluent.test.entity.ProjectModel;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -14,9 +14,9 @@ import org.junit.jupiter.api.*;
 import java.util.List;
 import java.util.Optional;
 
-import static com.mammb.code.jpa.fluent.test.ProjectState.CLOSE;
-import static com.mammb.code.jpa.fluent.test.ProjectState.OPEN;
-import static com.mammb.code.jpa.fluent.test.ProjectState.PLAN;
+import static com.mammb.code.jpa.fluent.test.entity.ProjectState.CLOSE;
+import static com.mammb.code.jpa.fluent.test.entity.ProjectState.OPEN;
+import static com.mammb.code.jpa.fluent.test.entity.ProjectState.PLAN;
 import static org.junit.jupiter.api.Assertions.*;
 
 class QueryingTest {
