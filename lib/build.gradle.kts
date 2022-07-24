@@ -15,7 +15,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.7.2")
     testImplementation("jakarta.persistence:jakarta.persistence-api:3.0.0")
     testAnnotationProcessor("org.hibernate:hibernate-jpamodelgen:6.1.1.Final")
-    testAnnotationProcessor("com.mammb:jpa-fluent-modelgen:0.6.0")
+    //testAnnotationProcessor("com.mammb:jpa-fluent-modelgen:0.6.0")
+    testAnnotationProcessor(fileTree("../../jpa-fluent-modelgen/lib/build/libs/") { include("*.jar") })
     testImplementation("com.h2database:h2:2.1.212")
     testImplementation("org.eclipse.persistence:eclipselink:4.0.0-M3")
 }

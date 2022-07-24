@@ -6,15 +6,33 @@
 ----
 List<Issue> issues = Querying.of(IssueModel.root())
     .filter(issue -> issue.getProject().getName().eq("name"))
-    .toList().on(em);
+    .toList()
+    .on(em);
 ----
 
-`Querying` provides the following methods.
+The above is the same as below.
+
+[source, java]
+----
+CriteriaBuilder builder = em.getCriteriaBuilder());
+CriteriaQuery<Issue> query = builder.createQuery(Issue.class);
+query.distinct(true);
+Root<Issue> root = query.from(Issue.class);
+query.select(root);
+query.where(builder.equal(root.get(Issue_.project).get(Project_.name), "name"));
+query.orderBy(builder().asc(root.get(Issue_.id)));
+List<Issue> issues = em.createQuery(query).getResultList();
+----
+
+In `Querying`, the defaults are distinct and sorting by ID.
+These conditionals do not apply to constructor expressions or subqueries.
+
+The following methods are available in `Querying`.
 
 * `Querying<E, R, U> filter(Filter<E, R> filter)`
-* `Querying<E, R, U> sorted(Sort<E, R> sort)`
-* `Querying<E, R, U> sorted(Sort<E, R> sort1, ...)`
+* `Querying<E, R, U> sorted(Sort<E, R> sort, ...)`
 * `Querying<E, R, U> distinct()`
+* `Querying<E, R, U> unDistinct()`
 * `<Y> Querying<E, R, Y> map(Mapper<E, R, Y> mapper)`
 
 

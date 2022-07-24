@@ -152,7 +152,7 @@ public interface Pagination {
      * @return the offset of the ending of the current page
      */
     default long getElementsBottom() {
-        return getElementsTop() + getSlice().getContent().size();
+        return getElementsTop() + getSlice().getContent().size() - 1;
     }
 
 

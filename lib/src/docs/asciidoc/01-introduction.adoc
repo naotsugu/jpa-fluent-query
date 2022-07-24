@@ -6,7 +6,7 @@ This project is currently under development.
 
 === What is JPA Fluent Query?
 
-JPA Fluent Query is Query library for Jakarta Persistence.
+JPA Fluent Query is small query library for Jakarta Persistence.
 
 Generate a fluent API from a static metamodel class using an annotation processor with https://github.com/naotsugu/jpa-fluent-modelgen[jpa-fluent-modelgen].
 
@@ -18,7 +18,7 @@ JPA Fluent Query uses `JPA Fluent Modelgen`.
 `JPA Fluent Modelgen` generates helper classes for queries from JAP Static Metamodel.
 
 
-As an example, suppose we define the following entities
+As an example, suppose we define the following entities.
 
 [source, java]
 ----
@@ -39,7 +39,6 @@ In this case, the JPA Static Metamodel would look like this
 
 [source, java]
 ----
-@Generated(value = "org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor")
 @StaticMetamodel(Issue.class)
 public abstract class Issue_ extends BaseEntity_ {
 
@@ -128,5 +127,5 @@ var list = repository.findAll(issue -> issue.getProject().getName().eq("name"));
 
 === Release Notes
 
-Current version is v0.6.0(under development).
+Current version is v0.7.0(under development).
 

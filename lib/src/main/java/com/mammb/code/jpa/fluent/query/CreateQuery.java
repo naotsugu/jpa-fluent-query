@@ -18,6 +18,7 @@ package com.mammb.code.jpa.fluent.query;
 import com.mammb.code.jpa.fluent.core.RootAware;
 import com.mammb.code.jpa.fluent.core.RootSource;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -135,6 +136,18 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
      * This Stream reads records by page.
      * It is recommended that {@code toStream()} be used when updating a record that has already been read,
      * since there is a possibility of missing processing.
+     * @return the {@link Stream} result
+     */
+    default Query<Stream<U>> toForwardingStream() {
+        return toForwardingStream(100);
+    }
+
+
+    /**
+     * Get the {@link Stream} result.
+     * This Stream reads records by page.
+     * It is recommended that {@code toStream(int pageSize)} be used when updating a record that has already been read,
+     * since there is a possibility of missing processing.
      * @param pageSize The size of page
      * @return the {@link Stream} result
      */
@@ -143,6 +156,61 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
             QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts()),
             pageSize
         ).stream();
+    }
+
+
+    /**
+     * Get the {@link Stream} result.
+     * This Stream reads records by page.
+     * This {@link Stream} is descending order.
+     * @return the {@link Stream} result
+     */
+    default Query<Iterable<U>> toIterable() {
+        return toIterable(100);
+    }
+
+
+    /**
+     * Get the {@link Iterable} result.
+     * This Iterable reads records by page.
+     * This {@link Iterable} is descending order.
+     * @param pageSize The size of page
+     * @return the {@link Iterable} result
+     */
+    default Query<Iterable<U>> toIterable(int pageSize) {
+        return em -> SliceStream.of(
+            QueryBuilder.countQuery(em, rootSource(), filter()),
+            QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts()),
+            pageSize
+        );
+    }
+
+
+    /**
+     * Get the {@link Iterable} result.
+     * This Iterable reads records by page.
+     * It is recommended that {@code toIterable()} be used when updating a record that has already been read,
+     * since there is a possibility of missing processing.
+     * @return the {@link Iterable} result
+     */
+    default Query<Iterable<U>> toForwardingIterable() {
+        return toForwardingIterable(100);
+    }
+
+
+    /**
+     * Get the {@link Iterable} result.
+     * This Iterable reads records by page.
+     * It is recommended that {@code toIterable(int pageSize)} be used when updating a record that has already been read,
+     * since there is a possibility of missing processing.
+     * @param pageSize The size of page
+     * @return the {@link Iterable} result
+     */
+    default Query<Iterable<U>> toForwardingIterable(int pageSize) {
+        return em -> SliceStream.forwardOf(
+            QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts()),
+            pageSize
+        );
     }
 
 }
