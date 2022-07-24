@@ -443,7 +443,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>JPA Fluent Query User Manual</h1>
 <div class="details">
 <span id="author" class="author">https://github.com/naotsugu/jpa-fluent-query</span><br>
-<span id="revnumber">version 0.6.0</span>
+<span id="revnumber">version 0.7.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -463,6 +463,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_order_by_query">Order By Query</a></li>
 <li><a href="#_paging_query">Paging Query</a></li>
 <li><a href="#_slicing_query">Slicing Query</a></li>
+<li><a href="#_stream_query">Stream Query</a></li>
 <li><a href="#_subquery">Subquery</a></li>
 <li><a href="#_using_repository">Using Repository</a></li>
 <li><a href="#_using_typesafe_mapping">Using typesafe mapping</a></li>
@@ -497,7 +498,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_what_is_jpa_fluent_query"><a class="anchor" href="#_what_is_jpa_fluent_query"></a>What is JPA Fluent Query?</h3>
 <div class="paragraph">
-<p>JPA Fluent Query is Query library for Jakarta Persistence.</p>
+<p>JPA Fluent Query is small query library for Jakarta Persistence.</p>
 </div>
 <div class="paragraph">
 <p>Generate a fluent API from a static metamodel class using an annotation processor with <a href="https://github.com/naotsugu/jpa-fluent-modelgen">jpa-fluent-modelgen</a>.</p>
@@ -512,7 +513,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p><code>JPA Fluent Modelgen</code> generates helper classes for queries from JAP Static Metamodel.</p>
 </div>
 <div class="paragraph">
-<p>As an example, suppose we define the following entities</p>
+<p>As an example, suppose we define the following entities.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -534,8 +535,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="java"><span class="nd">@Generated</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor"</span><span class="o">)</span>
-<span class="nd">@StaticMetamodel</span><span class="o">(</span><span class="nc">Issue</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@StaticMetamodel</span><span class="o">(</span><span class="nc">Issue</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
 <span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Issue_</span> <span class="kd">extends</span> <span class="n">BaseEntity_</span> <span class="o">{</span>
 
   <span class="kd">public</span> <span class="kd">static</span> <span class="kd">volatile</span> <span class="nc">SingularAttribute</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">title</span><span class="o">;</span>
@@ -625,7 +625,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_release_notes"><a class="anchor" href="#_release_notes"></a>Release Notes</h3>
 <div class="paragraph">
-<p>Current version is v0.6.0(under development).</p>
+<p>Current version is v0.7.0(under development).</p>
 </div>
 </div>
 </div>
@@ -642,8 +642,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="content">
 <pre class="rouge highlight"><code data-lang="kotlin"><span class="nf">dependencies</span> <span class="p">{</span>
   <span class="nf">annotationProcessor</span><span class="p">(</span><span class="s">"org.hibernate.orm:hibernate-jpamodelgen:6.1.0.Final"</span><span class="p">)</span> <i class="conum" data-value="1"></i><b>(1)</b>
-  <span class="nf">annotationProcessor</span><span class="p">(</span><span class="s">"com.mammb:jpa-fluent-modelgen:0.6.0"</span><span class="p">)</span> <i class="conum" data-value="2"></i><b>(2)</b>
-  <span class="nf">implementation</span><span class="p">(</span><span class="s">"com.mammb:jpa-fluent-query:0.6.0"</span><span class="p">)</span> <i class="conum" data-value="3"></i><b>(3)</b>
+  <span class="nf">annotationProcessor</span><span class="p">(</span><span class="s">"com.mammb:jpa-fluent-modelgen:0.7.0"</span><span class="p">)</span> <i class="conum" data-value="2"></i><b>(2)</b>
+  <span class="nf">implementation</span><span class="p">(</span><span class="s">"com.mammb:jpa-fluent-query:0.7.0"</span><span class="p">)</span> <i class="conum" data-value="3"></i><b>(3)</b>
 <span class="p">}</span></code></pre>
 </div>
 </div>
@@ -670,8 +670,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="content">
 <pre class="rouge highlight"><code data-lang="groovy"><span class="n">dependencies</span> <span class="o">{</span>
   <span class="n">annotationProcessor</span> <span class="s1">'org.hibernate.orm:hibernate-jpamodelgen:6.1.0.Final'</span>
-  <span class="n">annotationProcessor</span> <span class="s1">'com.mammb:jpa-fluent-modelgen:0.6.0'</span>
-  <span class="n">implementation</span> <span class="s1">'com.mammb:jpa-fluent-query:0.6.0'</span>
+  <span class="n">annotationProcessor</span> <span class="s1">'com.mammb:jpa-fluent-modelgen:0.7.0'</span>
+  <span class="n">implementation</span> <span class="s1">'com.mammb:jpa-fluent-query:0.7.0'</span>
 <span class="o">}</span></code></pre>
 </div>
 </div>
@@ -689,13 +689,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
   <span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>com.mammb<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>jpa-fluent-modelgen<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>0.6.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>0.7.0<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;optional&gt;</span>true<span class="nt">&lt;/optional&gt;</span>
   <span class="nt">&lt;/dependency&gt;</span>
   <span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>com.mammb<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>jpa-fluent-query<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>0.6.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>0.7.0<span class="nt">&lt;/version&gt;</span>
   <span class="nt">&lt;/dependency&gt;</span></code></pre>
 </div>
 </div>
@@ -836,6 +836,32 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
+<h3 id="_stream_query"><a class="anchor" href="#_stream_query"></a>Stream Query</h3>
+<div class="paragraph">
+<p>A Stream can be obtained by <code>toStream()</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">&gt;</span> <span class="n">issues</span> <span class="o">=</span> <span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
+        <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getName</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"name"</span><span class="o">))</span>
+        <span class="o">.</span><span class="na">toStream</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The Stream retrieved here retrieves a record each time on a page(by default, every 100 records per page).</p>
+</div>
+<div class="paragraph">
+<p>Similarly, it can be obtained as an <code>Iterable</code> with <code>toIterable()</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nc">Iterable</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">&gt;</span> <span class="n">issues</span> <span class="o">=</span> <span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
+        <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getName</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"name"</span><span class="o">))</span>
+        <span class="o">.</span><span class="na">toIterable</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_subquery"><a class="anchor" href="#_subquery"></a>Subquery</h3>
 <div class="paragraph">
 <p>If a subquery is needed, use <code>SubQuery</code> as follows</p>
@@ -857,6 +883,17 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>For entities, the base class of the repository is automatically generated by the annotation processor.</p>
 </div>
 <div class="paragraph">
+<p>To use the repository, you must first prepare a interface annotated with <code>@RepositoryTrait</code> as follows to select a Trait to Mixin to the repository.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@RepositoryTrait</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">BaseRepository</span><span class="o">&lt;</span><span class="no">PK</span> <span class="kd">extends</span> <span class="nc">Serializable</span><span class="o">,</span> <span class="no">E</span><span class="o">,</span> <span class="no">R</span> <span class="kd">extends</span> <span class="nc">RootAware</span><span class="o">&lt;</span><span class="no">E</span><span class="o">&gt;&gt;</span>
+    <span class="kd">extends</span> <span class="nc">QueryRepository</span><span class="o">&lt;</span><span class="no">PK</span><span class="o">,</span> <span class="no">E</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;,</span> <span class="nc">CommandRepository</span><span class="o">&lt;</span><span class="no">PK</span><span class="o">,</span> <span class="no">E</span><span class="o">&gt;</span> <span class="o">{</span>
+<span class="o">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
 <p>A repository can be created as follows</p>
 </div>
 <div class="listingblock">
@@ -874,6 +911,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="paragraph">
+<p><code>IssueRepository_</code> implements <code>BaseRepository</code>.</p>
+</div>
+<div class="paragraph">
+<p>The default methods provided by the <code>QueryRepository</code> and <code>CommandRepository</code> will be available.</p>
+</div>
+<div class="paragraph">
 <p>Using the predefined methods, you can retrieve the listings as follows</p>
 </div>
 <div class="listingblock">
@@ -882,7 +925,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="paragraph">
-<p>In addition, the following methods are predefined</p>
+<p>The following methods are predefined.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -979,11 +1022,31 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="content">
 <pre class="rouge highlight"><code data-lang="java"><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">&gt;</span> <span class="n">issues</span> <span class="o">=</span> <span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
     <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getName</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"name"</span><span class="o">))</span>
-    <span class="o">.</span><span class="na">toList</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+    <span class="o">.</span><span class="na">toList</span><span class="o">()</span>
+    <span class="o">.</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p><code>Querying</code> provides the following methods.</p>
+<p>The above is the same as below.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nc">CriteriaBuilder</span> <span class="n">builder</span> <span class="o">=</span> <span class="n">em</span><span class="o">.</span><span class="na">getCriteriaBuilder</span><span class="o">());</span>
+<span class="nc">CriteriaQuery</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">&gt;</span> <span class="n">query</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">createQuery</span><span class="o">(</span><span class="nc">Issue</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="n">query</span><span class="o">.</span><span class="na">distinct</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+<span class="nc">Root</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">&gt;</span> <span class="n">root</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="nc">Issue</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="n">query</span><span class="o">.</span><span class="na">select</span><span class="o">(</span><span class="n">root</span><span class="o">);</span>
+<span class="n">query</span><span class="o">.</span><span class="na">where</span><span class="o">(</span><span class="n">builder</span><span class="o">.</span><span class="na">equal</span><span class="o">(</span><span class="n">root</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">Issue_</span><span class="o">.</span><span class="na">project</span><span class="o">).</span><span class="na">get</span><span class="o">(</span><span class="n">Project_</span><span class="o">.</span><span class="na">name</span><span class="o">),</span> <span class="s">"name"</span><span class="o">));</span>
+<span class="n">query</span><span class="o">.</span><span class="na">orderBy</span><span class="o">(</span><span class="n">builder</span><span class="o">().</span><span class="na">asc</span><span class="o">(</span><span class="n">root</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">Issue_</span><span class="o">.</span><span class="na">id</span><span class="o">)));</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">&gt;</span> <span class="n">issues</span> <span class="o">=</span> <span class="n">em</span><span class="o">.</span><span class="na">createQuery</span><span class="o">(</span><span class="n">query</span><span class="o">).</span><span class="na">getResultList</span><span class="o">();</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In <code>Querying</code>, the defaults are distinct and sorting by ID.
+These conditionals do not apply to constructor expressions or subqueries.</p>
+</div>
+<div class="paragraph">
+<p>The following methods are available in <code>Querying</code>.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -991,13 +1054,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p><code>Querying&lt;E, R, U&gt; filter(Filter&lt;E, R&gt; filter)</code></p>
 </li>
 <li>
-<p><code>Querying&lt;E, R, U&gt; sorted(Sort&lt;E, R&gt; sort)</code></p>
-</li>
-<li>
-<p><code>Querying&lt;E, R, U&gt; sorted(Sort&lt;E, R&gt; sort1, &#8230;&#8203;)</code></p>
+<p><code>Querying&lt;E, R, U&gt; sorted(Sort&lt;E, R&gt; sort, &#8230;&#8203;)</code></p>
 </li>
 <li>
 <p><code>Querying&lt;E, R, U&gt; distinct()</code></p>
+</li>
+<li>
+<p><code>Querying&lt;E, R, U&gt; unDistinct()</code></p>
 </li>
 <li>
 <p><code>&lt;Y&gt; Querying&lt;E, R, Y&gt; map(Mapper&lt;E, R, Y&gt; mapper)</code></p>
@@ -1057,8 +1120,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.6.0<br>
-Last updated 2022-07-22 09:47:45 UTC
+Version 0.7.0<br>
+Last updated 2022-07-24 14:02:28 UTC
 </div>
 </div>
 <style>
