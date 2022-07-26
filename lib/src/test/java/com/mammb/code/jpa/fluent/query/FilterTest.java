@@ -16,8 +16,12 @@
 package com.mammb.code.jpa.fluent.query;
 
 import com.mammb.code.jpa.fluent.test.Fixtures;
+import com.mammb.code.jpa.fluent.test.entity.ExternalProject;
+import com.mammb.code.jpa.fluent.test.entity.ExternalProjectModel;
 import com.mammb.code.jpa.fluent.test.entity.Issue;
 import com.mammb.code.jpa.fluent.test.entity.IssueModel;
+import com.mammb.code.jpa.fluent.test.entity.Project;
+import com.mammb.code.jpa.fluent.test.entity.ProjectModel;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -55,12 +59,13 @@ public class FilterTest {
         em.getTransaction().rollback();
     }
 
+
     @Test
     void testFilter() {
         var project1 = Fixtures.createProject("project1", em);
-        var issue1 = Fixtures.createIssue(project1, "issue1", em);
-        var issue2 = Fixtures.createIssue(project1, "issue2", em);
-        var issue3 = Fixtures.createIssue(project1, "issue3", em);
+        Fixtures.createIssue(project1, "issue1", em);
+        Fixtures.createIssue(project1, "issue2", em);
+        Fixtures.createIssue(project1, "issue3", em);
 
         List<Issue> issues = Querying.of(IssueModel.root())
             .filter(issue -> issue.getProject().getName().like("project"))
@@ -82,5 +87,29 @@ public class FilterTest {
 
     }
 
+
+    @Test
+    void testFilterJoin() {
+        Fixtures.createProject("project1", em);
+        List<Project> project = Querying.of(ProjectModel.root())
+            .filter(prj -> prj.joinComments().getCommentedBy().like("commentedBy"))
+            .toList().on(em);
+        assertEquals(1, project.size());
+
+        List<ExternalProject> ext = Querying.of(ExternalProjectModel.root())
+            .filter(prj -> prj.joinComments().getCommentedBy().like("commentedBy"))
+            .toList().on(em);
+        assertEquals(0, ext.size());
+    }
+
+
+    @Test
+    void testFilterMapJoin() {
+        Fixtures.createProject("project1", em);
+        List<Project> project = Querying.of(ProjectModel.root())
+            .filter(issue -> issue.joinTasks((k, v) -> k.like("task")))
+            .toList().on(em);
+        assertEquals(1, project.size());
+    }
 
 }

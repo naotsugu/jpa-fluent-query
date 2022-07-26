@@ -22,6 +22,7 @@ import com.mammb.code.jpa.fluent.test.entity.Journal;
 import com.mammb.code.jpa.fluent.test.entity.Project;
 import com.mammb.code.jpa.fluent.test.entity.ProjectState;
 import com.mammb.code.jpa.fluent.test.entity.Tag;
+import com.mammb.code.jpa.fluent.test.entity.Task;
 import jakarta.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,6 +31,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -39,6 +41,8 @@ public class Fixtures {
 
     public static Project createProject(String name, EntityManager em) {
         var project = createProject(name);
+        project.getComments().forEach(em::persist);
+        project.getTasks().forEach((key, value) -> em.persist(value));
         em.persist(project);
         return project;
     }
@@ -57,6 +61,8 @@ public class Fixtures {
         var duration = new Duration();
         project.setName(name);
         project.setState(ProjectState.OPEN);
+        project.setComments(createComments());
+        project.setTasks(Map.of("task1", new Task(), "task2", new Task()));
         project.setDuration(duration);
         duration.setOpen(LocalDate.of(2000, 1, 1));
         duration.setClose(LocalDate.of(2001, 1, 1));

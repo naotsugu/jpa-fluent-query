@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
  * The criteria utilities.
  * @author Naotsugu Kobayashi
  */
-@SuppressWarnings("doclint")
+@SuppressWarnings({"unchecked", "doclint"})
 public class Criteria {
 
     /**

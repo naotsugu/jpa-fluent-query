@@ -16,6 +16,7 @@
         <class>com.mammb.code.jpa.fluent.test.entity.ExternalProject</class>
         <class>com.mammb.code.jpa.fluent.test.entity.SpecialTag</class>
         <class>com.mammb.code.jpa.fluent.test.entity.Tag</class>
+        <class>com.mammb.code.jpa.fluent.test.entity.Task</class>
 
         <properties>
             <property name="jakarta.persistence.schema-generation.database.action" value="create"/>

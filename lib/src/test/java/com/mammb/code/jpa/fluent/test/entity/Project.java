@@ -21,6 +21,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+
+import java.util.List;
+import java.util.Map;
 
 @Entity
 public class Project extends BaseEntity {
@@ -35,6 +39,12 @@ public class Project extends BaseEntity {
 
     @ManyToOne(cascade = CascadeType.ALL)
     Project parent;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Comment> comments;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    Map<String, Task> tasks;
 
     public String getName() {
         return name;
@@ -67,4 +77,21 @@ public class Project extends BaseEntity {
     public void setParent(Project parent) {
         this.parent = parent;
     }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public Map<String, Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(Map<String, Task> tasks) {
+        this.tasks = tasks;
+    }
+
 }
