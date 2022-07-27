@@ -170,6 +170,8 @@ public class Criteria {
         default Predicate in(Object... values) { return get().in(values); }
         default Order asc() { return builder().asc(get()); }
         default Order desc() { return builder().desc(get()); }
+        default NumberExp<Long> count() { return new NumberExp<>(() -> builder().count(get()), builder()); }
+        default NumberExp<Long> countDistinct() { return new NumberExp<>(() -> builder().countDistinct(get()), builder()); }
     }
 
     public interface ComparableExpression<E extends Comparable<? super E>, T extends Expression<E>>
@@ -190,6 +192,9 @@ public class Criteria {
                 : isEmpty(x) ? le(y)
                 : builder().between(get(), x, y);
         }
+        default ComparableExp<E> max() { return new ComparableExp<>(() -> builder().greatest(get()), builder()); }
+        default ComparableExp<E> min() { return new ComparableExp<>(() -> builder().least(get()), builder()); }
+
     }
 
     public interface StringExpression<T extends Expression<String>>

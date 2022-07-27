@@ -60,8 +60,7 @@ public class FilterTest {
     }
 
 
-    @Test
-    void testFilter() {
+    @Test void testFilter() {
         var project1 = Fixtures.createProject("project1", em);
         Fixtures.createIssue(project1, "issue1", em);
         Fixtures.createIssue(project1, "issue2", em);
@@ -88,9 +87,10 @@ public class FilterTest {
     }
 
 
-    @Test
-    void testFilterJoin() {
+    @Test void testFilterJoin() {
+
         Fixtures.createProject("project1", em);
+
         List<Project> project = Querying.of(ProjectModel.root())
             .filter(prj -> prj.joinComments().getCommentedBy().like("commentedBy"))
             .toList().on(em);
@@ -100,16 +100,19 @@ public class FilterTest {
             .filter(prj -> prj.joinComments().getCommentedBy().like("commentedBy"))
             .toList().on(em);
         assertEquals(0, ext.size());
+
     }
 
 
-    @Test
-    void testFilterMapJoin() {
+    @Test void testFilterMapJoin() {
+
         Fixtures.createProject("project1", em);
+
         List<Project> project = Querying.of(ProjectModel.root())
             .filter(issue -> issue.joinTasks((k, v) -> k.like("task")))
             .toList().on(em);
         assertEquals(1, project.size());
+
     }
 
 }

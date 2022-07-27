@@ -196,7 +196,7 @@ class QueryingTest {
         Optional<Mappers.IntegerResult> result = Querying.of(IssueModel.root())
             .filter(r -> r.getTitle().eq("foo"))
             .map(Mappers.integerResult(issue -> issue.getPriority().max()))
-            .toOptionalOne().on(em);
+            .toOptional().on(em);
         assertEquals(3, result.get().value());
     }
 

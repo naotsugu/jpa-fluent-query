@@ -18,7 +18,6 @@ package com.mammb.code.jpa.fluent.query;
 import com.mammb.code.jpa.fluent.core.RootAware;
 import com.mammb.code.jpa.fluent.core.RootSource;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -70,8 +69,17 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
      * Get the optional single result.
      * @return the optional single result
      */
-    default Query<Optional<U>> toOptionalOne() {
+    default Query<Optional<U>> toOptional() {
         return em -> Optional.ofNullable(QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts()).getSingleResult());
+    }
+
+
+    /**
+     * Get the single result.
+     * @return the single result
+     */
+    default Query<U> toSingle() {
+        return em -> QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts()).getSingleResult();
     }
 
 
