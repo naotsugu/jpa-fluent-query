@@ -22,6 +22,7 @@ import com.mammb.code.jpa.fluent.test.entity.Issue;
 import com.mammb.code.jpa.fluent.test.entity.IssueModel;
 import com.mammb.code.jpa.fluent.test.entity.Project;
 import com.mammb.code.jpa.fluent.test.entity.ProjectModel;
+import com.mammb.code.jpa.fluent.test.entity.ProjectState;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -34,6 +35,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static com.mammb.code.jpa.fluent.query.Filters.*;
 
 public class FilterTest {
 
@@ -83,7 +85,6 @@ public class FilterTest {
             .filter(issue -> issue.joinJournals().getPostedOn().gt(LocalDateTime.of(1999, 1, 1, 1, 0)))
             .toList().on(em);
         assertEquals(3, issues.size());
-
     }
 
 

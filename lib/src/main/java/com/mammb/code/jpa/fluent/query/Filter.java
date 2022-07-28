@@ -73,33 +73,6 @@ public interface Filter<E, R extends RootAware<E>> {
 
 
     /**
-     * Create filter by the given {@link Filter}.
-     * @param filter1 the {@link Filter}
-     * @param filter2 the {@link Filter}
-     * @param <E> the type of entity
-     * @param <R> the type of root
-     * @return a {@link Filter}
-     */
-    static <E, R extends RootAware<E>> Filter<E, R> of(Filter<E, R> filter1, Filter<E, R> filter2) {
-        return of(filter1).and(filter2);
-    }
-
-
-    /**
-     * Create filter by the given {@link Filter}.
-     * @param filter1 the {@link Filter}
-     * @param filters the {@link Filter}s
-     * @param <E> the type of entity
-     * @param <R> the type of root
-     * @return a {@link Filter}
-     */
-    @SafeVarargs
-    static <E, R extends RootAware<E>> Filter<E, R> of(Filter<E, R> filter1, Filter<E, R>... filters) {
-        return Arrays.stream(filters).reduce(filter1, Filter::and);
-    }
-
-
-    /**
      * Get the empty {@link Filter}.
      * @param <E> the type of entity
      * @param <R> the type of root

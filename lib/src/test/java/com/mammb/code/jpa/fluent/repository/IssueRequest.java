@@ -16,6 +16,7 @@
 package com.mammb.code.jpa.fluent.repository;
 
 import com.mammb.code.jpa.fluent.query.Filter;
+import com.mammb.code.jpa.fluent.query.Filters;
 import com.mammb.code.jpa.fluent.query.Request;
 import com.mammb.code.jpa.fluent.query.SlicePoint;
 import com.mammb.code.jpa.fluent.query.Sorts;
@@ -30,7 +31,7 @@ public class IssueRequest implements Request<Issue, Root_> {
 
     @Override
     public Filter<Issue, Root_> getFilter() {
-        return Filter.of(
+        return Filters.and(
             issue -> issue.getTitle().like(titleLike),
             issue -> issue.getDescription().eq(description));
     }

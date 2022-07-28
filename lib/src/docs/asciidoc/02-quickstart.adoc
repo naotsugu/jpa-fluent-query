@@ -174,8 +174,8 @@ A Stream can be obtained by `toStream()`.
 [source, java]
 ----
 Stream<Issue> issues = Querying.of(IssueModel.root())
-        .filter(issue -> issue.getProject().getName().eq("name"))
-        .toStream().on(em);
+    .filter(issue -> issue.getProject().getName().eq("name"))
+    .toStream().on(em);
 ----
 
 The Stream retrieved here retrieves a record each time on a page(by default, every 100 records per page).
@@ -185,8 +185,8 @@ Similarly, it can be obtained as an `Iterable` with `toIterable()`.
 [source, java]
 ----
 Iterable<Issue> issues = Querying.of(IssueModel.root())
-        .filter(issue -> issue.getProject().getName().eq("name"))
-        .toIterable().on(em);
+    .filter(issue -> issue.getProject().getName().eq("name"))
+    .toIterable().on(em);
 ----
 
 
