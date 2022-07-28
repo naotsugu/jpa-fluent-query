@@ -471,6 +471,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_how_to_use_querying">How to use Querying</a>
 <ul class="sectlevel2">
+<li><a href="#_querying_of">Querying.of()</a></li>
 <li><a href="#_filter">Filter</a></li>
 <li><a href="#_sorted">Sorted</a></li>
 <li><a href="#_distinct">Distinct</a></li>
@@ -478,6 +479,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ul>
 </li>
 <li><a href="#_how_to_use_subquery">How to use SubQuery</a></li>
+<li><a href="#_querying_result_types">Querying result types</a></li>
+<li><a href="#_more_about_query">More about Query</a>
+<ul class="sectlevel2">
+<li><a href="#_mapjoin">MapJoin</a></li>
+<li><a href="#_inheritance_entity">Inheritance Entity</a></li>
+</ul>
+</li>
 <li><a href="#_how_to_use_repository">How to use Repository</a></li>
 <li><a href="#_how_to_use_mappers">How to use Mappers</a></li>
 </ul>
@@ -843,8 +851,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="java"><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">&gt;</span> <span class="n">issues</span> <span class="o">=</span> <span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
-        <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getName</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"name"</span><span class="o">))</span>
-        <span class="o">.</span><span class="na">toStream</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+    <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getName</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"name"</span><span class="o">))</span>
+    <span class="o">.</span><span class="na">toStream</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -856,8 +864,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="java"><span class="nc">Iterable</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">&gt;</span> <span class="n">issues</span> <span class="o">=</span> <span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
-        <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getName</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"name"</span><span class="o">))</span>
-        <span class="o">.</span><span class="na">toIterable</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+    <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getName</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"name"</span><span class="o">))</span>
+    <span class="o">.</span><span class="na">toIterable</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
 </div>
 </div>
 </div>
@@ -1022,8 +1030,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="content">
 <pre class="rouge highlight"><code data-lang="java"><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">&gt;</span> <span class="n">issues</span> <span class="o">=</span> <span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
     <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getName</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"name"</span><span class="o">))</span>
-    <span class="o">.</span><span class="na">toList</span><span class="o">()</span>
-    <span class="o">.</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+    <span class="o">.</span><span class="na">toList</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1042,14 +1049,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="paragraph">
-<p>In <code>Querying</code>, the defaults are distinct and sorting by ID.
-These conditionals do not apply to constructor expressions or subqueries.</p>
+<p>In <code>Querying</code>, distinct and sorting by ID is applied by default.</p>
 </div>
 <div class="paragraph">
 <p>The following methods are available in <code>Querying</code>.</p>
 </div>
 <div class="ulist">
 <ul>
+<li>
+<p><code>Querying&lt;E, R, E&gt; of(RootSource&lt;E, R&gt; rootSource)</code></p>
+</li>
 <li>
 <p><code>Querying&lt;E, R, U&gt; filter(Filter&lt;E, R&gt; filter)</code></p>
 </li>
@@ -1068,27 +1077,222 @@ These conditionals do not apply to constructor expressions or subqueries.</p>
 </ul>
 </div>
 <div class="sect2">
+<h3 id="_querying_of"><a class="anchor" href="#_querying_of"></a>Querying.of()</h3>
+<div class="paragraph">
+<p>Querying can be instantiated by model classes generated by <code>JPA Fluent Modelgen</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this example, <code>IssueModel.root()</code> is used to set the Issue entity as root.</p>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_filter"><a class="anchor" href="#_filter"></a>Filter</h3>
 <div class="paragraph">
-<p>T.B.D</p>
+<p>Use <code>filter()</code> to filter search results.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
+  <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getName</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"..."</span><span class="o">))</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The filter argument defines a predicate with a lambda whose root is the specified model.</p>
+</div>
+<div class="paragraph">
+<p>To specify multiple conditions, filters can be specified consecutively.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
+  <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getName</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"..."</span><span class="o">))</span>
+  <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getTitle</span><span class="o">().</span><span class="na">like</span><span class="o">(</span><span class="s">"..."</span><span class="o">))</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>By compositing with the Filters utility, it can also be written as follows.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="kn">import</span> <span class="nn">static</span> <span class="n">com</span><span class="o">.</span><span class="na">mammb</span><span class="o">.</span><span class="na">code</span><span class="o">.</span><span class="na">jpa</span><span class="o">.</span><span class="na">fluent</span><span class="o">.</span><span class="na">query</span><span class="o">.</span><span class="na">Filters</span><span class="o">.*;</span>
+
+<span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
+<span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">and</span><span class="o">(</span>
+    <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getName</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"..."</span><span class="o">),</span>
+    <span class="n">issue</span><span class="o">.</span><span class="na">getTitle</span><span class="o">().</span><span class="na">like</span><span class="o">(</span><span class="s">"..."</span><span class="o">))</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Similarly, you can use an <code>Filters.or()</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
+  <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="o">{</span>
+      <span class="kt">var</span> <span class="n">tags</span> <span class="o">=</span> <span class="n">issue</span><span class="o">.</span><span class="na">joinTags</span><span class="o">();</span>
+      <span class="k">return</span> <span class="nf">or</span><span class="o">(</span>
+          <span class="n">tags</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"..."</span><span class="o">).</span><span class="na">not</span><span class="o">(),</span>
+          <span class="n">tags</span><span class="o">.</span><span class="na">getLastModifiedOn</span><span class="o">().</span><span class="na">ge</span><span class="o">(</span><span class="nc">LocalDateTime</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">1999</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="o">)));</span>
+  <span class="o">})</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Predefined filters can also be used.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nc">Filter</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">,</span> <span class="nc">IssueModel</span><span class="o">.</span><span class="na">Root_</span><span class="o">&gt;</span> <span class="n">filter</span> <span class="o">=</span> <span class="n">and</span><span class="o">(</span>
+    <span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getTitle</span><span class="o">().</span><span class="na">like</span><span class="o">(</span><span class="s">"..."</span><span class="o">),</span>
+    <span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getDescription</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"..."</span><span class="o">),</span>
+    <span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getState</span><span class="o">().</span><span class="na">in</span><span class="o">(</span><span class="no">PLAN</span><span class="o">,</span> <span class="no">OPEN</span><span class="o">));</span>
+
+<span class="kt">var</span> <span class="n">issues</span> <span class="o">=</span> <span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
+    <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">filter</span><span class="o">).</span><span class="na">toList</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+</div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_sorted"><a class="anchor" href="#_sorted"></a>Sorted</h3>
 <div class="paragraph">
-<p>T.B.D</p>
+<p>Use sorted() to ORDER BY clause.</p>
+</div>
+<div class="paragraph">
+<p>If you do not specify a sort as follows</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">&gt;</span> <span class="n">issues</span> <span class="o">=</span> <span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
+    <span class="o">.</span><span class="na">toList</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The following SQL will be used.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="sql"><span class="k">SELECT</span> <span class="n">ID</span><span class="p">,</span> <span class="p">...</span> <span class="k">FROM</span> <span class="n">ISSUE</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">ID</span> <span class="k">ASC</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>That is, sorting by ID is already applied by default.
+This helps to make the resulting sequence unique.</p>
+</div>
+<div class="paragraph">
+<p>To explicitly specify sorting, use ss as follows</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
+    <span class="o">.</span><span class="na">sorted</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getName</span><span class="o">().</span><span class="na">desc</span><span class="o">(),</span>
+            <span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getId</span><span class="o">().</span><span class="na">asc</span><span class="o">())</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The following <code>Order By</code> clause will be generated</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="sql"><span class="p">...</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">PROJECT</span><span class="p">.</span><span class="n">NAME</span> <span class="k">DESC</span><span class="p">,</span> <span class="n">ISSUE</span><span class="p">.</span><span class="n">ID</span> <span class="k">ASC</span><span class="p">,</span> <span class="n">t1</span><span class="p">.</span><span class="n">ID</span> <span class="k">ASC</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Sorting by ID is again given at the end.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Sorting by ID is not automatically applied when using <code>map</code> or <code>SubQuery</code>, which will be described later.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_distinct"><a class="anchor" href="#_distinct"></a>Distinct</h3>
 <div class="paragraph">
-<p>T.B.D</p>
+<p>Queries by <code>Querying</code> are treated as <code>query.distinct(true)</code> by default.</p>
+</div>
+<div class="paragraph">
+<p>This prevents the query result from being treated as an undesired direct product by joins.</p>
+</div>
+<div class="paragraph">
+<p>If you want to explicitly use <code>query.distinct(false)</code>, you can use <code>unDistinct()</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
+    <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getName</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"name"</span><span class="o">))</span>
+    <span class="o">.</span><span class="na">unDistinct</span><span class="o">()</span>
+    <span class="o">.</span><span class="na">toList</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>As with sorting by ID, the automatic application of distinct does not apply to <code>map</code> and <code>SubQuery</code>.
+You must use <code>distinct()</code> explicitly to get results with distinct.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_map"><a class="anchor" href="#_map"></a>Map</h3>
 <div class="paragraph">
-<p>T.B.D</p>
+<p>Use <code>map()</code> if you want to map query results to different types.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nc">Mappers</span><span class="o">.</span><span class="na">IntegerResult</span> <span class="n">result</span> <span class="o">=</span> <span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
+    <span class="o">.</span><span class="na">filter</span><span class="o">(...)</span>
+    <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nc">Mappers</span><span class="o">.</span><span class="na">integerResult</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getPriority</span><span class="o">().</span><span class="na">max</span><span class="o">()))</span>
+    <span class="o">.</span><span class="na">toSingle</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span>
+
+<span class="n">result</span><span class="o">.</span><span class="na">value</span><span class="o">();</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this example, the result of the aggregate function is obtained as an <code>Mappers.IntegerResult</code>.</p>
+</div>
+<div class="paragraph">
+<p>Other result types, such as <code>Mappers.LongResult</code>, are predefined and provided by <code>jpa-fluent-modelgen</code>.</p>
+</div>
+<div class="paragraph">
+<p>In addition to the predefined types, you can handle arbitrary result types by annotating them with <code>@Mappable</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@Mappable</span>
+<span class="kd">public</span> <span class="n">record</span> <span class="nf">IssueDto</span><span class="o">(</span><span class="nc">Long</span> <span class="n">id</span><span class="o">,</span> <span class="nc">String</span> <span class="n">title</span><span class="o">)</span> <span class="o">{</span> <span class="o">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can define a mapping to a DTO as follows</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nc">List</span><span class="o">&lt;</span><span class="nc">IssueDto</span><span class="o">&gt;</span> <span class="n">issues</span> <span class="o">=</span> <span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
+    <span class="o">.</span><span class="na">filter</span><span class="o">(...)</span>
+    <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nc">Mappers</span><span class="o">.</span><span class="na">issueDto</span><span class="o">(</span><span class="n">r</span> <span class="o">-&gt;</span> <span class="n">r</span><span class="o">.</span><span class="na">getId</span><span class="o">(),</span> <span class="n">r</span> <span class="o">-&gt;</span> <span class="n">r</span><span class="o">.</span><span class="na">getTitle</span><span class="o">()))</span>
+    <span class="o">.</span><span class="na">toList</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -1097,7 +1301,183 @@ These conditionals do not apply to constructor expressions or subqueries.</p>
 <h2 id="_how_to_use_subquery"><a class="anchor" href="#_how_to_use_subquery"></a>How to use SubQuery</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>T.B.D</p>
+<p>If you need a subquery, use <code>SubQuery</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
+    <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="nc">SubQuery</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">ProjectModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
+                             <span class="o">.</span><span class="na">filter</span><span class="o">(...)</span>
+                             <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">prj</span> <span class="o">-&gt;</span> <span class="n">prj</span><span class="o">.</span><span class="na">getId</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getId</span><span class="o">()))</span>
+                             <span class="o">.</span><span class="na">exists</span><span class="o">())</span>
+    <span class="o">.</span><span class="na">toList</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can also use <code>to()</code> to specify the result type of a subquery to compare as an Expression.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
+    <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getId</span><span class="o">().</span><span class="na">gt</span><span class="o">(</span>
+            <span class="nc">SubQuery</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">ProjectModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
+                       <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">prj</span> <span class="o">-&gt;</span> <span class="n">prj</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"name1"</span><span class="o">))</span>
+                       <span class="o">.</span><span class="na">to</span><span class="o">(</span><span class="nc">Long</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">prj</span> <span class="o">-&gt;</span> <span class="n">prj</span><span class="o">.</span><span class="na">getId</span><span class="o">())))</span>
+    <span class="o">.</span><span class="na">toList</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The Correlated subquery should be as follows.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
+    <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="nc">SubQuery</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">ProjectModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
+            <span class="o">.</span><span class="na">filter</span><span class="o">(...)</span>
+            <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span><span class="o">,</span> <span class="o">(</span><span class="n">issue1</span><span class="o">,</span> <span class="n">prj</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">issue1</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="n">prj</span><span class="o">))</span>
+            <span class="o">.</span><span class="na">exists</span><span class="o">())</span>
+    <span class="o">.</span><span class="na">toList</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+</div>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The above will not work because Hibernate does not currently handle <code>correlat</code> correctly.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_querying_result_types"><a class="anchor" href="#_querying_result_types"></a>Querying result types</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The results from <code>Querying</code> can be specified as follows</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Query&lt;Long&gt; count()</code></p>
+</li>
+<li>
+<p><code>Query&lt;Optional&lt;U&gt;&gt; toOptional()</code></p>
+</li>
+<li>
+<p><code>Query&lt;U&gt; toSingle()</code></p>
+</li>
+<li>
+<p><code>Query&lt;List&lt;U&gt;&gt; toList()</code></p>
+</li>
+<li>
+<p><code>Query&lt;Slice&lt;U&gt;&gt; toSlice(SlicePoint slicePoint)</code></p>
+</li>
+<li>
+<p><code>Query&lt;Page&lt;U&gt;&gt; toPage(SlicePoint slicePoint)</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Uses for retrieving results on a page-by-page basis include.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Query&lt;Stream&lt;U&gt;&gt; toStream()</code></p>
+</li>
+<li>
+<p><code>Query&lt;Stream&lt;U&gt;&gt; toStream(int pageSize)</code></p>
+</li>
+<li>
+<p><code>Query&lt;Stream&lt;U&gt;&gt; toForwardingStream()</code></p>
+</li>
+<li>
+<p><code>Query&lt;Stream&lt;U&gt;&gt; toForwardingStream(int pageSize)</code></p>
+</li>
+<li>
+<p><code>Query&lt;Iterable&lt;U&gt;&gt; toIterable()</code></p>
+</li>
+<li>
+<p><code>Query&lt;Iterable&lt;U&gt;&gt; toIterable(int pageSize)</code></p>
+</li>
+<li>
+<p><code>Query&lt;Iterable&lt;U&gt;&gt; toForwardingIterable()</code></p>
+</li>
+<li>
+<p><code>Query&lt;Iterable&lt;U&gt;&gt; toForwardingIterable(int pageSize)</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_more_about_query"><a class="anchor" href="#_more_about_query"></a>More about Query</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_mapjoin"><a class="anchor" href="#_mapjoin"></a>MapJoin</h3>
+<div class="paragraph">
+<p>If you have a relationship by map, then the</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@Entity</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Project</span> <span class="o">{</span>
+
+    <span class="nd">@OneToMany</span>
+    <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Task</span><span class="o">&gt;</span> <span class="n">tasks</span><span class="o">;</span>
+    <span class="c1">// ...</span>
+<span class="o">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can handle MapJoin in the following way</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">ProjectModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
+    <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">joinTasks</span><span class="o">((</span><span class="n">k</span><span class="o">,</span> <span class="n">v</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">k</span><span class="o">.</span><span class="na">like</span><span class="o">(</span><span class="s">"..."</span><span class="o">)))</span>
+    <span class="o">.</span><span class="na">toList</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_inheritance_entity"><a class="anchor" href="#_inheritance_entity"></a>Inheritance Entity</h3>
+<div class="paragraph">
+<p>Given the following inheritance relationship Entity</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@Entity</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Project</span> <span class="kd">extends</span> <span class="nc">BaseEntity</span> <span class="o">{</span>
+    <span class="c1">// ...</span>
+<span class="o">}</span>
+
+<span class="nd">@Entity</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExternalProject</span> <span class="kd">extends</span> <span class="nc">Project</span> <span class="o">{</span>
+
+<span class="o">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It can be cast by using <code>asExternalProject()</code> as follows</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
+    <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">asExternalProject</span><span class="o">().</span><span class="na">getCode</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"code"</span><span class="o">))</span>
+    <span class="o">.</span><span class="na">toList</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If there is an inheritance relationship Entity, a method like <code>asExternalProject()</code> is generated.
+This works as a <code>criteriaBuilder.treat()</code> in JPA.</p>
+</div>
 </div>
 </div>
 </div>
@@ -1121,7 +1501,7 @@ These conditionals do not apply to constructor expressions or subqueries.</p>
 <div id="footer">
 <div id="footer-text">
 Version 0.7.0<br>
-Last updated 2022-07-27 11:22:08 UTC
+Last updated 2022-07-28 13:23:50 UTC
 </div>
 </div>
 <style>
