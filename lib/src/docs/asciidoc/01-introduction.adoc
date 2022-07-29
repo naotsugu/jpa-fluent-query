@@ -127,5 +127,5 @@ var list = repository.findAll(issue -> issue.getProject().getName().eq("name"));
 
 === Release Notes
 
-Current version is v0.7.0(under development).
+Current version is v0.8.0(under development).
 

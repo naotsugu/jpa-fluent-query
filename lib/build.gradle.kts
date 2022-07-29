@@ -15,7 +15,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.7.2")
     testImplementation("jakarta.persistence:jakarta.persistence-api:3.0.0")
     testAnnotationProcessor("org.hibernate:hibernate-jpamodelgen:6.1.1.Final")
-    testAnnotationProcessor("com.mammb:jpa-fluent-modelgen:0.7.0")
+    testAnnotationProcessor("com.mammb:jpa-fluent-modelgen:0.8.0")
     testImplementation("com.h2database:h2:2.1.212")
     testImplementation("org.eclipse.persistence:eclipselink:4.0.0-M3")
 }
@@ -44,7 +44,7 @@ tasks.javadoc {
 }
 
 group = "com.mammb"
-version = "0.7.0"
+version = "0.8.0"
 
 val sonatypeUsername: String? by project
 val sonatypePassword: String? by project

@@ -5,4 +5,5 @@
 :toclevels: 3
 :source-highlighter: rouge
 :icons: font
+:sectnums:
 :sectanchors:
