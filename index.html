@@ -443,51 +443,51 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>JPA Fluent Query User Manual</h1>
 <div class="details">
 <span id="author" class="author">https://github.com/naotsugu/jpa-fluent-query</span><br>
-<span id="revnumber">version 0.7.0</span>
+<span id="revnumber">version 0.8.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_introduction">Introduction</a>
+<li><a href="#_introduction">1. Introduction</a>
 <ul class="sectlevel2">
-<li><a href="#_what_is_jpa_fluent_query">What is JPA Fluent Query?</a></li>
-<li><a href="#_jpa_fluent_modelgen_jpa_fluent_query">JPA Fluent Modelgen &amp; JPA Fluent Query</a></li>
-<li><a href="#_release_notes">Release Notes</a></li>
+<li><a href="#_what_is_jpa_fluent_query">1.1. What is JPA Fluent Query?</a></li>
+<li><a href="#_jpa_fluent_modelgen_jpa_fluent_query">1.2. JPA Fluent Modelgen &amp; JPA Fluent Query</a></li>
+<li><a href="#_release_notes">1.3. Release Notes</a></li>
 </ul>
 </li>
-<li><a href="#_quick_start">Quick Start</a>
+<li><a href="#_quick_start">2. Quick Start</a>
 <ul class="sectlevel2">
-<li><a href="#_getting_started">Getting Started</a></li>
-<li><a href="#_building_queries">Building Queries</a></li>
-<li><a href="#_count_query">Count Query</a></li>
-<li><a href="#_order_by_query">Order By Query</a></li>
-<li><a href="#_paging_query">Paging Query</a></li>
-<li><a href="#_slicing_query">Slicing Query</a></li>
-<li><a href="#_stream_query">Stream Query</a></li>
-<li><a href="#_subquery">Subquery</a></li>
-<li><a href="#_using_repository">Using Repository</a></li>
-<li><a href="#_using_typesafe_mapping">Using typesafe mapping</a></li>
+<li><a href="#_getting_started">2.1. Getting Started</a></li>
+<li><a href="#_building_queries">2.2. Building Queries</a></li>
+<li><a href="#_count_query">2.3. Count Query</a></li>
+<li><a href="#_order_by_query">2.4. Order By Query</a></li>
+<li><a href="#_paging_query">2.5. Paging Query</a></li>
+<li><a href="#_slicing_query">2.6. Slicing Query</a></li>
+<li><a href="#_stream_query">2.7. Stream Query</a></li>
+<li><a href="#_subquery">2.8. Subquery</a></li>
+<li><a href="#_using_repository">2.9. Using Repository</a></li>
+<li><a href="#_using_typesafe_mapping">2.10. Using typesafe mapping</a></li>
 </ul>
 </li>
-<li><a href="#_how_to_use_querying">How to use Querying</a>
+<li><a href="#_how_to_use_querying">3. How to use Querying</a>
 <ul class="sectlevel2">
-<li><a href="#_querying_of">Querying.of()</a></li>
-<li><a href="#_filter">Filter</a></li>
-<li><a href="#_sorted">Sorted</a></li>
-<li><a href="#_distinct">Distinct</a></li>
-<li><a href="#_map">Map</a></li>
+<li><a href="#_querying_of">3.1. Querying.of()</a></li>
+<li><a href="#_filter">3.2. Filter</a></li>
+<li><a href="#_sorted">3.3. Sorted</a></li>
+<li><a href="#_distinct">3.4. Distinct</a></li>
+<li><a href="#_map">3.5. Map</a></li>
 </ul>
 </li>
-<li><a href="#_how_to_use_subquery">How to use SubQuery</a></li>
-<li><a href="#_querying_result_types">Querying result types</a></li>
-<li><a href="#_more_about_query">More about Query</a>
+<li><a href="#_how_to_use_subquery">4. How to use SubQuery</a></li>
+<li><a href="#_querying_result_types">5. Querying result types</a></li>
+<li><a href="#_more_about_query">6. More about Query</a>
 <ul class="sectlevel2">
-<li><a href="#_mapjoin">MapJoin</a></li>
-<li><a href="#_inheritance_entity">Inheritance Entity</a></li>
+<li><a href="#_mapjoin">6.1. MapJoin</a></li>
+<li><a href="#_inheritance_entity">6.2. Inheritance Entity</a></li>
 </ul>
 </li>
-<li><a href="#_how_to_use_repository">How to use Repository</a></li>
-<li><a href="#_how_to_use_mappers">How to use Mappers</a></li>
+<li><a href="#_how_to_use_repository">7. How to use Repository</a></li>
+<li><a href="#_how_to_use_mappers">8. How to use Mappers</a></li>
 </ul>
 </div>
 </div>
@@ -498,13 +498,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect1">
-<h2 id="_introduction"><a class="anchor" href="#_introduction"></a>Introduction</h2>
+<h2 id="_introduction"><a class="anchor" href="#_introduction"></a>1. Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>This project is currently under development.</p>
 </div>
 <div class="sect2">
-<h3 id="_what_is_jpa_fluent_query"><a class="anchor" href="#_what_is_jpa_fluent_query"></a>What is JPA Fluent Query?</h3>
+<h3 id="_what_is_jpa_fluent_query"><a class="anchor" href="#_what_is_jpa_fluent_query"></a>1.1. What is JPA Fluent Query?</h3>
 <div class="paragraph">
 <p>JPA Fluent Query is small query library for Jakarta Persistence.</p>
 </div>
@@ -513,7 +513,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_jpa_fluent_modelgen_jpa_fluent_query"><a class="anchor" href="#_jpa_fluent_modelgen_jpa_fluent_query"></a>JPA Fluent Modelgen &amp; JPA Fluent Query</h3>
+<h3 id="_jpa_fluent_modelgen_jpa_fluent_query"><a class="anchor" href="#_jpa_fluent_modelgen_jpa_fluent_query"></a>1.2. JPA Fluent Modelgen &amp; JPA Fluent Query</h3>
 <div class="paragraph">
 <p>JPA Fluent Query uses <code>JPA Fluent Modelgen</code>.</p>
 </div>
@@ -631,18 +631,18 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_release_notes"><a class="anchor" href="#_release_notes"></a>Release Notes</h3>
+<h3 id="_release_notes"><a class="anchor" href="#_release_notes"></a>1.3. Release Notes</h3>
 <div class="paragraph">
-<p>Current version is v0.7.0(under development).</p>
+<p>Current version is v0.8.0(under development).</p>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_quick_start"><a class="anchor" href="#_quick_start"></a>Quick Start</h2>
+<h2 id="_quick_start"><a class="anchor" href="#_quick_start"></a>2. Quick Start</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_getting_started"><a class="anchor" href="#_getting_started"></a>Getting Started</h3>
+<h3 id="_getting_started"><a class="anchor" href="#_getting_started"></a>2.1. Getting Started</h3>
 <div class="paragraph">
 <p>If you use Gradle Kotlin DSL, define annotation processors and <code>jpa-fluent-query</code> dependencies as follows :</p>
 </div>
@@ -650,8 +650,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="content">
 <pre class="rouge highlight"><code data-lang="kotlin"><span class="nf">dependencies</span> <span class="p">{</span>
   <span class="nf">annotationProcessor</span><span class="p">(</span><span class="s">"org.hibernate.orm:hibernate-jpamodelgen:6.1.0.Final"</span><span class="p">)</span> <i class="conum" data-value="1"></i><b>(1)</b>
-  <span class="nf">annotationProcessor</span><span class="p">(</span><span class="s">"com.mammb:jpa-fluent-modelgen:0.7.0"</span><span class="p">)</span> <i class="conum" data-value="2"></i><b>(2)</b>
-  <span class="nf">implementation</span><span class="p">(</span><span class="s">"com.mammb:jpa-fluent-query:0.7.0"</span><span class="p">)</span> <i class="conum" data-value="3"></i><b>(3)</b>
+  <span class="nf">annotationProcessor</span><span class="p">(</span><span class="s">"com.mammb:jpa-fluent-modelgen:0.8.0"</span><span class="p">)</span> <i class="conum" data-value="2"></i><b>(2)</b>
+  <span class="nf">implementation</span><span class="p">(</span><span class="s">"com.mammb:jpa-fluent-query:0.8.0"</span><span class="p">)</span> <i class="conum" data-value="3"></i><b>(3)</b>
 <span class="p">}</span></code></pre>
 </div>
 </div>
@@ -678,8 +678,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="content">
 <pre class="rouge highlight"><code data-lang="groovy"><span class="n">dependencies</span> <span class="o">{</span>
   <span class="n">annotationProcessor</span> <span class="s1">'org.hibernate.orm:hibernate-jpamodelgen:6.1.0.Final'</span>
-  <span class="n">annotationProcessor</span> <span class="s1">'com.mammb:jpa-fluent-modelgen:0.7.0'</span>
-  <span class="n">implementation</span> <span class="s1">'com.mammb:jpa-fluent-query:0.7.0'</span>
+  <span class="n">annotationProcessor</span> <span class="s1">'com.mammb:jpa-fluent-modelgen:0.8.0'</span>
+  <span class="n">implementation</span> <span class="s1">'com.mammb:jpa-fluent-query:0.8.0'</span>
 <span class="o">}</span></code></pre>
 </div>
 </div>
@@ -697,19 +697,19 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
   <span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>com.mammb<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>jpa-fluent-modelgen<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>0.7.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>0.8.0<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;optional&gt;</span>true<span class="nt">&lt;/optional&gt;</span>
   <span class="nt">&lt;/dependency&gt;</span>
   <span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>com.mammb<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>jpa-fluent-query<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>0.7.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>0.8.0<span class="nt">&lt;/version&gt;</span>
   <span class="nt">&lt;/dependency&gt;</span></code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_building_queries"><a class="anchor" href="#_building_queries"></a>Building Queries</h3>
+<h3 id="_building_queries"><a class="anchor" href="#_building_queries"></a>2.2. Building Queries</h3>
 <div class="paragraph">
 <p>If you have an Issue entity like the following</p>
 </div>
@@ -768,7 +768,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_count_query"><a class="anchor" href="#_count_query"></a>Count Query</h3>
+<h3 id="_count_query"><a class="anchor" href="#_count_query"></a>2.3. Count Query</h3>
 <div class="paragraph">
 <p>The count of records can be obtained as follows</p>
 </div>
@@ -781,7 +781,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_order_by_query"><a class="anchor" href="#_order_by_query"></a>Order By Query</h3>
+<h3 id="_order_by_query"><a class="anchor" href="#_order_by_query"></a>2.4. Order By Query</h3>
 <div class="paragraph">
 <p>Order By specifies <code>sorted()</code> as follows.</p>
 </div>
@@ -796,7 +796,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_paging_query"><a class="anchor" href="#_paging_query"></a>Paging Query</h3>
+<h3 id="_paging_query"><a class="anchor" href="#_paging_query"></a>2.5. Paging Query</h3>
 <div class="paragraph">
 <p>If paging is required, the following can be done</p>
 </div>
@@ -822,7 +822,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_slicing_query"><a class="anchor" href="#_slicing_query"></a>Slicing Query</h3>
+<h3 id="_slicing_query"><a class="anchor" href="#_slicing_query"></a>2.6. Slicing Query</h3>
 <div class="paragraph">
 <p>If you do not need the total number of records, you can use <code>Slice</code> instead of <code>Page</code>.</p>
 </div>
@@ -844,7 +844,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_stream_query"><a class="anchor" href="#_stream_query"></a>Stream Query</h3>
+<h3 id="_stream_query"><a class="anchor" href="#_stream_query"></a>2.7. Stream Query</h3>
 <div class="paragraph">
 <p>A Stream can be obtained by <code>toStream()</code>.</p>
 </div>
@@ -870,7 +870,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_subquery"><a class="anchor" href="#_subquery"></a>Subquery</h3>
+<h3 id="_subquery"><a class="anchor" href="#_subquery"></a>2.8. Subquery</h3>
 <div class="paragraph">
 <p>If a subquery is needed, use <code>SubQuery</code> as follows</p>
 </div>
@@ -886,7 +886,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_using_repository"><a class="anchor" href="#_using_repository"></a>Using Repository</h3>
+<h3 id="_using_repository"><a class="anchor" href="#_using_repository"></a>2.9. Using Repository</h3>
 <div class="paragraph">
 <p>For entities, the base class of the repository is automatically generated by the annotation processor.</p>
 </div>
@@ -974,7 +974,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_using_typesafe_mapping"><a class="anchor" href="#_using_typesafe_mapping"></a>Using typesafe mapping</h3>
+<h3 id="_using_typesafe_mapping"><a class="anchor" href="#_using_typesafe_mapping"></a>2.10. Using typesafe mapping</h3>
 <div class="paragraph">
 <p>If you use constructor expressions to map query results to DTOs, mapping errors can only be detected at run-time.</p>
 </div>
@@ -1021,7 +1021,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect1">
-<h2 id="_how_to_use_querying"><a class="anchor" href="#_how_to_use_querying"></a>How to use Querying</h2>
+<h2 id="_how_to_use_querying"><a class="anchor" href="#_how_to_use_querying"></a>3. How to use Querying</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p><code>Querying</code> is used to construct the query.</p>
@@ -1077,7 +1077,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ul>
 </div>
 <div class="sect2">
-<h3 id="_querying_of"><a class="anchor" href="#_querying_of"></a>Querying.of()</h3>
+<h3 id="_querying_of"><a class="anchor" href="#_querying_of"></a>3.1. Querying.of()</h3>
 <div class="paragraph">
 <p>Querying can be instantiated by model classes generated by <code>JPA Fluent Modelgen</code>.</p>
 </div>
@@ -1091,7 +1091,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_filter"><a class="anchor" href="#_filter"></a>Filter</h3>
+<h3 id="_filter"><a class="anchor" href="#_filter"></a>3.2. Filter</h3>
 <div class="paragraph">
 <p>Use <code>filter()</code> to filter search results.</p>
 </div>
@@ -1157,7 +1157,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_sorted"><a class="anchor" href="#_sorted"></a>Sorted</h3>
+<h3 id="_sorted"><a class="anchor" href="#_sorted"></a>3.3. Sorted</h3>
 <div class="paragraph">
 <p>Use sorted() to ORDER BY clause.</p>
 </div>
@@ -1219,7 +1219,7 @@ This helps to make the resulting sequence unique.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_distinct"><a class="anchor" href="#_distinct"></a>Distinct</h3>
+<h3 id="_distinct"><a class="anchor" href="#_distinct"></a>3.4. Distinct</h3>
 <div class="paragraph">
 <p>Queries by <code>Querying</code> are treated as <code>query.distinct(true)</code> by default.</p>
 </div>
@@ -1254,7 +1254,7 @@ You must use <code>distinct()</code> explicitly to get results with distinct.</p
 </div>
 </div>
 <div class="sect2">
-<h3 id="_map"><a class="anchor" href="#_map"></a>Map</h3>
+<h3 id="_map"><a class="anchor" href="#_map"></a>3.5. Map</h3>
 <div class="paragraph">
 <p>Use <code>map()</code> if you want to map query results to different types.</p>
 </div>
@@ -1298,7 +1298,7 @@ You must use <code>distinct()</code> explicitly to get results with distinct.</p
 </div>
 </div>
 <div class="sect1">
-<h2 id="_how_to_use_subquery"><a class="anchor" href="#_how_to_use_subquery"></a>How to use SubQuery</h2>
+<h2 id="_how_to_use_subquery"><a class="anchor" href="#_how_to_use_subquery"></a>4. How to use SubQuery</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>If you need a subquery, use <code>SubQuery</code>.</p>
@@ -1356,7 +1356,7 @@ You must use <code>distinct()</code> explicitly to get results with distinct.</p
 </div>
 </div>
 <div class="sect1">
-<h2 id="_querying_result_types"><a class="anchor" href="#_querying_result_types"></a>Querying result types</h2>
+<h2 id="_querying_result_types"><a class="anchor" href="#_querying_result_types"></a>5. Querying result types</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The results from <code>Querying</code> can be specified as follows</p>
@@ -1417,10 +1417,10 @@ You must use <code>distinct()</code> explicitly to get results with distinct.</p
 </div>
 </div>
 <div class="sect1">
-<h2 id="_more_about_query"><a class="anchor" href="#_more_about_query"></a>More about Query</h2>
+<h2 id="_more_about_query"><a class="anchor" href="#_more_about_query"></a>6. More about Query</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_mapjoin"><a class="anchor" href="#_mapjoin"></a>MapJoin</h3>
+<h3 id="_mapjoin"><a class="anchor" href="#_mapjoin"></a>6.1. MapJoin</h3>
 <div class="paragraph">
 <p>If you have a relationship by map, then the</p>
 </div>
@@ -1447,7 +1447,7 @@ You must use <code>distinct()</code> explicitly to get results with distinct.</p
 </div>
 </div>
 <div class="sect2">
-<h3 id="_inheritance_entity"><a class="anchor" href="#_inheritance_entity"></a>Inheritance Entity</h3>
+<h3 id="_inheritance_entity"><a class="anchor" href="#_inheritance_entity"></a>6.2. Inheritance Entity</h3>
 <div class="paragraph">
 <p>Given the following inheritance relationship Entity</p>
 </div>
@@ -1482,7 +1482,7 @@ This works as a <code>criteriaBuilder.treat()</code> in JPA.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_how_to_use_repository"><a class="anchor" href="#_how_to_use_repository"></a>How to use Repository</h2>
+<h2 id="_how_to_use_repository"><a class="anchor" href="#_how_to_use_repository"></a>7. How to use Repository</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>T.B.D</p>
@@ -1490,7 +1490,7 @@ This works as a <code>criteriaBuilder.treat()</code> in JPA.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_how_to_use_mappers"><a class="anchor" href="#_how_to_use_mappers"></a>How to use Mappers</h2>
+<h2 id="_how_to_use_mappers"><a class="anchor" href="#_how_to_use_mappers"></a>8. How to use Mappers</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>T.B.D</p>
@@ -1500,8 +1500,8 @@ This works as a <code>criteriaBuilder.treat()</code> in JPA.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.7.0<br>
-Last updated 2022-07-28 13:23:50 UTC
+Version 0.8.0<br>
+Last updated 2022-08-01 13:20:37 UTC
 </div>
 </div>
 <style>
