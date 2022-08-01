@@ -17,6 +17,7 @@ package com.mammb.code.jpa.fluent.query;
 
 import com.mammb.code.jpa.fluent.core.RootAware;
 import com.mammb.code.jpa.fluent.core.RootSource;
+import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -41,19 +42,22 @@ public interface QueryBuilder {
      * @param em {@link EntityManager}
      * @param rootSource {@link RootSource}
      * @param filter {@link Filter}
+     * @param hints {@link Hints}
      * @param <E> the type of entity
      * @param <R> the type of root
      * @return a count query
      */
     static <E, R extends RootAware<E>> TypedQuery<Long> countQuery(
-            EntityManager em, RootSource<E, R> rootSource, Filter<E, R> filter) {
+            EntityManager em, RootSource<E, R> rootSource, Filter<E, R> filter, Hints hints) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
         R root = rootSource.root(cq.from(rootSource.rootClass()), cq, cb);
         cq.select(cq.isDistinct() ? cb.countDistinct(root.get()) : cb.count(root.get()));
         Optional.ofNullable(filter.apply(root)).ifPresent(cq::where);
         cq.orderBy(List.of());
-        return em.createQuery(cq);
+        TypedQuery<Long> typedQuery = em.createQuery(cq);
+        hints.apply(typedQuery);
+        return typedQuery;
     }
 
 
@@ -64,6 +68,7 @@ public interface QueryBuilder {
      * @param filter {@link Filter}
      * @param mapper {@link Mapper}
      * @param sorts {@link Sorts}
+     * @param hints {@link Hints}
      * @param <E> the type of entity
      * @param <R> the type of root
      * @param <U> the type of result value
@@ -74,7 +79,8 @@ public interface QueryBuilder {
             RootSource<E, R> rootSource,
             Mapper<E, R, U> mapper,
             Filter<E, R> filter,
-            Sorts<E, R> sorts) {
+            Sorts<E, R> sorts,
+            Hints hints) {
 
         CriteriaBuilder cb = QueryContext.put(em.getCriteriaBuilder());
         R root = mapper.apply(rootSource, cb);
@@ -84,14 +90,17 @@ public interface QueryBuilder {
 
         List<Order> orders = new ArrayList<>();
         Optional.ofNullable(sorts.apply(root)).ifPresent(orders::addAll);
-        if (!cq.getSelection().isCompoundSelection()) {
+        if (!cq.getSelection().isCompoundSelection() &&
+            cq.getSelection().getJavaType().isAnnotationPresent(Entity.class)) {
             // id sorting is mandatory in the normal select
             orders.addAll(getIdentifierName(root.get().getModel()).stream()
                 .map(name -> cb.asc(root.get().get(name))).toList());
         }
         cq.orderBy(orders);
+        TypedQuery<U> typedQuery = em.createQuery(cq);
+        hints.apply(typedQuery);
         QueryContext.close();
-        return em.createQuery(cq);
+        return typedQuery;
     }
 
 
@@ -125,6 +134,7 @@ public interface QueryBuilder {
      * @param filter {@link Filter}
      * @param sorts {@link Sorts}
      * @param slicePoint  {@link SlicePoint}
+     * @param hints {@link Hints}
      * @param <E> the type of entity
      * @param <R> the type of root
      * @param <U> the type of result value
@@ -132,8 +142,8 @@ public interface QueryBuilder {
      */
     static <E, R extends RootAware<E>, U> Slice<U> slice(
             EntityManager em, RootSource<E, R> rootSource, Mapper<E, R, U> mapper,
-            Filter<E, R> filter, Sorts<E, R> sorts, SlicePoint slicePoint) {
-        var query = QueryBuilder.query(em, rootSource, mapper, filter, sorts);
+            Filter<E, R> filter, Sorts<E, R> sorts, SlicePoint slicePoint, Hints hints) {
+        var query = QueryBuilder.query(em, rootSource, mapper, filter, sorts, hints);
         return slice(query, slicePoint);
     }
 
@@ -163,6 +173,7 @@ public interface QueryBuilder {
      * @param filter {@link Filter}
      * @param sorts {@link Sorts}
      * @param slicePoint  {@link SlicePoint}
+     * @param hints {@link Hints}
      * @param <E> the type of entity
      * @param <R> the type of root
      * @param <U> the type of result value
@@ -170,14 +181,14 @@ public interface QueryBuilder {
      */
     static <E, R extends RootAware<E>, U> Page<U> page(
             EntityManager em, RootSource<E, R> rootSource, Mapper<E, R, U> mapper,
-            Filter<E, R> filter, Sorts<E, R> sorts, SlicePoint slicePoint) {
+            Filter<E, R> filter, Sorts<E, R> sorts, SlicePoint slicePoint, Hints hints) {
 
-        var count = countQuery(em, rootSource, filter).getSingleResult();
+        var count = countQuery(em, rootSource, filter, Hints.empty()).getSingleResult();
         if (count <= slicePoint.getOffset()) {
             return Page.of(List.of(), count, slicePoint);
         }
 
-        var query = QueryBuilder.query(em, rootSource, mapper, filter, sorts);
+        var query = QueryBuilder.query(em, rootSource, mapper, filter, sorts, hints);
         query.setFirstResult(Math.toIntExact(slicePoint.getOffset()));
         query.setMaxResults(slicePoint.getSize());
         List<U> result = query.getResultList();

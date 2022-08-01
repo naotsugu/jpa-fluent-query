@@ -15,8 +15,11 @@
  */
 package com.mammb.code.jpa.fluent.query;
 
+import com.mammb.code.jpa.fluent.core.Criteria;
 import com.mammb.code.jpa.fluent.core.RootAware;
 import com.mammb.code.jpa.fluent.core.RootSource;
+
+import java.util.Arrays;
 
 /**
  * Represents a query that should be executed.
@@ -90,9 +93,27 @@ public interface Querying<E, R extends RootAware<E>, U> extends CreateQuery<E, R
      * Apply the given {@link Mapper} to the current {@link Querying}.
      * @param mapper the {@link Mapper} to apply
      * @param <Y> type of query result
-     * @return a {@link Mapper} applied {@link Querying}
+     * @return the {@link Querying}
      */
     <Y> Querying<E, R, Y> map(Mapper<E, R, Y> mapper);
+
+
+    /**
+     * Apply the given {@link Hint} to the current {@link Querying}.
+     * @param hints the {@link Hint} to apply
+     * @return the {@link Querying}
+     */
+    Querying<E, R, U> with(Hint hints);
+
+
+    /**
+     * Apply the query result to the current {@link Querying}.
+     * @param resultType the query result type
+     * @param selector the selector
+     * @param <Y>  the type of query result
+     * @return a the {@link Querying}
+     */
+    <Y> Querying<E, R, Y> map(Class<Y> resultType, Criteria.ExpressionSelector<E, R, Y> selector);
 
 
     /**
@@ -103,7 +124,7 @@ public interface Querying<E, R extends RootAware<E>, U> extends CreateQuery<E, R
      * @return a {@link Querying}
      */
     static <E, R extends RootAware<E>> Querying<E, R, E> of(RootSource<E, R> rootSource) {
-        return Querying.of(rootSource, Mapper.of(), Filter.empty(), Sorts.empty());
+        return Querying.of(rootSource, Mapper.of(), Filter.empty(), Sorts.empty(), Hints.empty());
     }
 
 
@@ -111,24 +132,33 @@ public interface Querying<E, R extends RootAware<E>, U> extends CreateQuery<E, R
             RootSource<E, R> rootSource,
             Mapper<E, R, U> mapper,
             Filter<E, R> filter,
-            Sorts<E, R> sorts) {
+            Sorts<E, R> sorts,
+            Hints hints) {
         return new Querying<>() {
             @Override
-            public Querying<E, R, U> filter(Filter<E, R> f) { return Querying.of(rootSource(), mapper(), filter().and(f), sorts()); }
+            public Querying<E, R, U> filter(Filter<E, R> f) { return Querying.of(rootSource(), mapper(), filter().and(f), sorts(), hints()); }
             @Override
-            public Querying<E, R, U> sorted(Sort<E, R> sort) { return Querying.of(rootSource(), mapper(), filter(), sorts().and(sort)); }
+            public Querying<E, R, U> sorted(Sort<E, R> sort) { return Querying.of(rootSource(), mapper(), filter(), sorts().and(sort), hints()); }
             @Override
-            public Querying<E, R, U> sorted(Sort<E, R> sort1, Sort<E, R> sort2) { return Querying.of(rootSource(), mapper(), filter(), sorts().and(sort1).and(sort2)); }
+            public Querying<E, R, U> sorted(Sort<E, R> sort1, Sort<E, R> sort2) { return Querying.of(rootSource(), mapper(), filter(), sorts().and(sort1).and(sort2), hints()); }
             @Override
-            public Querying<E, R, U> sorted(Sort<E, R> sort1, Sort<E, R> sort2, Sort<E, R> sort3) { return Querying.of(rootSource(), mapper(), filter(), sorts().and(sort1).and(sort2).and(sort3)); }
+            public Querying<E, R, U> sorted(Sort<E, R> sort1, Sort<E, R> sort2, Sort<E, R> sort3) { return Querying.of(rootSource(), mapper(), filter(), sorts().and(sort1).and(sort2).and(sort3), hints()); }
             @Override
-            public Querying<E, R, U> sorted(Sort<E, R> sort1, Sort<E, R> sort2, Sort<E, R> sort3, Sort<E, R> sort4) { return Querying.of(rootSource(), mapper(), filter(), sorts().and(sort1).and(sort2).and(sort3).and(sort4)); }
+            public Querying<E, R, U> sorted(Sort<E, R> sort1, Sort<E, R> sort2, Sort<E, R> sort3, Sort<E, R> sort4) { return Querying.of(rootSource(), mapper(), filter(), sorts().and(sort1).and(sort2).and(sort3).and(sort4), hints()); }
             @Override
-            public Querying<E, R, U> distinct() { return Querying.of(rootSource(), mapper().distinct(true), filter(), sorts()); }
+            public Querying<E, R, U> distinct() { return Querying.of(rootSource(), mapper().distinct(true), filter(), sorts(), hints()); }
             @Override
-            public Querying<E, R, U> unDistinct() { return Querying.of(rootSource(), mapper().distinct(false), filter(), sorts()); }
+            public Querying<E, R, U> unDistinct() { return Querying.of(rootSource(), mapper().distinct(false), filter(), sorts(), hints()); }
             @Override
-            public <Y> Querying<E, R, Y> map(Mapper<E, R, Y> mapper) { return Querying.of(rootSource(), mapper, filter(), sorts()); }
+            public <Y> Querying<E, R, Y> map(Mapper<E, R, Y> mapper) { return Querying.of(rootSource(), mapper, filter(), sorts(), hints()); }
+            @Override
+            public <Y> Querying<E, R, Y> map(Class<Y> resultType, Criteria.ExpressionSelector<E, R, Y> selector) {
+                return Querying.of(rootSource(), Mapper.of(resultType, ExpressionSelector.of(selector)), filter(), sorts(), hints());
+            }
+            @Override
+            public Querying<E, R, U> with(Hint hint) {
+                return Querying.of(rootSource(), mapper().distinct(true), filter(), sorts(), hints().add(hint));
+            }
             @Override
             public RootSource<E, R> rootSource() { return rootSource; }
             @Override
@@ -137,6 +167,9 @@ public interface Querying<E, R extends RootAware<E>, U> extends CreateQuery<E, R
             public Sorts<E, R> sorts() { return sorts; }
             @Override
             public Mapper<E, R, U> mapper() { return mapper; }
+            @Override
+            public Hints hints() { return hints; }
+
         };
     }
 

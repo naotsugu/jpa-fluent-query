@@ -55,13 +55,19 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
      */
     Mapper<E, R, U> mapper();
 
+    /**
+     * Get the current hints.
+     * @return the current hints
+     */
+    Hints hints();
+
 
     /**
      * Get the count result.
      * @return the count result
      */
     default Query<Long> count() {
-        return em -> QueryBuilder.countQuery(em, rootSource(), filter()).getSingleResult();
+        return em -> QueryBuilder.countQuery(em, rootSource(), filter(), hints()).getSingleResult();
     }
 
 
@@ -70,7 +76,7 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
      * @return the optional single result
      */
     default Query<Optional<U>> toOptional() {
-        return em -> Optional.ofNullable(QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts()).getSingleResult());
+        return em -> Optional.ofNullable(QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts(), hints()).getSingleResult());
     }
 
 
@@ -79,7 +85,7 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
      * @return the single result
      */
     default Query<U> toSingle() {
-        return em -> QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts()).getSingleResult();
+        return em -> QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts(), hints()).getSingleResult();
     }
 
 
@@ -88,7 +94,7 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
      * @return the {@link List} result
      */
     default Query<List<U>> toList() {
-        return em -> QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts()).getResultList();
+        return em -> QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts(), hints()).getResultList();
     }
 
 
@@ -98,7 +104,7 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
      * @return the {@link Slice} result
      */
     default Query<Slice<U>> toSlice(SlicePoint slicePoint) {
-        return em -> QueryBuilder.slice(em, rootSource(), mapper(), filter(), sorts(), slicePoint);
+        return em -> QueryBuilder.slice(em, rootSource(), mapper(), filter(), sorts(), slicePoint, hints());
     }
 
 
@@ -108,7 +114,7 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
      * @return the {@link Page} result
      */
     default Query<Page<U>> toPage(SlicePoint slicePoint) {
-        return em -> QueryBuilder.page(em, rootSource(), mapper(), filter(), sorts(), slicePoint);
+        return em -> QueryBuilder.page(em, rootSource(), mapper(), filter(), sorts(), slicePoint, hints());
     }
 
 
@@ -132,8 +138,8 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
      */
     default Query<Stream<U>> toStream(int pageSize) {
         return em -> SliceStream.of(
-            QueryBuilder.countQuery(em, rootSource(), filter()),
-            QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts()),
+            QueryBuilder.countQuery(em, rootSource(), filter(), hints()),
+            QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts(), hints()),
             pageSize
         ).stream();
     }
@@ -161,7 +167,7 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
      */
     default Query<Stream<U>> toForwardingStream(int pageSize) {
         return em -> SliceStream.forwardOf(
-            QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts()),
+            QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts(), hints()),
             pageSize
         ).stream();
     }
@@ -187,8 +193,8 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
      */
     default Query<Iterable<U>> toIterable(int pageSize) {
         return em -> SliceStream.of(
-            QueryBuilder.countQuery(em, rootSource(), filter()),
-            QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts()),
+            QueryBuilder.countQuery(em, rootSource(), filter(), hints()),
+            QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts(), hints()),
             pageSize
         );
     }
@@ -216,7 +222,7 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
      */
     default Query<Iterable<U>> toForwardingIterable(int pageSize) {
         return em -> SliceStream.forwardOf(
-            QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts()),
+            QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts(), hints()),
             pageSize
         );
     }

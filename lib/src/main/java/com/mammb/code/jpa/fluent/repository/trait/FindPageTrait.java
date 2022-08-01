@@ -16,6 +16,7 @@
 package com.mammb.code.jpa.fluent.repository.trait;
 
 import com.mammb.code.jpa.fluent.core.EntityManagerAware;
+import com.mammb.code.jpa.fluent.query.Hints;
 import com.mammb.code.jpa.fluent.query.Mapper;
 import com.mammb.code.jpa.fluent.core.RootAware;
 import com.mammb.code.jpa.fluent.core.RootSourceAware;
@@ -52,7 +53,7 @@ public interface FindPageTrait<E, R extends RootAware<E>> extends EntityManagerA
      * @return the {@link Page}
      */
     default Page<E> findPage(Filter<E, R> filter, Sorts<E, R> sorts, SlicePoint slicePoint) {
-        return QueryBuilder.page(em(), rootSource(), Mapper.of(), filter, sorts, slicePoint);
+        return QueryBuilder.page(em(), rootSource(), Mapper.of(), filter, sorts, slicePoint, Hints.empty());
     }
 
 }

@@ -61,7 +61,7 @@ public interface Mapper<E, R extends RootAware<E>, U> {
      * Create a general {@link Mapper}.
      * @param <E> the type of entity
      * @param <R> the type of root
-     * @return a general {@link Mapper}
+     * @return the general {@link Mapper}
      */
     static <E, R extends RootAware<E>> Mapper<E, R, E> of() {
         return new Mapper<>() {
@@ -78,6 +78,37 @@ public interface Mapper<E, R extends RootAware<E>, U> {
             }
             @Override
             public Mapper<E, R, E> distinct(boolean distinct) {
+                queryDecorator = query -> query.distinct(distinct);
+                return this;
+            }
+        };
+    }
+
+
+    /**
+     * Create a {@link Mapper}.
+     * @param resultType the class of query result
+     * @param selector the selectors
+     * @param <E> the type of entity
+     * @param <R> the type of root
+     * @param <U> the type of result
+     * @return the general {@link Mapper}
+     */
+    static <E, R extends RootAware<E>, U> Mapper<E, R, U> of(
+            Class<U> resultType, ExpressionSelector<E, R, U> selector) {
+        return new Mapper<>() {
+            private QueryDecorator<U> queryDecorator = QueryDecorator.empty();
+            @Override
+            public R apply(RootSource<E, R> rootSource, CriteriaBuilder builder) {
+                CriteriaQuery<U> query = builder.createQuery(resultType);
+                queryDecorator.decorate(query);
+                QueryContext.put(query);
+                R root = rootSource.root(query.from(rootSource.rootClass()), query, builder);
+                query.select(selector.apply(root));
+                return root;
+            }
+            @Override
+            public Mapper<E, R, U> distinct(boolean distinct) {
                 queryDecorator = query -> query.distinct(distinct);
                 return this;
             }

@@ -147,7 +147,7 @@ class QueryingTest {
     @Test
     void testTreatFilter() {
         List<Issue> issues = Querying.of(IssueModel.root())
-            .filter(issue -> issue.getProject().asExternalProjectModel().getCode().eq("code"))
+            .filter(issue -> issue.getProject().asExternalProject().getCode().eq("code"))
             .toList().on(em);
         assertEquals(2, issues.size());
     }
@@ -193,11 +193,11 @@ class QueryingTest {
      */
     @Test
     void testAggregateMax() {
-        Optional<Mappers.IntegerResult> result = Querying.of(IssueModel.root())
+        Optional<Integer> result = Querying.of(IssueModel.root())
             .filter(r -> r.getTitle().eq("foo"))
-            .map(Mappers.integerResult(issue -> issue.getPriority().max()))
+            .map(Integer.class, issue -> issue.getPriority().max())
             .toOptional().on(em);
-        assertEquals(3, result.get().value());
+        assertEquals(3, result.get());
     }
 
     /**

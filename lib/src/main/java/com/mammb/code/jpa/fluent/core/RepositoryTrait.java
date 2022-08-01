@@ -36,4 +36,11 @@ public @interface RepositoryTrait {
      */
     Class<?>[] targets() default {};
 
+
+    /**
+     * The entity classes to be excluded from the trait target.
+     * @return the entity classes to be excluded
+     */
+    Class<?>[] excludes() default {};
+
 }
