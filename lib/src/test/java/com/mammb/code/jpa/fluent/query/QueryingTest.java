@@ -232,6 +232,22 @@ class QueryingTest {
         assertEquals(3, issues.getTotalElements());
     }
 
+
+    /**
+     * <pre>
+     * SELECT DISTINCT ... FROM ISSUE WHERE (TITLE = ?) ORDER BY ID ASC LIMIT ? OFFSET ?
+     * </pre>
+     */
+    @Test
+    void testRequest() {
+        var request = new IssueRequest();
+        request.title = "foo";
+
+        Page<Issue> issues = Querying.of(IssueModel.root()).toPage(request).on(em);
+        assertEquals(3, issues.getTotalElements());
+    }
+
+
     /**
      * <pre>
      * SELECT t0.* FROM ISSUE t0 WHERE EXISTS (
@@ -341,6 +357,14 @@ class QueryingTest {
         em.persist(issue1); em.persist(issue2); em.persist(issue3); em.persist(issue4);
         em.persist(issue5); em.persist(issue6); em.persist(issue7); em.persist(issue8);
 
+    }
+
+    private static class IssueRequest implements SliceRequest<Issue, IssueModel.Root_> {
+        public String title;
+        @Override
+        public Filter<Issue, IssueModel.Root_> getFilter() {
+            return issue -> issue.getTitle().eq(title);
+        }
     }
 
 }

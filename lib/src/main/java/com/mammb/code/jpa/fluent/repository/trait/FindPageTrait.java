@@ -25,6 +25,7 @@ import com.mammb.code.jpa.fluent.query.Page;
 import com.mammb.code.jpa.fluent.query.QueryBuilder;
 import com.mammb.code.jpa.fluent.query.Request;
 import com.mammb.code.jpa.fluent.query.SlicePoint;
+import com.mammb.code.jpa.fluent.query.SliceRequest;
 import com.mammb.code.jpa.fluent.query.Sorts;
 
 /**
@@ -40,7 +41,7 @@ public interface FindPageTrait<E, R extends RootAware<E>> extends EntityManagerA
      * @param request the slice request
      * @return the {@link Page}
      */
-    default Page<E> findPage(Request<E, R> request) {
+    default Page<E> findPage(SliceRequest<E, R> request) {
         return findPage(request.getFilter(), request.getSorts(), request.getSlicePoint());
     }
 

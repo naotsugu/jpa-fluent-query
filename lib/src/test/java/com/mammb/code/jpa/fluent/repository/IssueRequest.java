@@ -27,7 +27,6 @@ public class IssueRequest implements Request<Issue, Root_> {
 
     public String titleLike = "";
     public String description = "";
-    private SlicePoint point = SlicePoint.of();
 
     @Override
     public Filter<Issue, Root_> getFilter() {
@@ -42,11 +41,6 @@ public class IssueRequest implements Request<Issue, Root_> {
             issue -> issue.getTitle().asc(),
             issue -> issue.getDescription().desc(),
             issue -> issue.getId().asc());
-    }
-
-    @Override
-    public SlicePoint getSlicePoint() {
-        return point;
     }
 
 }

@@ -17,7 +17,6 @@ package com.mammb.code.jpa.fluent.query;
 
 import com.mammb.code.jpa.fluent.core.RootAware;
 import com.mammb.code.jpa.fluent.core.RootSource;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -37,11 +36,13 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
      */
     RootSource<E, R> rootSource();
 
+
     /**
      * Get the current filter.
      * @return the current filter
      */
     Filter<E, R> filter();
+
 
     /**
      * Get the current sorts.
@@ -49,11 +50,13 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
      */
     Sorts<E, R> sorts();
 
+
     /**
      * Get the current mapper.
      * @return the current mapper
      */
     Mapper<E, R, U> mapper();
+
 
     /**
      * Get the current hints.
@@ -67,7 +70,19 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
      * @return the count result
      */
     default Query<Long> count() {
-        return em -> QueryBuilder.countQuery(em, rootSource(), filter(), hints()).getSingleResult();
+        return em -> QueryBuilder.countQuery(em, rootSource(), filter(), hints())
+            .getSingleResult();
+    }
+
+
+    /**
+     * Get the count result.
+     * @param request The request
+     * @return the count result
+     */
+    default Query<Long> count(Request<E, R> request) {
+        return em -> QueryBuilder.countQuery(em, rootSource(), filter().and(request.getFilter()), hints())
+            .getSingleResult();
     }
 
 
@@ -76,7 +91,21 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
      * @return the optional single result
      */
     default Query<Optional<U>> toOptional() {
-        return em -> Optional.ofNullable(QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts(), hints()).getSingleResult());
+        return em -> Optional.ofNullable(
+            QueryBuilder.query(em, rootSource(), mapper(), filter(), Sorts.empty(), hints())
+                .getSingleResult());
+    }
+
+
+    /**
+     * Get the optional single result.
+     * @param request The request
+     * @return the optional single result
+     */
+    default Query<Optional<U>> toOptional(Request<E, R> request) {
+        return em -> Optional.ofNullable(
+            QueryBuilder.query(em, rootSource(), mapper(), filter().and(request.getFilter()), Sorts.empty(), hints())
+                .getSingleResult());
     }
 
 
@@ -85,7 +114,19 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
      * @return the single result
      */
     default Query<U> toSingle() {
-        return em -> QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts(), hints()).getSingleResult();
+        return em -> QueryBuilder.query(em, rootSource(), mapper(), filter(), Sorts.empty(), hints())
+            .getSingleResult();
+    }
+
+
+    /**
+     * Get the single result.
+     * @param request The request
+     * @return the single result
+     */
+    default Query<U> toSingle(Request<E, R> request) {
+        return em -> QueryBuilder.query(em, rootSource(), mapper(), filter().and(request.getFilter()), Sorts.empty(), hints())
+            .getSingleResult();
     }
 
 
@@ -95,6 +136,17 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
      */
     default Query<List<U>> toList() {
         return em -> QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts(), hints()).getResultList();
+    }
+
+
+    /**
+     * Get the {@link List} result.
+     * @param request The request
+     * @return the {@link List} result
+     */
+    default Query<List<U>> toList(Request<E, R> request) {
+        return em -> QueryBuilder.query(em, rootSource(), mapper(),
+            filter().and(request.getFilter()), sorts().ands(request.getSorts()), hints()).getResultList();
     }
 
 
@@ -109,12 +161,34 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
 
 
     /**
+     * Get the {@link Slice} result.
+     * @param request The slice request
+     * @return the {@link Slice} result
+     */
+    default Query<Slice<U>> toSlice(SliceRequest<E, R> request) {
+        return em -> QueryBuilder.slice(em, rootSource(), mapper(),
+            filter().and(request.getFilter()), sorts().ands(request.getSorts()), request.getSlicePoint(), hints());
+    }
+
+
+    /**
      * Get the {@link Page} result.
      * @param slicePoint the slice point
      * @return the {@link Page} result
      */
     default Query<Page<U>> toPage(SlicePoint slicePoint) {
         return em -> QueryBuilder.page(em, rootSource(), mapper(), filter(), sorts(), slicePoint, hints());
+    }
+
+
+    /**
+     * Get the {@link Page} result.
+     * @param request The slice request
+     * @return the {@link Page} result
+     */
+    default Query<Page<U>> toPage(SliceRequest<E, R> request) {
+        return em -> QueryBuilder.page(em, rootSource(), mapper(),
+            filter().and(request.getFilter()), sorts().ands(request.getSorts()), request.getSlicePoint(), hints());
     }
 
 
@@ -148,6 +222,21 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
     /**
      * Get the {@link Stream} result.
      * This Stream reads records by page.
+     * This {@link Stream} is descending order.
+     * @param request The slice request
+     * @return the {@link Stream} result
+     */
+    default Query<Stream<U>> toStream(SliceRequest<E, R> request) {
+        return em -> SliceStream.of(
+            QueryBuilder.countQuery(em, rootSource(), filter().and(request.getFilter()), hints()),
+            QueryBuilder.query(em, rootSource(), mapper(), filter().and(request.getFilter()), sorts().ands(request.getSorts()), hints()),
+            request.getSize()
+        ).stream();
+    }
+
+    /**
+     * Get the {@link Stream} result.
+     * This Stream reads records by page.
      * It is recommended that {@code toStream()} be used when updating a record that has already been read,
      * since there is a possibility of missing processing.
      * @return the {@link Stream} result
@@ -160,7 +249,8 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
     /**
      * Get the {@link Stream} result.
      * This Stream reads records by page.
-     * It is recommended that {@code toStream(int pageSize)} be used when updating a record that has already been read,
+     * It is recommended that {@code toStream(int pageSize)} be used
+     * when updating a record that has already been read,
      * since there is a possibility of missing processing.
      * @param pageSize The size of page
      * @return the {@link Stream} result
@@ -169,6 +259,23 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
         return em -> SliceStream.forwardOf(
             QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts(), hints()),
             pageSize
+        ).stream();
+    }
+
+
+    /**
+     * Get the {@link Stream} result.
+     * This Stream reads records by page.
+     * It is recommended that {@code toStream(SliceRequest<E, R> request)} be used
+     * when updating a record that has already been read,
+     * since there is a possibility of missing processing.
+     * @param request The slice request
+     * @return the {@link Stream} result
+     */
+    default Query<Stream<U>> toForwardingStream(SliceRequest<E, R> request) {
+        return em -> SliceStream.forwardOf(
+            QueryBuilder.query(em, rootSource(), mapper(), filter().and(request.getFilter()), sorts().ands(request.getSorts()), hints()),
+            request.getSize()
         ).stream();
     }
 
@@ -203,6 +310,22 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
     /**
      * Get the {@link Iterable} result.
      * This Iterable reads records by page.
+     * This {@link Iterable} is descending order.
+     * @param request The slice request
+     * @return the {@link Iterable} result
+     */
+    default Query<Iterable<U>> toIterable(SliceRequest<E, R> request) {
+        return em -> SliceStream.of(
+            QueryBuilder.countQuery(em, rootSource(), filter(), hints()),
+            QueryBuilder.query(em, rootSource(), mapper(), filter().and(request.getFilter()), sorts().ands(request.getSorts()), hints()),
+            request.getSize()
+        );
+    }
+
+
+    /**
+     * Get the {@link Iterable} result.
+     * This Iterable reads records by page.
      * It is recommended that {@code toIterable()} be used when updating a record that has already been read,
      * since there is a possibility of missing processing.
      * @return the {@link Iterable} result
@@ -215,7 +338,8 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
     /**
      * Get the {@link Iterable} result.
      * This Iterable reads records by page.
-     * It is recommended that {@code toIterable(int pageSize)} be used when updating a record that has already been read,
+     * It is recommended that {@code toIterable(int pageSize)} be used
+     * when updating a record that has already been read,
      * since there is a possibility of missing processing.
      * @param pageSize The size of page
      * @return the {@link Iterable} result
@@ -224,6 +348,23 @@ public interface CreateQuery<E, R extends RootAware<E>, U> {
         return em -> SliceStream.forwardOf(
             QueryBuilder.query(em, rootSource(), mapper(), filter(), sorts(), hints()),
             pageSize
+        );
+    }
+
+
+    /**
+     * Get the {@link Iterable} result.
+     * This Iterable reads records by page.
+     * It is recommended that {@code toIterable(SliceRequest<E, R> request)} be used
+     * when updating a record that has already been read,
+     * since there is a possibility of missing processing.
+     * @param request The slice request
+     * @return the {@link Iterable} result
+     */
+    default Query<Iterable<U>> toForwardingIterable(SliceRequest<E, R> request) {
+        return em -> SliceStream.forwardOf(
+            QueryBuilder.query(em, rootSource(), mapper(), filter().and(request.getFilter()), sorts().ands(request.getSorts()), hints()),
+            request.getSize()
         );
     }
 

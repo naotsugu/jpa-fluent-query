@@ -1,5 +1,116 @@
 == How to use Repository
 
-T.B.D
+Using Repository requires a simple preparation.
+
+Define predefined methods in Repository by annotating them with `@RepositoryTrait`.
+
+For example, to make `QueryRepository` and `CommandRepository` available to all repositories, define the following interface
+
+[source, java]
+----
+@RepositoryTrait
+public interface BaseRepository<PK extends Serializable, E, R extends RootAware<E>>
+    extends QueryRepository<PK, E, R>, CommandRepository<PK, E> {
+}
+----
+
+The `QueryRepository` defines default methods for queries such as `Optional<E> get(PK id)` and `List<E> findAll()`.
+
+The `JPA Fluent Modelgen` generates a repository interface for each entity, such as `IssueRepository_` for `Issue` entities and `ProjectRepository_` for `Project` entities.
+The generated interfaces inherit from the interfaces annotated with `@RepositoryTrait`.
+
+
+If you create an `IssueRepository` that implements the `IssueRepository_` interface, you can use the methods defined by default in the `QueryRepository` and `CommandRepository`.
+
+[source, java]
+----
+@ApplicationScoped
+public class IssueRepository implements IssueRepository_ {
+
+    @PersistenceContext
+    private EntityManager em;
+
+    @Override
+    public EntityManager em() {
+        return em;
+    }
+}
+----
+
+The created repository can be used as follows.
+
+[source, java]
+----
+@RequestScoped
+@Transactional
+public class IssueService {
+
+    @Inject
+    private IssueRepository repository;
+
+    public List<Issue> findAll() {
+        return repository.findAll(r -> r.getTitle().eq("..."));
+    }
+
+    public List<Issue> findAll(IssueRequest request) {
+        return repository.findAll(request);
+    }
+
+}
+----
+
+
+=== @RepositoryTrait
+
+`@RepositoryTrait` can limit the target Entity.
+
+[source, java]
+----
+@RepositoryTrait(targets = { Issue.class, Project.class })
+public interface BaseCommandRepository<PK extends Serializable, E, R extends RootAware<E>> CommandRepository<PK, E> {
+}
+----
+
+If `targets` is not specified, it applies to all repositories.
+
+To exclude a specific Entity, use `excludes` as follows
+
+[source, java]
+----
+@RepositoryTrait(excludes = { Tag.class })
+----
+
+
+This allows for controls such as providing only a read-only repository for a particular Entity.
+
+
+=== QueryRepository
+
+The `QueryRepository` implements the following four Traits.
+
+[source, java]
+----
+public interface QueryRepository<PK extends Serializable, E, R extends RootAware<E>>
+  extends GetTrait<PK, E, R>,
+          FindAllTrait<E, R>,
+          FindSliceTrait<E, R>,
+          FindPageTrait<E, R> {
+----
+
+
+=== CommandRepository
+
+The `QueryRepository` implements the following two Traits
+
+[source, java]
+----
+public interface CommandRepository<PK extends Serializable, E>
+    extends SaveTrait<E>,
+            DeleteTrait<E> {
+}
+----
+
+
+You can customize your repository by creating a Trait that suits your purposes.
 
 

@@ -13,6 +13,5 @@ include::03-querying.adoc[]
 
 include::04-repository.adoc[]
 
-include::05-mappers.adoc[]
 
 

@@ -50,6 +50,16 @@ public interface Sorts<E, R extends RootAware<E>> {
 
 
     /**
+     * AND composite the specified sort condition to the current one.
+     * @param other a {@link Sorts} for AND target
+     * @return the {@link Sorts} after composite
+     */
+    default Sorts<E, R> ands(Sorts<E, R> other) {
+        return Sorts.plus(this, other);
+    }
+
+
+    /**
      * Create an empty {@link Sorts}.
      * @param <E> the type of entity
      * @param <R> the type of root

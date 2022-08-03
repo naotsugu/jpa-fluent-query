@@ -49,7 +49,7 @@ In this example, `IssueModel.root()` is used to set the Issue entity as root.
 
 === Filter
 
-Use `filter()` to filter search results.
+Use `filter()` to filter the search results.
 
 [source, java]
 ----
@@ -84,6 +84,8 @@ Similarly, you can use an `Filters.or()`.
 
 [source, java]
 ----
+import static com.mammb.code.jpa.fluent.query.Filters.*;
+
 Querying.of(IssueModel.root())
   .filter(issue -> {
       var tags = issue.joinTags();
@@ -103,14 +105,21 @@ Filter<Issue, IssueModel.Root_> filter = and(
     issue -> issue.getProject().getState().in(PLAN, OPEN));
 
 var issues = Querying.of(IssueModel.root())
-    .filter(filter).toList().on(em);
+  .filter(filter).toList().on(em);
 ----
+
+[NOTE]
+====
+There are two ways to get the relationship between entities. +
+`issue.getProject()` is equivalent to `root.get(Issue_.project)` in JPA. +
+`issue.joinProject()` is equivalent to `root.join(Issue_.project)` in JPA.
+====
+
 
 
 === Sorted
 
-Use sorted() to ORDER BY clause.
-
+Use `sorted()` to ORDER BY clause.
 
 If you do not specify a sort as follows
 
@@ -137,14 +146,14 @@ To explicitly specify sorting, use ss as follows
 ----
 Querying.of(IssueModel.root())
     .sorted(issue -> issue.getProject().getName().desc(),
-            issue -> issue.getId().asc())
+            issue -> issue.getTitle().asc())
 ----
 
 The following `Order By` clause will be generated
 
 [source, sql]
 ----
-... ORDER BY PROJECT.NAME DESC, ISSUE.ID ASC, t1.ID ASC
+... ORDER BY PROJECT.NAME DESC, ISSUE.TITLE ASC, ISSUE.ID ASC
 ----
 
 Sorting by ID is again given at the end.
@@ -152,7 +161,7 @@ Sorting by ID is again given at the end.
 
 [NOTE]
 ====
-Sorting by ID is not automatically applied when using `map` or `SubQuery`, which will be described later.
+Sorting by ID is **not** automatically applied when using `map` or `SubQuery`.
 ====
 
 
@@ -167,7 +176,7 @@ If you want to explicitly use `query.distinct(false)`, you can use `unDistinct()
 [source, java]
 ----
 Querying.of(IssueModel.root())
-    .filter(issue -> issue.getProject().getName().eq("name"))
+    .filter(issue -> issue.getProject().getName().eq("..."))
     .unDistinct()
     .toList().on(em);
 ----
@@ -185,17 +194,14 @@ Use `map()` if you want to map query results to different types.
 
 [source, java]
 ----
-Mappers.IntegerResult result = Querying.of(IssueModel.root())
-    .filter(...)
-    .map(Mappers.integerResult(issue -> issue.getPriority().max()))
-    .toSingle().on(em);
-
-result.value();
+Optional<Integer> result = Querying.of(IssueModel.root())
+  .filter(r -> r.getTitle().eq("..."))
+  .map(Integer.class, issue -> issue.getPriority().max())
+  .toOptional().on(em);
 ----
 
-In this example, the result of the aggregate function is obtained as an `Mappers.IntegerResult`.
+In this example, the result of the aggregate function is obtained as an `Integer`.
 
-Other result types, such as `Mappers.LongResult`, are predefined and provided by `jpa-fluent-modelgen`.
 
 In addition to the predefined types, you can handle arbitrary result types by annotating them with `@Mappable`.
 
@@ -215,6 +221,7 @@ List<IssueDto> issues = Querying.of(IssueModel.root())
     .toList().on(em);
 ----
 
+The type and number of arguments can be detected at build time.
 
 
 == How to use SubQuery
@@ -263,8 +270,49 @@ The above will not work because Hibernate does not currently handle `correlat` c
 ====
 
 
+== Querying with Request
 
-== Querying result types
+Querying can use the `Request` class to retrieve results.
+
+[source, java]
+----
+var request = new IssueRequest();
+Page<Issue> issues = Querying.of(IssueModel.root()).toPage(request).on(em);
+----
+
+
+The request class is prepared by implementing the following interface.
+
+* `Request` is a request that does not require paging
+* `SliceRequest` is a request that requires paging
+
+Create a class implementing `SliceRequest` as follows.
+
+
+[source, java]
+----
+private static class IssueRequest implements SliceRequest<Issue, IssueModel.Root_> {
+    public String title;
+    @Override
+    public Filter<Issue, IssueModel.Root_> getFilter() {
+        return issue -> issue.getTitle().eq(title);
+    }
+}
+----
+
+You can use `IssueRequest` and get the following results.
+
+[source, java]
+----
+var request = new IssueRequest();
+request.title = "...";
+Page<Issue> issues = Querying.of(IssueModel.root()).toPage(request).on(em);
+----
+
+
+== Result type of Querying
+
+=== Typical result types
 
 The results from `Querying` can be specified as follows
 
@@ -275,6 +323,11 @@ The results from `Querying` can be specified as follows
 * `Query<Slice<U>> toSlice(SlicePoint slicePoint)`
 * `Query<Page<U>> toPage(SlicePoint slicePoint)`
 
+
+For each result type, there is also a method that takes `Request` as an argument, as described above.
+
+
+=== Streaming result types
 
 Uses for retrieving results on a page-by-page basis include.
 
@@ -287,6 +340,11 @@ Uses for retrieving results on a page-by-page basis include.
 * `Query<Iterable<U>> toForwardingIterable()`
 * `Query<Iterable<U>> toForwardingIterable(int pageSize)`
 
+Each result is sorted in ascending order by ID, and data is retrieved in order from the tail.
+
+If you want to get the IDs in order from the smallest to the largest, use `toForwardingXXX`. Note, however, that there is a possibility of missing data if the data is updated at the same time.
+
+For each result type, there is also a method that takes `Request` as an argument, as described above.
 
 
 
@@ -318,7 +376,7 @@ Querying.of(ProjectModel.root())
 ----
 
 
-=== Inheritance Entity
+=== Inheritance cast
 
 Given the following inheritance relationship Entity
 
@@ -340,7 +398,7 @@ It can be cast by using `asExternalProject()` as follows
 [source, java]
 ----
 Querying.of(IssueModel.root())
-    .filter(issue -> issue.getProject().asExternalProject().getCode().eq("code"))
+    .filter(issue -> issue.getProject().asExternalProject().getCode().eq("..."))
     .toList().on(em);
 ----
 

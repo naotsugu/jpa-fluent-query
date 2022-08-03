@@ -33,17 +33,14 @@ public interface Request<E, R extends RootAware<E>> {
      */
     Filter<E, R> getFilter();
 
+
     /**
      * Get the {@link Sorts}.
      * @return the {@link Sorts}
      */
-    Sorts<E, R> getSorts();
-
-    /**
-     * Get the {@link SlicePoint}.
-     * @return the {@link SlicePoint}
-     */
-    SlicePoint getSlicePoint();
+    default Sorts<E, R> getSorts() {
+        return Sorts.empty();
+    }
 
 
     /**
@@ -54,7 +51,7 @@ public interface Request<E, R extends RootAware<E>> {
      * @return a {@link Request}
      */
     static <E, R extends RootAware<E>> Request<E, R> of(Filter<E, R> filter) {
-        return of(filter, Sorts.empty(), SlicePoint.of());
+        return of(filter, Sorts.empty());
     }
 
 
@@ -64,37 +61,7 @@ public interface Request<E, R extends RootAware<E>> {
      * @return {@link SlicePoint}
      */
     default Request<E, R> withSorts(Sorts<E, R> sorts) {
-        return of(getFilter(), sorts, getSlicePoint());
-    }
-
-
-    /**
-     * Create the {@link Request} with given slice point.
-     * @param point a {@link SlicePoint}
-     * @return {@link SlicePoint}
-     */
-    default Request<E, R> withPoint(SlicePoint point) {
-        return of(getFilter(), getSorts(), point);
-    }
-
-
-    /**
-     * Create the {@link Request} with given slice number.
-     * @param number a {@link SlicePoint} number
-     * @return {@link SlicePoint}
-     */
-    default Request<E, R> withNumber(int number) {
-        return of(getFilter(), getSorts(), getSlicePoint().withNumber(number));
-    }
-
-
-    /**
-     * Create the {@link Request} with given slice size.
-     * @param size a {@link SlicePoint} size
-     * @return {@link SlicePoint}
-     */
-    default Request<E, R> withSize(int size) {
-        return of(getFilter(), getSorts(), getSlicePoint().withSize(size));
+        return of(getFilter(), sorts);
     }
 
 
@@ -102,29 +69,18 @@ public interface Request<E, R extends RootAware<E>> {
      * Create a {@link Request}
      * @param filter a {@link Filter}
      * @param sorts a {@link Sorts}
-     * @param slicePoint a {@link SlicePoint}
      * @param <E> the type of entity
      * @param <R> the type of root
      * @return a {@link Request}
      */
-    static <E, R extends RootAware<E>> Request<E, R> of(
-            Filter<E, R> filter, Sorts<E, R> sorts, SlicePoint slicePoint) {
+    static <E, R extends RootAware<E>> Request<E, R> of(Filter<E, R> filter, Sorts<E, R> sorts) {
         return new Request<>() {
-
             @Override
-            public Filter<E, R> getFilter() {
-                return Objects.isNull(filter) ? Filter.empty() : filter; }
-
+            public Filter<E, R> getFilter() { return Objects.isNull(filter) ? Filter.empty() : filter; }
             @Override
             public Sorts<E, R> getSorts() {
                 return Objects.isNull(sorts) ? Sorts.empty() : sorts;
             }
-
-            @Override
-            public SlicePoint getSlicePoint() {
-                return Objects.isNull(slicePoint) ? SlicePoint.of() : slicePoint;
-            }
-
         };
     }
 
