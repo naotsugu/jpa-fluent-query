@@ -443,7 +443,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>JPA Fluent Query User Manual</h1>
 <div class="details">
 <span id="author" class="author">https://github.com/naotsugu/jpa-fluent-query</span><br>
-<span id="revnumber">version 0.8.0</span>
+<span id="revnumber">version 0.9.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -479,15 +479,26 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ul>
 </li>
 <li><a href="#_how_to_use_subquery">4. How to use SubQuery</a></li>
-<li><a href="#_querying_result_types">5. Querying result types</a></li>
-<li><a href="#_more_about_query">6. More about Query</a>
+<li><a href="#_querying_with_request">5. Querying with Request</a></li>
+<li><a href="#_result_type_of_querying">6. Result type of Querying</a>
 <ul class="sectlevel2">
-<li><a href="#_mapjoin">6.1. MapJoin</a></li>
-<li><a href="#_inheritance_entity">6.2. Inheritance Entity</a></li>
+<li><a href="#_typical_result_types">6.1. Typical result types</a></li>
+<li><a href="#_streaming_result_types">6.2. Streaming result types</a></li>
 </ul>
 </li>
-<li><a href="#_how_to_use_repository">7. How to use Repository</a></li>
-<li><a href="#_how_to_use_mappers">8. How to use Mappers</a></li>
+<li><a href="#_more_about_query">7. More about Query</a>
+<ul class="sectlevel2">
+<li><a href="#_mapjoin">7.1. MapJoin</a></li>
+<li><a href="#_inheritance_cast">7.2. Inheritance cast</a></li>
+</ul>
+</li>
+<li><a href="#_how_to_use_repository">8. How to use Repository</a>
+<ul class="sectlevel2">
+<li><a href="#_repositorytrait">8.1. @RepositoryTrait</a></li>
+<li><a href="#_queryrepository">8.2. QueryRepository</a></li>
+<li><a href="#_commandrepository">8.3. CommandRepository</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -633,7 +644,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_release_notes"><a class="anchor" href="#_release_notes"></a>1.3. Release Notes</h3>
 <div class="paragraph">
-<p>Current version is v0.8.0(under development).</p>
+<p>Current version is v0.9.0(under development).</p>
 </div>
 </div>
 </div>
@@ -644,14 +655,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_getting_started"><a class="anchor" href="#_getting_started"></a>2.1. Getting Started</h3>
 <div class="paragraph">
-<p>If you use Gradle Kotlin DSL, define annotation processors and <code>jpa-fluent-query</code> dependencies as follows :</p>
+<p>If you use Gradle Kotlin DSL, define annotation processors and <code>jpa-fluent-query</code> dependencies as follows</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="kotlin"><span class="nf">dependencies</span> <span class="p">{</span>
   <span class="nf">annotationProcessor</span><span class="p">(</span><span class="s">"org.hibernate.orm:hibernate-jpamodelgen:6.1.0.Final"</span><span class="p">)</span> <i class="conum" data-value="1"></i><b>(1)</b>
-  <span class="nf">annotationProcessor</span><span class="p">(</span><span class="s">"com.mammb:jpa-fluent-modelgen:0.8.0"</span><span class="p">)</span> <i class="conum" data-value="2"></i><b>(2)</b>
-  <span class="nf">implementation</span><span class="p">(</span><span class="s">"com.mammb:jpa-fluent-query:0.8.0"</span><span class="p">)</span> <i class="conum" data-value="3"></i><b>(3)</b>
+  <span class="nf">annotationProcessor</span><span class="p">(</span><span class="s">"com.mammb:jpa-fluent-modelgen:0.9.0"</span><span class="p">)</span> <i class="conum" data-value="2"></i><b>(2)</b>
+  <span class="nf">implementation</span><span class="p">(</span><span class="s">"com.mammb:jpa-fluent-query:0.9.0"</span><span class="p">)</span> <i class="conum" data-value="3"></i><b>(3)</b>
 <span class="p">}</span></code></pre>
 </div>
 </div>
@@ -678,8 +689,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="content">
 <pre class="rouge highlight"><code data-lang="groovy"><span class="n">dependencies</span> <span class="o">{</span>
   <span class="n">annotationProcessor</span> <span class="s1">'org.hibernate.orm:hibernate-jpamodelgen:6.1.0.Final'</span>
-  <span class="n">annotationProcessor</span> <span class="s1">'com.mammb:jpa-fluent-modelgen:0.8.0'</span>
-  <span class="n">implementation</span> <span class="s1">'com.mammb:jpa-fluent-query:0.8.0'</span>
+  <span class="n">annotationProcessor</span> <span class="s1">'com.mammb:jpa-fluent-modelgen:0.9.0'</span>
+  <span class="n">implementation</span> <span class="s1">'com.mammb:jpa-fluent-query:0.9.0'</span>
 <span class="o">}</span></code></pre>
 </div>
 </div>
@@ -697,13 +708,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
   <span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>com.mammb<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>jpa-fluent-modelgen<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>0.8.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>0.9.0<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;optional&gt;</span>true<span class="nt">&lt;/optional&gt;</span>
   <span class="nt">&lt;/dependency&gt;</span>
   <span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>com.mammb<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>jpa-fluent-query<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>0.8.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>0.9.0<span class="nt">&lt;/version&gt;</span>
   <span class="nt">&lt;/dependency&gt;</span></code></pre>
 </div>
 </div>
@@ -711,7 +722,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_building_queries"><a class="anchor" href="#_building_queries"></a>2.2. Building Queries</h3>
 <div class="paragraph">
-<p>If you have an Issue entity like the following</p>
+<p>If you have an <code>Issue</code> entity like the following</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -733,8 +744,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="java"><span class="nd">@Transactional</span>
-<span class="nd">@RequestScoped</span>
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@RequestScoped</span>
+<span class="nd">@Transactional</span>
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">IssueService</span> <span class="o">{</span>
 
   <span class="nd">@PersistenceContext</span>
@@ -775,8 +786,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="java"><span class="kt">var</span> <span class="n">count</span> <span class="o">=</span> <span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
-    <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getTitle</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"foo"</span><span class="o">))</span>
-    <span class="o">.</span><span class="na">count</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+  <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getTitle</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"..."</span><span class="o">))</span>
+  <span class="o">.</span><span class="na">count</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
 </div>
 </div>
 </div>
@@ -788,9 +799,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="java"><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">&gt;</span> <span class="n">issues</span> <span class="o">=</span> <span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
-    <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getTitle</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"foo"</span><span class="o">))</span>
-    <span class="o">.</span><span class="na">sorted</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getName</span><span class="o">().</span><span class="na">desc</span><span class="o">(),</span>
-            <span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getId</span><span class="o">().</span><span class="na">asc</span><span class="o">())</span>
+  <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getTitle</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"..."</span><span class="o">))</span>
+  <span class="o">.</span><span class="na">sorted</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getName</span><span class="o">().</span><span class="na">desc</span><span class="o">(),</span>
+          <span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getId</span><span class="o">().</span><span class="na">asc</span><span class="o">())</span>
     <span class="o">.</span><span class="na">toList</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
 </div>
 </div>
@@ -803,8 +814,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="java"><span class="nc">Page</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">&gt;</span> <span class="n">page</span> <span class="o">=</span> <span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
-    <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getTitle</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"foo"</span><span class="o">))</span>
-    <span class="o">.</span><span class="na">toPage</span><span class="o">(</span><span class="nc">SlicePoint</span><span class="o">.</span><span class="na">of</span><span class="o">()).</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+  <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getTitle</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"..."</span><span class="o">))</span>
+  <span class="o">.</span><span class="na">toPage</span><span class="o">(</span><span class="nc">SlicePoint</span><span class="o">.</span><span class="na">of</span><span class="o">()).</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -829,8 +840,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="java"><span class="nc">Slice</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">&gt;</span> <span class="n">slice</span> <span class="o">=</span> <span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
-    <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getTitle</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"foo"</span><span class="o">))</span>
-    <span class="o">.</span><span class="na">toSlice</span><span class="o">(</span><span class="nc">SlicePoint</span><span class="o">.</span><span class="na">of</span><span class="o">()).</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+  <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getTitle</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"..."</span><span class="o">))</span>
+  <span class="o">.</span><span class="na">toSlice</span><span class="o">(</span><span class="nc">SlicePoint</span><span class="o">.</span><span class="na">of</span><span class="o">()).</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -851,8 +862,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="java"><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">&gt;</span> <span class="n">issues</span> <span class="o">=</span> <span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
-    <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getName</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"name"</span><span class="o">))</span>
-    <span class="o">.</span><span class="na">toStream</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+  <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getName</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"..."</span><span class="o">))</span>
+  <span class="o">.</span><span class="na">toStream</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -864,8 +875,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="java"><span class="nc">Iterable</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">&gt;</span> <span class="n">issues</span> <span class="o">=</span> <span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
-    <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getName</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"name"</span><span class="o">))</span>
-    <span class="o">.</span><span class="na">toIterable</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+  <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getName</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"..."</span><span class="o">))</span>
+  <span class="o">.</span><span class="na">toIterable</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
 </div>
 </div>
 </div>
@@ -877,10 +888,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="java"><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">&gt;</span> <span class="n">issues</span> <span class="o">=</span> <span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
-    <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="nc">SubQuery</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">ProjectModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
-                             <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">prj</span> <span class="o">-&gt;</span> <span class="n">prj</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"name1"</span><span class="o">))</span>
-                             <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">prj</span> <span class="o">-&gt;</span> <span class="n">prj</span><span class="o">.</span><span class="na">getId</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getId</span><span class="o">()))</span>
-                             <span class="o">.</span><span class="na">exists</span><span class="o">())</span>
+  <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="nc">SubQuery</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">ProjectModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
+                           <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">prj</span> <span class="o">-&gt;</span> <span class="n">prj</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"..."</span><span class="o">))</span>
+                           <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">prj</span> <span class="o">-&gt;</span> <span class="n">prj</span><span class="o">.</span><span class="na">getId</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getId</span><span class="o">()))</span>
+                           <span class="o">.</span><span class="na">exists</span><span class="o">())</span>
     <span class="o">.</span><span class="na">toList</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
 </div>
 </div>
@@ -1010,8 +1021,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="java"><span class="nc">List</span><span class="o">&lt;</span><span class="nc">IssueDto</span><span class="o">&gt;</span> <span class="n">issues</span> <span class="o">=</span> <span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
-    <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nc">Mappers</span><span class="o">.</span><span class="na">issueDto</span><span class="o">(</span><span class="n">r</span> <span class="o">-&gt;</span> <span class="n">r</span><span class="o">.</span><span class="na">getId</span><span class="o">(),</span> <span class="n">r</span> <span class="o">-&gt;</span> <span class="n">r</span><span class="o">.</span><span class="na">getTitle</span><span class="o">()))</span>
-    <span class="o">.</span><span class="na">toList</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+  <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nc">Mappers</span><span class="o">.</span><span class="na">issueDto</span><span class="o">(</span><span class="n">r</span> <span class="o">-&gt;</span> <span class="n">r</span><span class="o">.</span><span class="na">getId</span><span class="o">(),</span> <span class="n">r</span> <span class="o">-&gt;</span> <span class="n">r</span><span class="o">.</span><span class="na">getTitle</span><span class="o">()))</span>
+  <span class="o">.</span><span class="na">toList</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1093,7 +1104,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_filter"><a class="anchor" href="#_filter"></a>3.2. Filter</h3>
 <div class="paragraph">
-<p>Use <code>filter()</code> to filter search results.</p>
+<p>Use <code>filter()</code> to filter the search results.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1132,7 +1143,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="java"><span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
+<pre class="rouge highlight"><code data-lang="java"><span class="kn">import</span> <span class="nn">static</span> <span class="n">com</span><span class="o">.</span><span class="na">mammb</span><span class="o">.</span><span class="na">code</span><span class="o">.</span><span class="na">jpa</span><span class="o">.</span><span class="na">fluent</span><span class="o">.</span><span class="na">query</span><span class="o">.</span><span class="na">Filters</span><span class="o">.*;</span>
+
+<span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
   <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="o">{</span>
       <span class="kt">var</span> <span class="n">tags</span> <span class="o">=</span> <span class="n">issue</span><span class="o">.</span><span class="na">joinTags</span><span class="o">();</span>
       <span class="k">return</span> <span class="nf">or</span><span class="o">(</span>
@@ -1152,14 +1165,30 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
     <span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getState</span><span class="o">().</span><span class="na">in</span><span class="o">(</span><span class="no">PLAN</span><span class="o">,</span> <span class="no">OPEN</span><span class="o">));</span>
 
 <span class="kt">var</span> <span class="n">issues</span> <span class="o">=</span> <span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
-    <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">filter</span><span class="o">).</span><span class="na">toList</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+  <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">filter</span><span class="o">).</span><span class="na">toList</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
 </div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>There are two ways to get the relationship between entities.<br>
+<code>issue.getProject()</code> is equivalent to <code>root.get(Issue_.project)</code> in JPA.<br>
+<code>issue.joinProject()</code> is equivalent to <code>root.join(Issue_.project)</code> in JPA.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_sorted"><a class="anchor" href="#_sorted"></a>3.3. Sorted</h3>
 <div class="paragraph">
-<p>Use sorted() to ORDER BY clause.</p>
+<p>Use <code>sorted()</code> to ORDER BY clause.</p>
 </div>
 <div class="paragraph">
 <p>If you do not specify a sort as follows</p>
@@ -1189,7 +1218,7 @@ This helps to make the resulting sequence unique.</p>
 <div class="content">
 <pre class="rouge highlight"><code data-lang="java"><span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
     <span class="o">.</span><span class="na">sorted</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getName</span><span class="o">().</span><span class="na">desc</span><span class="o">(),</span>
-            <span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getId</span><span class="o">().</span><span class="na">asc</span><span class="o">())</span></code></pre>
+            <span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getTitle</span><span class="o">().</span><span class="na">asc</span><span class="o">())</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1197,7 +1226,7 @@ This helps to make the resulting sequence unique.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="sql"><span class="p">...</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">PROJECT</span><span class="p">.</span><span class="n">NAME</span> <span class="k">DESC</span><span class="p">,</span> <span class="n">ISSUE</span><span class="p">.</span><span class="n">ID</span> <span class="k">ASC</span><span class="p">,</span> <span class="n">t1</span><span class="p">.</span><span class="n">ID</span> <span class="k">ASC</span></code></pre>
+<pre class="rouge highlight"><code data-lang="sql"><span class="p">...</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">PROJECT</span><span class="p">.</span><span class="n">NAME</span> <span class="k">DESC</span><span class="p">,</span> <span class="n">ISSUE</span><span class="p">.</span><span class="n">TITLE</span> <span class="k">ASC</span><span class="p">,</span> <span class="n">ISSUE</span><span class="p">.</span><span class="n">ID</span> <span class="k">ASC</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1211,7 +1240,7 @@ This helps to make the resulting sequence unique.</p>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Sorting by ID is not automatically applied when using <code>map</code> or <code>SubQuery</code>, which will be described later.</p>
+<p>Sorting by ID is <strong>not</strong> automatically applied when using <code>map</code> or <code>SubQuery</code>.</p>
 </div>
 </td>
 </tr>
@@ -1232,7 +1261,7 @@ This helps to make the resulting sequence unique.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="java"><span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
-    <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getName</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"name"</span><span class="o">))</span>
+    <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">getName</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"..."</span><span class="o">))</span>
     <span class="o">.</span><span class="na">unDistinct</span><span class="o">()</span>
     <span class="o">.</span><span class="na">toList</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
 </div>
@@ -1260,19 +1289,14 @@ You must use <code>distinct()</code> explicitly to get results with distinct.</p
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="java"><span class="nc">Mappers</span><span class="o">.</span><span class="na">IntegerResult</span> <span class="n">result</span> <span class="o">=</span> <span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
-    <span class="o">.</span><span class="na">filter</span><span class="o">(...)</span>
-    <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nc">Mappers</span><span class="o">.</span><span class="na">integerResult</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getPriority</span><span class="o">().</span><span class="na">max</span><span class="o">()))</span>
-    <span class="o">.</span><span class="na">toSingle</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span>
-
-<span class="n">result</span><span class="o">.</span><span class="na">value</span><span class="o">();</span></code></pre>
+<pre class="rouge highlight"><code data-lang="java"><span class="nc">Optional</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
+  <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">r</span> <span class="o">-&gt;</span> <span class="n">r</span><span class="o">.</span><span class="na">getTitle</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"..."</span><span class="o">))</span>
+  <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nc">Integer</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getPriority</span><span class="o">().</span><span class="na">max</span><span class="o">())</span>
+  <span class="o">.</span><span class="na">toOptional</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>In this example, the result of the aggregate function is obtained as an <code>Mappers.IntegerResult</code>.</p>
-</div>
-<div class="paragraph">
-<p>Other result types, such as <code>Mappers.LongResult</code>, are predefined and provided by <code>jpa-fluent-modelgen</code>.</p>
+<p>In this example, the result of the aggregate function is obtained as an <code>Integer</code>.</p>
 </div>
 <div class="paragraph">
 <p>In addition to the predefined types, you can handle arbitrary result types by annotating them with <code>@Mappable</code>.</p>
@@ -1293,6 +1317,9 @@ You must use <code>distinct()</code> explicitly to get results with distinct.</p
     <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nc">Mappers</span><span class="o">.</span><span class="na">issueDto</span><span class="o">(</span><span class="n">r</span> <span class="o">-&gt;</span> <span class="n">r</span><span class="o">.</span><span class="na">getId</span><span class="o">(),</span> <span class="n">r</span> <span class="o">-&gt;</span> <span class="n">r</span><span class="o">.</span><span class="na">getTitle</span><span class="o">()))</span>
     <span class="o">.</span><span class="na">toList</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>The type and number of arguments can be detected at build time.</p>
 </div>
 </div>
 </div>
@@ -1356,8 +1383,61 @@ You must use <code>distinct()</code> explicitly to get results with distinct.</p
 </div>
 </div>
 <div class="sect1">
-<h2 id="_querying_result_types"><a class="anchor" href="#_querying_result_types"></a>5. Querying result types</h2>
+<h2 id="_querying_with_request"><a class="anchor" href="#_querying_with_request"></a>5. Querying with Request</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>Querying can use the <code>Request</code> class to retrieve results.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="kt">var</span> <span class="n">request</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">IssueRequest</span><span class="o">();</span>
+<span class="nc">Page</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">&gt;</span> <span class="n">issues</span> <span class="o">=</span> <span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">()).</span><span class="na">toPage</span><span class="o">(</span><span class="n">request</span><span class="o">).</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The request class is prepared by implementing the following interface.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Request</code> is a request that does not require paging</p>
+</li>
+<li>
+<p><code>SliceRequest</code> is a request that requires paging</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Create a class implementing <code>SliceRequest</code> as follows.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="kd">private</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">IssueRequest</span> <span class="kd">implements</span> <span class="nc">SliceRequest</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">,</span> <span class="nc">IssueModel</span><span class="o">.</span><span class="na">Root_</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="n">title</span><span class="o">;</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">Filter</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">,</span> <span class="nc">IssueModel</span><span class="o">.</span><span class="na">Root_</span><span class="o">&gt;</span> <span class="nf">getFilter</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getTitle</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="n">title</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can use <code>IssueRequest</code> and get the following results.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="kt">var</span> <span class="n">request</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">IssueRequest</span><span class="o">();</span>
+<span class="n">request</span><span class="o">.</span><span class="na">title</span> <span class="o">=</span> <span class="s">"..."</span><span class="o">;</span>
+<span class="nc">Page</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">&gt;</span> <span class="n">issues</span> <span class="o">=</span> <span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">()).</span><span class="na">toPage</span><span class="o">(</span><span class="n">request</span><span class="o">).</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_result_type_of_querying"><a class="anchor" href="#_result_type_of_querying"></a>6. Result type of Querying</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_typical_result_types"><a class="anchor" href="#_typical_result_types"></a>6.1. Typical result types</h3>
 <div class="paragraph">
 <p>The results from <code>Querying</code> can be specified as follows</p>
 </div>
@@ -1383,6 +1463,12 @@ You must use <code>distinct()</code> explicitly to get results with distinct.</p
 </li>
 </ul>
 </div>
+<div class="paragraph">
+<p>For each result type, there is also a method that takes <code>Request</code> as an argument, as described above.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_streaming_result_types"><a class="anchor" href="#_streaming_result_types"></a>6.2. Streaming result types</h3>
 <div class="paragraph">
 <p>Uses for retrieving results on a page-by-page basis include.</p>
 </div>
@@ -1414,13 +1500,23 @@ You must use <code>distinct()</code> explicitly to get results with distinct.</p
 </li>
 </ul>
 </div>
+<div class="paragraph">
+<p>Each result is sorted in ascending order by ID, and data is retrieved in order from the tail.</p>
+</div>
+<div class="paragraph">
+<p>If you want to get the IDs in order from the smallest to the largest, use <code>toForwardingXXX</code>. Note, however, that there is a possibility of missing data if the data is updated at the same time.</p>
+</div>
+<div class="paragraph">
+<p>For each result type, there is also a method that takes <code>Request</code> as an argument, as described above.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_more_about_query"><a class="anchor" href="#_more_about_query"></a>6. More about Query</h2>
+<h2 id="_more_about_query"><a class="anchor" href="#_more_about_query"></a>7. More about Query</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_mapjoin"><a class="anchor" href="#_mapjoin"></a>6.1. MapJoin</h3>
+<h3 id="_mapjoin"><a class="anchor" href="#_mapjoin"></a>7.1. MapJoin</h3>
 <div class="paragraph">
 <p>If you have a relationship by map, then the</p>
 </div>
@@ -1447,7 +1543,7 @@ You must use <code>distinct()</code> explicitly to get results with distinct.</p
 </div>
 </div>
 <div class="sect2">
-<h3 id="_inheritance_entity"><a class="anchor" href="#_inheritance_entity"></a>6.2. Inheritance Entity</h3>
+<h3 id="_inheritance_cast"><a class="anchor" href="#_inheritance_cast"></a>7.2. Inheritance cast</h3>
 <div class="paragraph">
 <p>Given the following inheritance relationship Entity</p>
 </div>
@@ -1470,7 +1566,7 @@ You must use <code>distinct()</code> explicitly to get results with distinct.</p
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="java"><span class="nc">Querying</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">IssueModel</span><span class="o">.</span><span class="na">root</span><span class="o">())</span>
-    <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">asExternalProject</span><span class="o">().</span><span class="na">getCode</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"code"</span><span class="o">))</span>
+    <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">issue</span> <span class="o">-&gt;</span> <span class="n">issue</span><span class="o">.</span><span class="na">getProject</span><span class="o">().</span><span class="na">asExternalProject</span><span class="o">().</span><span class="na">getCode</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"..."</span><span class="o">))</span>
     <span class="o">.</span><span class="na">toList</span><span class="o">().</span><span class="na">on</span><span class="o">(</span><span class="n">em</span><span class="o">);</span></code></pre>
 </div>
 </div>
@@ -1482,26 +1578,139 @@ This works as a <code>criteriaBuilder.treat()</code> in JPA.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_how_to_use_repository"><a class="anchor" href="#_how_to_use_repository"></a>7. How to use Repository</h2>
+<h2 id="_how_to_use_repository"><a class="anchor" href="#_how_to_use_repository"></a>8. How to use Repository</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>T.B.D</p>
+<p>Using Repository requires a simple preparation.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_how_to_use_mappers"><a class="anchor" href="#_how_to_use_mappers"></a>8. How to use Mappers</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>T.B.D</p>
+<p>Define predefined methods in Repository by annotating them with <code>@RepositoryTrait</code>.</p>
+</div>
+<div class="paragraph">
+<p>For example, to make <code>QueryRepository</code> and <code>CommandRepository</code> available to all repositories, define the following interface</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@RepositoryTrait</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">BaseRepository</span><span class="o">&lt;</span><span class="no">PK</span> <span class="kd">extends</span> <span class="nc">Serializable</span><span class="o">,</span> <span class="no">E</span><span class="o">,</span> <span class="no">R</span> <span class="kd">extends</span> <span class="nc">RootAware</span><span class="o">&lt;</span><span class="no">E</span><span class="o">&gt;&gt;</span>
+    <span class="kd">extends</span> <span class="nc">QueryRepository</span><span class="o">&lt;</span><span class="no">PK</span><span class="o">,</span> <span class="no">E</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;,</span> <span class="nc">CommandRepository</span><span class="o">&lt;</span><span class="no">PK</span><span class="o">,</span> <span class="no">E</span><span class="o">&gt;</span> <span class="o">{</span>
+<span class="o">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>QueryRepository</code> defines default methods for queries such as <code>Optional&lt;E&gt; get(PK id)</code> and <code>List&lt;E&gt; findAll()</code>.</p>
+</div>
+<div class="paragraph">
+<p>The <code>JPA Fluent Modelgen</code> generates a repository interface for each entity, such as <code>IssueRepository_</code> for <code>Issue</code> entities and <code>ProjectRepository_</code> for <code>Project</code> entities.
+The generated interfaces inherit from the interfaces annotated with <code>@RepositoryTrait</code>.</p>
+</div>
+<div class="paragraph">
+<p>If you create an <code>IssueRepository</code> that implements the <code>IssueRepository_</code> interface, you can use the methods defined by default in the <code>QueryRepository</code> and <code>CommandRepository</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@ApplicationScoped</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">IssueRepository</span> <span class="kd">implements</span> <span class="n">IssueRepository_</span> <span class="o">{</span>
+
+    <span class="nd">@PersistenceContext</span>
+    <span class="kd">private</span> <span class="nc">EntityManager</span> <span class="n">em</span><span class="o">;</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">EntityManager</span> <span class="nf">em</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">em</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The created repository can be used as follows.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@RequestScoped</span>
+<span class="nd">@Transactional</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">IssueService</span> <span class="o">{</span>
+
+    <span class="nd">@Inject</span>
+    <span class="kd">private</span> <span class="nc">IssueRepository</span> <span class="n">repository</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">&gt;</span> <span class="nf">findAll</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">repository</span><span class="o">.</span><span class="na">findAll</span><span class="o">(</span><span class="n">r</span> <span class="o">-&gt;</span> <span class="n">r</span><span class="o">.</span><span class="na">getTitle</span><span class="o">().</span><span class="na">eq</span><span class="o">(</span><span class="s">"..."</span><span class="o">));</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Issue</span><span class="o">&gt;</span> <span class="nf">findAll</span><span class="o">(</span><span class="nc">IssueRequest</span> <span class="n">request</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">repository</span><span class="o">.</span><span class="na">findAll</span><span class="o">(</span><span class="n">request</span><span class="o">);</span>
+    <span class="o">}</span>
+
+<span class="o">}</span></code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_repositorytrait"><a class="anchor" href="#_repositorytrait"></a>8.1. @RepositoryTrait</h3>
+<div class="paragraph">
+<p><code>@RepositoryTrait</code> can limit the target Entity.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@RepositoryTrait</span><span class="o">(</span><span class="n">targets</span> <span class="o">=</span> <span class="o">{</span> <span class="nc">Issue</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">Project</span><span class="o">.</span><span class="na">class</span> <span class="o">})</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">BaseCommandRepository</span><span class="o">&lt;</span><span class="no">PK</span> <span class="kd">extends</span> <span class="nc">Serializable</span><span class="o">,</span> <span class="no">E</span><span class="o">,</span> <span class="no">R</span> <span class="kd">extends</span> <span class="nc">RootAware</span><span class="o">&lt;</span><span class="no">E</span><span class="o">&gt;&gt;</span> <span class="nc">CommandRepository</span><span class="o">&lt;</span><span class="no">PK</span><span class="o">,</span> <span class="no">E</span><span class="o">&gt;</span> <span class="o">{</span>
+<span class="o">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If <code>targets</code> is not specified, it applies to all repositories.</p>
+</div>
+<div class="paragraph">
+<p>To exclude a specific Entity, use <code>excludes</code> as follows</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@RepositoryTrait</span><span class="o">(</span><span class="n">excludes</span> <span class="o">=</span> <span class="o">{</span> <span class="nc">Tag</span><span class="o">.</span><span class="na">class</span> <span class="o">})</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This allows for controls such as providing only a read-only repository for a particular Entity.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_queryrepository"><a class="anchor" href="#_queryrepository"></a>8.2. QueryRepository</h3>
+<div class="paragraph">
+<p>The <code>QueryRepository</code> implements the following four Traits.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">QueryRepository</span><span class="o">&lt;</span><span class="no">PK</span> <span class="kd">extends</span> <span class="nc">Serializable</span><span class="o">,</span> <span class="no">E</span><span class="o">,</span> <span class="no">R</span> <span class="kd">extends</span> <span class="nc">RootAware</span><span class="o">&lt;</span><span class="no">E</span><span class="o">&gt;&gt;</span>
+  <span class="kd">extends</span> <span class="nc">GetTrait</span><span class="o">&lt;</span><span class="no">PK</span><span class="o">,</span> <span class="no">E</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;,</span>
+          <span class="nc">FindAllTrait</span><span class="o">&lt;</span><span class="no">E</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;,</span>
+          <span class="nc">FindSliceTrait</span><span class="o">&lt;</span><span class="no">E</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;,</span>
+          <span class="nc">FindPageTrait</span><span class="o">&lt;</span><span class="no">E</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;</span> <span class="o">{</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_commandrepository"><a class="anchor" href="#_commandrepository"></a>8.3. CommandRepository</h3>
+<div class="paragraph">
+<p>The <code>QueryRepository</code> implements the following two Traits</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">CommandRepository</span><span class="o">&lt;</span><span class="no">PK</span> <span class="kd">extends</span> <span class="nc">Serializable</span><span class="o">,</span> <span class="no">E</span><span class="o">&gt;</span>
+    <span class="kd">extends</span> <span class="nc">SaveTrait</span><span class="o">&lt;</span><span class="no">E</span><span class="o">&gt;,</span>
+            <span class="nc">DeleteTrait</span><span class="o">&lt;</span><span class="no">E</span><span class="o">&gt;</span> <span class="o">{</span>
+<span class="o">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can customize your repository by creating a Trait that suits your purposes.</p>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.8.0<br>
-Last updated 2022-08-01 13:20:37 UTC
+Version 0.9.0<br>
+Last updated 2022-08-03 11:48:58 UTC
 </div>
 </div>
 <style>
