@@ -26,13 +26,13 @@ import com.mammb.code.jpa.fluent.repository.trait.GetTrait;
 import java.io.Serializable;
 
 /**
- * Query base repository.
+ * Query base trait.
  * @param <PK> the type of primary key
  * @param <E> the type of entity
  * @param <R> the type of RootEntity
  * @author Naotsugu Kobayashi
  */
-public interface QueryRepository<PK extends Serializable, E, R extends RootAware<E>>
+public interface QueryTrait<PK extends Serializable, E, R extends RootAware<E>>
     extends GetTrait<PK, E, R>,
             FindAllTrait<E, R>,
             FindSliceTrait<E, R>,

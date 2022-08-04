@@ -20,11 +20,11 @@ import com.mammb.code.jpa.fluent.repository.trait.SaveTrait;
 import java.io.Serializable;
 
 /**
- * CommandRepository.
+ * CommandTrait.
  * @param <PK> the type of primary key
  * @param <E> the type of entity
  * @author Naotsugu Kobayashi
  */
-public interface CommandRepository<PK extends Serializable, E>
+public interface CommandTrait<PK extends Serializable, E>
     extends SaveTrait<E>, DeleteTrait<E> {
 }

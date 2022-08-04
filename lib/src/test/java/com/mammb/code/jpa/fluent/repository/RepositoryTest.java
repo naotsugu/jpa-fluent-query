@@ -86,7 +86,7 @@ public class RepositoryTest {
         IssueRequest req = new IssueRequest();
         req.titleLike = "testRequestRepository";
 
-        var list = repository.findAll(req);
+        var list = repository.findAllBy(req);
         assertEquals(2L, list.size());
     }
 

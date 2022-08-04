@@ -15,7 +15,6 @@
  */
 package com.mammb.code.jpa.fluent.core;
 
-import com.mammb.code.jpa.fluent.repository.QueryRepository;
 import java.io.Serializable;
 
 /**

@@ -48,7 +48,7 @@ public interface FindAllTrait<E, R extends RootAware<E>> extends EntityManagerAw
      * @param request the {@link Request}
      * @return the list of target entity
      */
-    default List<E> findAll(Request<E, R> request) {
+    default List<E> findAllBy(Request<E, R> request) {
         return findAll(request.getFilter(), request.getSorts());
     }
 

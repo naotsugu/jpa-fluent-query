@@ -26,6 +26,7 @@ import com.mammb.code.jpa.fluent.query.QueryBuilder;
 import com.mammb.code.jpa.fluent.query.Request;
 import com.mammb.code.jpa.fluent.query.SlicePoint;
 import com.mammb.code.jpa.fluent.query.SliceRequest;
+import com.mammb.code.jpa.fluent.query.Sort;
 import com.mammb.code.jpa.fluent.query.Sorts;
 
 /**
@@ -41,19 +42,30 @@ public interface FindPageTrait<E, R extends RootAware<E>> extends EntityManagerA
      * @param request the slice request
      * @return the {@link Page}
      */
-    default Page<E> findPage(SliceRequest<E, R> request) {
-        return findPage(request.getFilter(), request.getSorts(), request.getSlicePoint());
+    default Page<E> findPageBy(SliceRequest<E, R> request) {
+        return findPage(request.getSlicePoint(), request.getFilter(), request.getSorts());
     }
 
 
     /**
      * Find page.
-     * @param filter a {@link Filter}
-     * @param sorts a {@link Sorts}
      * @param slicePoint a {@link SlicePoint}
+     * @param filter a {@link Filter}
      * @return the {@link Page}
      */
-    default Page<E> findPage(Filter<E, R> filter, Sorts<E, R> sorts, SlicePoint slicePoint) {
+    default Page<E> findPage(SlicePoint slicePoint, Filter<E, R> filter) {
+        return findPage(slicePoint, filter, Sorts.empty());
+    }
+
+
+    /**
+     * Find page.
+     * @param slicePoint a {@link SlicePoint}
+     * @param filter a {@link Filter}
+     * @param sorts a {@link Sorts}
+     * @return the {@link Page}
+     */
+    default Page<E> findPage(SlicePoint slicePoint, Filter<E, R> filter, Sorts<E, R> sorts) {
         return QueryBuilder.page(em(), rootSource(), Mapper.of(), filter, sorts, slicePoint, Hints.empty());
     }
 

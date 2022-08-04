@@ -19,12 +19,12 @@ import com.mammb.code.jpa.fluent.core.RootAware;
 import java.io.Serializable;
 
 /**
- * CrudRepository.
+ * CrudTrait.
  * @param <PK> the type of primary key
  * @param <E> the type of entity
  * @param <R> the type of root
  * @author Naotsugu Kobayashi
  */
-public interface CrudRepository<PK extends Serializable, E, R extends RootAware<E>>
-    extends QueryRepository<PK, E, R>, CommandRepository<PK, E> {
+public interface CrudTrait<PK extends Serializable, E, R extends RootAware<E>>
+    extends QueryTrait<PK, E, R>, CommandTrait<PK, E> {
 }

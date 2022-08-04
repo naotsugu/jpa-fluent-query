@@ -40,19 +40,30 @@ public interface FindSliceTrait<E, R extends RootAware<E>> extends EntityManager
      * @param request the slice request
      * @return the {@link Slice}
      */
-    default Slice<E> findSlice(SliceRequest<E, R> request) {
-        return findSlice(request.getFilter(), request.getSorts(), request.getSlicePoint());
+    default Slice<E> findSliceBy(SliceRequest<E, R> request) {
+        return findSlice(request.getSlicePoint(), request.getFilter(), request.getSorts());
     }
 
 
     /**
      * Find slice.
-     * @param filter a {@link Filter}
-     * @param sorts a {@link Sorts}
      * @param slicePoint a {@link SlicePoint}
+     * @param filter a {@link Filter}
      * @return the {@link Slice}
      */
-    default Slice<E> findSlice(Filter<E, R> filter, Sorts<E, R> sorts, SlicePoint slicePoint) {
+    default Slice<E> findSlice(SlicePoint slicePoint, Filter<E, R> filter) {
+        return findSlice(slicePoint, filter, Sorts.empty());
+    }
+
+
+    /**
+     * Find slice.
+     * @param slicePoint a {@link SlicePoint}
+     * @param filter a {@link Filter}
+     * @param sorts a {@link Sorts}
+     * @return the {@link Slice}
+     */
+    default Slice<E> findSlice(SlicePoint slicePoint, Filter<E, R> filter, Sorts<E, R> sorts) {
         return QueryBuilder.slice(em(), rootSource(), Mapper.of(), filter, sorts, slicePoint, Hints.empty());
     }
 

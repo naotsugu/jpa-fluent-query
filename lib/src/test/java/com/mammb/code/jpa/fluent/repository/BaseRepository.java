@@ -24,5 +24,5 @@ import java.io.Serializable;
 
 @RepositoryTrait(targets = { Issue.class, Project.class })
 public interface BaseRepository<PK extends Serializable, E, R extends RootAware<E>>
-    extends QueryRepository<PK, E, R>, CommandRepository<PK, E> {
+    extends QueryTrait<PK, E, R>, CommandTrait<PK, E> {
 }
