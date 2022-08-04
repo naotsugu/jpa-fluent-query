@@ -495,8 +495,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_how_to_use_repository">8. How to use Repository</a>
 <ul class="sectlevel2">
 <li><a href="#_repositorytrait">8.1. @RepositoryTrait</a></li>
-<li><a href="#_queryrepository">8.2. QueryRepository</a></li>
-<li><a href="#_commandrepository">8.3. CommandRepository</a></li>
+<li><a href="#_querytrait">8.2. QueryTrait</a></li>
+<li><a href="#_commandtrait">8.3. CommandTrait</a></li>
+<li><a href="#_crudtrait">8.4. CrudTrait</a></li>
 </ul>
 </li>
 </ul>
@@ -1587,13 +1588,13 @@ This works as a <code>criteriaBuilder.treat()</code> in JPA.</p>
 <p>Define predefined methods in Repository by annotating them with <code>@RepositoryTrait</code>.</p>
 </div>
 <div class="paragraph">
-<p>For example, to make <code>QueryRepository</code> and <code>CommandRepository</code> available to all repositories, define the following interface</p>
+<p>For example, to make <code>QueryTrait</code> and <code>CommandTrait</code> available to all repositories, define the following interface</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="java"><span class="nd">@RepositoryTrait</span>
 <span class="kd">public</span> <span class="kd">interface</span> <span class="nc">BaseRepository</span><span class="o">&lt;</span><span class="no">PK</span> <span class="kd">extends</span> <span class="nc">Serializable</span><span class="o">,</span> <span class="no">E</span><span class="o">,</span> <span class="no">R</span> <span class="kd">extends</span> <span class="nc">RootAware</span><span class="o">&lt;</span><span class="no">E</span><span class="o">&gt;&gt;</span>
-    <span class="kd">extends</span> <span class="nc">QueryRepository</span><span class="o">&lt;</span><span class="no">PK</span><span class="o">,</span> <span class="no">E</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;,</span> <span class="nc">CommandRepository</span><span class="o">&lt;</span><span class="no">PK</span><span class="o">,</span> <span class="no">E</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kd">extends</span> <span class="nc">QueryTrait</span><span class="o">&lt;</span><span class="no">PK</span><span class="o">,</span> <span class="no">E</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;,</span> <span class="nc">CommandTrait</span><span class="o">&lt;</span><span class="no">PK</span><span class="o">,</span> <span class="no">E</span><span class="o">&gt;</span> <span class="o">{</span>
 <span class="o">}</span></code></pre>
 </div>
 </div>
@@ -1653,7 +1654,7 @@ The generated interfaces inherit from the interfaces annotated with <code>@Repos
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="java"><span class="nd">@RepositoryTrait</span><span class="o">(</span><span class="n">targets</span> <span class="o">=</span> <span class="o">{</span> <span class="nc">Issue</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">Project</span><span class="o">.</span><span class="na">class</span> <span class="o">})</span>
-<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">BaseCommandRepository</span><span class="o">&lt;</span><span class="no">PK</span> <span class="kd">extends</span> <span class="nc">Serializable</span><span class="o">,</span> <span class="no">E</span><span class="o">,</span> <span class="no">R</span> <span class="kd">extends</span> <span class="nc">RootAware</span><span class="o">&lt;</span><span class="no">E</span><span class="o">&gt;&gt;</span> <span class="nc">CommandRepository</span><span class="o">&lt;</span><span class="no">PK</span><span class="o">,</span> <span class="no">E</span><span class="o">&gt;</span> <span class="o">{</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">BaseCommandRepository</span><span class="o">&lt;</span><span class="no">PK</span> <span class="kd">extends</span> <span class="nc">Serializable</span><span class="o">,</span> <span class="no">E</span><span class="o">,</span> <span class="no">R</span> <span class="kd">extends</span> <span class="nc">RootAware</span><span class="o">&lt;</span><span class="no">E</span><span class="o">&gt;&gt;</span> <span class="nc">CommandTrait</span><span class="o">&lt;</span><span class="no">PK</span><span class="o">,</span> <span class="no">E</span><span class="o">&gt;</span> <span class="o">{</span>
 <span class="o">}</span></code></pre>
 </div>
 </div>
@@ -1673,13 +1674,13 @@ The generated interfaces inherit from the interfaces annotated with <code>@Repos
 </div>
 </div>
 <div class="sect2">
-<h3 id="_queryrepository"><a class="anchor" href="#_queryrepository"></a>8.2. QueryRepository</h3>
+<h3 id="_querytrait"><a class="anchor" href="#_querytrait"></a>8.2. QueryTrait</h3>
 <div class="paragraph">
-<p>The <code>QueryRepository</code> implements the following four Traits.</p>
+<p>The <code>QueryTrait</code> implements the following four Traits.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">QueryRepository</span><span class="o">&lt;</span><span class="no">PK</span> <span class="kd">extends</span> <span class="nc">Serializable</span><span class="o">,</span> <span class="no">E</span><span class="o">,</span> <span class="no">R</span> <span class="kd">extends</span> <span class="nc">RootAware</span><span class="o">&lt;</span><span class="no">E</span><span class="o">&gt;&gt;</span>
+<pre class="rouge highlight"><code data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">QueryTrait</span><span class="o">&lt;</span><span class="no">PK</span> <span class="kd">extends</span> <span class="nc">Serializable</span><span class="o">,</span> <span class="no">E</span><span class="o">,</span> <span class="no">R</span> <span class="kd">extends</span> <span class="nc">RootAware</span><span class="o">&lt;</span><span class="no">E</span><span class="o">&gt;&gt;</span>
   <span class="kd">extends</span> <span class="nc">GetTrait</span><span class="o">&lt;</span><span class="no">PK</span><span class="o">,</span> <span class="no">E</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;,</span>
           <span class="nc">FindAllTrait</span><span class="o">&lt;</span><span class="no">E</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;,</span>
           <span class="nc">FindSliceTrait</span><span class="o">&lt;</span><span class="no">E</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;,</span>
@@ -1688,15 +1689,28 @@ The generated interfaces inherit from the interfaces annotated with <code>@Repos
 </div>
 </div>
 <div class="sect2">
-<h3 id="_commandrepository"><a class="anchor" href="#_commandrepository"></a>8.3. CommandRepository</h3>
+<h3 id="_commandtrait"><a class="anchor" href="#_commandtrait"></a>8.3. CommandTrait</h3>
 <div class="paragraph">
-<p>The <code>QueryRepository</code> implements the following two Traits</p>
+<p>The <code>QueryTrait</code> implements the following two Traits</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">CommandRepository</span><span class="o">&lt;</span><span class="no">PK</span> <span class="kd">extends</span> <span class="nc">Serializable</span><span class="o">,</span> <span class="no">E</span><span class="o">&gt;</span>
+<pre class="rouge highlight"><code data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">CommandTrait</span><span class="o">&lt;</span><span class="no">PK</span> <span class="kd">extends</span> <span class="nc">Serializable</span><span class="o">,</span> <span class="no">E</span><span class="o">&gt;</span>
     <span class="kd">extends</span> <span class="nc">SaveTrait</span><span class="o">&lt;</span><span class="no">E</span><span class="o">&gt;,</span>
             <span class="nc">DeleteTrait</span><span class="o">&lt;</span><span class="no">E</span><span class="o">&gt;</span> <span class="o">{</span>
+<span class="o">}</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_crudtrait"><a class="anchor" href="#_crudtrait"></a>8.4. CrudTrait</h3>
+<div class="paragraph">
+<p>The <code>CrudTrait</code> implements the following two Traits</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">CrudTrait</span><span class="o">&lt;</span><span class="no">PK</span> <span class="kd">extends</span> <span class="nc">Serializable</span><span class="o">,</span> <span class="no">E</span><span class="o">&gt;</span>
+    <span class="kd">extends</span> <span class="nc">QueryTrait</span><span class="o">&lt;</span><span class="no">PK</span><span class="o">,</span> <span class="no">E</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;,</span> <span class="nc">CommandTrait</span><span class="o">&lt;</span><span class="no">PK</span><span class="o">,</span> <span class="no">E</span><span class="o">&gt;</span> <span class="o">{</span>
 <span class="o">}</span></code></pre>
 </div>
 </div>
@@ -1710,7 +1724,7 @@ The generated interfaces inherit from the interfaces annotated with <code>@Repos
 <div id="footer">
 <div id="footer-text">
 Version 0.9.0<br>
-Last updated 2022-08-03 11:52:52 UTC
+Last updated 2022-08-04 13:51:00 UTC
 </div>
 </div>
 <style>
