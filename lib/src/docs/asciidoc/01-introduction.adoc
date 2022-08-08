@@ -1,17 +1,16 @@
 == Introduction
 
-This project is currently under development.
-
-
-
 === What is JPA Fluent Query?
 
 JPA Fluent Query is small query library for Jakarta Persistence.
 
 Generate a fluent API from a static metamodel class using an annotation processor with https://github.com/naotsugu/jpa-fluent-modelgen[jpa-fluent-modelgen].
 
+* JDK 17+
+* JPA 3.0+
 
-=== JPA Fluent Modelgen & JPA Fluent Query
+
+=== JPA Fluent Modelgen & Query
 
 JPA Fluent Query uses `JPA Fluent Modelgen`.
 
@@ -96,8 +95,8 @@ public interface IssueRepository_ extends Repository<Long, Issue, IssueModel.Roo
 [source, java]
 ----
 List<Issue> issues = Querying.of(IssueModel.root())
-  .filter(issue -> issue.getProject().getName().eq("name"))
-  .filter(issue -> issue.getTitle().eq("foo"))
+  .filter(e -> e.joinProject().getName().eq("name"))
+  .filter(e -> e.getTitle().eq("title"))
   .toList().on(em);
 ----
 
@@ -121,11 +120,11 @@ The `IssueRepository_` has default query methods for common uses, So it can be q
 
 [source, java]
 ----
-var list = repository.findAll(issue -> issue.getProject().getName().eq("name"));
+var list = repository.findAll(e -> e.getProject().getName().eq("name"));
 ----
 
 
 === Release Notes
 
-Current version is v0.9.0(under development).
+Current version is v0.9.0. This version is under development.
 
