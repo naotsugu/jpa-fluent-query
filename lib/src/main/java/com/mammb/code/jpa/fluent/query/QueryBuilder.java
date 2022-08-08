@@ -49,15 +49,19 @@ public interface QueryBuilder {
      */
     static <E, R extends RootAware<E>> TypedQuery<Long> countQuery(
             EntityManager em, RootSource<E, R> rootSource, Filter<E, R> filter, Hints hints) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-        R root = rootSource.root(cq.from(rootSource.rootClass()), cq, cb);
-        cq.select(cq.isDistinct() ? cb.countDistinct(root.get()) : cb.count(root.get()));
-        Optional.ofNullable(filter.apply(root)).ifPresent(cq::where);
-        cq.orderBy(List.of());
-        TypedQuery<Long> typedQuery = em.createQuery(cq);
-        hints.apply(typedQuery);
-        return typedQuery;
+        try {
+            CriteriaBuilder cb = QueryContext.put(em.getCriteriaBuilder());
+            CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+            R root = rootSource.root(cq.from(rootSource.rootClass()), cq, cb);
+            cq.select(cq.isDistinct() ? cb.countDistinct(root.get()) : cb.count(root.get()));
+            Optional.ofNullable(filter.apply(root)).ifPresent(cq::where);
+            cq.orderBy(List.of());
+            TypedQuery<Long> typedQuery = em.createQuery(cq);
+            hints.apply(typedQuery);
+            return typedQuery;
+        } finally {
+            QueryContext.close();
+        }
     }
 
 
@@ -82,25 +86,28 @@ public interface QueryBuilder {
             Sorts<E, R> sorts,
             Hints hints) {
 
-        CriteriaBuilder cb = QueryContext.put(em.getCriteriaBuilder());
-        R root = mapper.apply(rootSource, cb);
-        @SuppressWarnings("unchecked")
-        CriteriaQuery<U> cq = (CriteriaQuery<U>) QueryContext.query();
-        Optional.ofNullable(filter.apply(root)).ifPresent(cq::where);
+        try {
+            CriteriaBuilder cb = QueryContext.put(em.getCriteriaBuilder());
+            R root = mapper.apply(rootSource, cb);
+            @SuppressWarnings("unchecked")
+            CriteriaQuery<U> cq = (CriteriaQuery<U>) QueryContext.query();
+            Optional.ofNullable(filter.apply(root)).ifPresent(cq::where);
 
-        List<Order> orders = new ArrayList<>();
-        Optional.ofNullable(sorts.apply(root)).ifPresent(orders::addAll);
-        if (!cq.getSelection().isCompoundSelection() &&
-            cq.getSelection().getJavaType().isAnnotationPresent(Entity.class)) {
-            // id sorting is mandatory in the normal select
-            orders.addAll(getIdentifierName(root.get().getModel()).stream()
-                .map(name -> cb.asc(root.get().get(name))).toList());
+            List<Order> orders = new ArrayList<>();
+            Optional.ofNullable(sorts.apply(root)).ifPresent(orders::addAll);
+            if (!cq.getSelection().isCompoundSelection() &&
+                cq.getSelection().getJavaType().isAnnotationPresent(Entity.class)) {
+                // id sorting is mandatory in the normal select
+                orders.addAll(getIdentifierName(root.get().getModel()).stream()
+                    .map(name -> cb.asc(root.get().get(name))).toList());
+            }
+            cq.orderBy(orders);
+            TypedQuery<U> typedQuery = em.createQuery(cq);
+            hints.apply(typedQuery);
+            return typedQuery;
+        } finally {
+            QueryContext.close();
         }
-        cq.orderBy(orders);
-        TypedQuery<U> typedQuery = em.createQuery(cq);
-        hints.apply(typedQuery);
-        QueryContext.close();
-        return typedQuery;
     }
 
 
