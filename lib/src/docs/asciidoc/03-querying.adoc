@@ -140,7 +140,7 @@ That is, sorting by ID is already applied by default.
 This helps to make the resulting sequence unique.
 
 
-To explicitly specify sorting, use ss as follows
+To explicitly specify sorting, uses as follows
 
 [source, java]
 ----

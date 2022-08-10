@@ -36,9 +36,12 @@ If you have an Issue entity like the following...
 ```java
 @Entity
 public class Issue extends BaseEntity {
+
+    private String title;
+
     @ManyToOne
     private Project project;
-    private String title;
+
 }
 ```
 
