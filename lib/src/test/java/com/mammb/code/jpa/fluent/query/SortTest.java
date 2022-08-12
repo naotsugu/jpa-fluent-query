@@ -16,13 +16,8 @@
 package com.mammb.code.jpa.fluent.query;
 
 import com.mammb.code.jpa.fluent.test.Fixtures;
-import com.mammb.code.jpa.fluent.test.entity.ExternalProject;
-import com.mammb.code.jpa.fluent.test.entity.ExternalProjectModel;
 import com.mammb.code.jpa.fluent.test.entity.Issue;
 import com.mammb.code.jpa.fluent.test.entity.IssueModel;
-import com.mammb.code.jpa.fluent.test.entity.Project;
-import com.mammb.code.jpa.fluent.test.entity.ProjectModel;
-import com.mammb.code.jpa.fluent.test.entity.ProjectState;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -31,13 +26,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static com.mammb.code.jpa.fluent.query.Filters.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class FilterTest {
+class SortTest {
 
     static EntityManagerFactory emf;
     static EntityManager em;
@@ -63,60 +58,62 @@ public class FilterTest {
 
 
     @Test
-    void testFilter() {
+    void testDefaultSort() {
         var project1 = Fixtures.createProject("project1", em);
         Fixtures.createIssue(project1, "issue1", em);
         Fixtures.createIssue(project1, "issue2", em);
-        Fixtures.createIssue(project1, "issue3", em);
 
         List<Issue> issues = Querying.of(IssueModel.root())
-            .filter(issue -> issue.getProject().getName().like("project"))
-            .filter(issue -> issue.getTitle().like("issue"))
             .toList().on(em);
-        assertEquals(3, issues.size());
-
-        issues = Querying.of(IssueModel.root())
-            .filter(issue -> issue.getProject().getName().likePartial("jec"))
-            .filter(issue -> issue.getTitle().likePartial("e2"))
-            .toList().on(em);
-        assertEquals(1, issues.size());
-
-        issues = Querying.of(IssueModel.root())
-            .filter(issue -> issue.getProject().getName().eq("project1"))
-            .filter(issue -> issue.joinJournals().getPostedOn().gt(LocalDateTime.of(1999, 1, 1, 1, 0)))
-            .toList().on(em);
-        assertEquals(3, issues.size());
+        assertEquals(2, issues.size());
+        assertEquals("issue1", issues.get(0).getTitle());
+        assertEquals("issue2", issues.get(1).getTitle());
     }
 
 
     @Test
-    void testFilterJoin() {
+    void testSingleSort() {
+        var project1 = Fixtures.createProject("project1", em);
+        Fixtures.createIssue(project1, "issue1", em);
+        Fixtures.createIssue(project1, "issue2", em);
 
-        Fixtures.createProject("project1", em);
-
-        List<Project> project = Querying.of(ProjectModel.root())
-            .filter(prj -> prj.joinComments().getCommentedBy().like("commentedBy"))
+        List<Issue> issues = Querying.of(IssueModel.root())
+            .sorted(e -> e.getTitle().desc())
             .toList().on(em);
-        assertEquals(1, project.size());
-
-        List<ExternalProject> ext = Querying.of(ExternalProjectModel.root())
-            .filter(prj -> prj.joinComments().getCommentedBy().like("commentedBy"))
-            .toList().on(em);
-        assertEquals(0, ext.size());
-
+        assertEquals(2, issues.size());
+        assertEquals("issue2", issues.get(0).getTitle());
+        assertEquals("issue1", issues.get(1).getTitle());
     }
 
 
     @Test
-    void testFilterMapJoin() {
+    void testSort() {
+        var project1 = Fixtures.createProject("project1", em);
+        Fixtures.createIssue(project1, "issue1", em);
+        Fixtures.createIssue(project1, "issue2", em);
 
-        Fixtures.createProject("project1", em);
-
-        List<Project> project = Querying.of(ProjectModel.root())
-            .filter(issue -> issue.joinTasks((k, v) -> k.like("task")))
+        List<Issue> issues = Querying.of(IssueModel.root())
+            .sorted(e -> e.getId().desc(), e -> e.getTitle().asc())
             .toList().on(em);
-        assertEquals(1, project.size());
+        assertEquals(2, issues.size());
+        assertEquals("issue2", issues.get(0).getTitle());
+        assertEquals("issue1", issues.get(1).getTitle());
+    }
 
+
+    @Test
+    void testSorts() {
+        var project1 = Fixtures.createProject("project1", em);
+        Fixtures.createIssue(project1, "issue1", em);
+        Fixtures.createIssue(project1, "issue2", em);
+
+        List<Issue> issues = Querying.of(IssueModel.root())
+            .sorted(e -> e.getId().desc())
+            .sorted(e -> e.getTitle().asc())
+            .toList().on(em);
+        assertEquals(2, issues.size());
+        assertEquals("issue2", issues.get(0).getTitle());
+        assertEquals("issue1", issues.get(1).getTitle());
     }
 
 }

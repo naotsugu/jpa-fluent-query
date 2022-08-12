@@ -21,7 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PageTest {
 
-    @Test void of() {
+    @Test
+    void of() {
         Page<String> page = Page.of(
             IntStream.rangeClosed(1, 10).mapToObj(String::valueOf).toList(),
             15,

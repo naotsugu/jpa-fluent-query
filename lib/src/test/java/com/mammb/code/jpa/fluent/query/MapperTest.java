@@ -64,4 +64,5 @@ class MapperTest {
         assertEquals(1, result.value());
 
     }
+
 }

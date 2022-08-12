@@ -154,26 +154,6 @@ class QueryingTest {
 
     /**
      * <pre>
-     * SELECT t1.* FROM PROJECT t0, ISSUE t1 WHERE ((t1.TITLE = ?) AND (t0.ID = t1.PROJECT_ID))
-     * ORDER BY t0.NAME DESC, t1.ID ASC, t1.ID ASC
-     * </pre>
-     */
-    @Test
-    void testOrderBy() {
-        List<Issue> issues = Querying.of(IssueModel.root())
-            .filter(issue -> issue.getTitle().eq("foo"))
-            .sorted(issue -> issue.getProject().getName().desc(),
-                    issue -> issue.getId().asc())
-            .toList().on(em);
-
-        assertEquals("name2", issues.get(0).getProject().getName());
-        assertEquals("name1", issues.get(1).getProject().getName());
-        assertEquals("name1", issues.get(2).getProject().getName());
-    }
-
-
-    /**
-     * <pre>
      * SELECT ID, TITLE FROM ISSUE WHERE (TITLE = ?) ORDER BY ID ASC
      * </pre>
      */

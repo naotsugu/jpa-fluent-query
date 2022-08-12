@@ -20,7 +20,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SlicePointTest {
 
-    @Test void of() {
+    @Test
+    void of() {
         SlicePoint slicePoint = SlicePoint.of(0, 10);
         assertEquals(0, slicePoint.getNumber());
         assertEquals(0, slicePoint.getOffset());
