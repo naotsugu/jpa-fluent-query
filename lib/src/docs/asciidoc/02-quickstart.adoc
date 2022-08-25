@@ -7,7 +7,7 @@ If you use Gradle Kotlin DSL, define annotation processors and `jpa-fluent-query
 [source, kotlin]
 ----
 dependencies {
-  annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen:6.1.0.Final") // <1>
+  annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen:6.1.2.Final") // <1>
   annotationProcessor("com.mammb:jpa-fluent-modelgen:0.9.0") // <2>
   implementation("com.mammb:jpa-fluent-query:0.9.0") // <3>
 }
@@ -21,7 +21,7 @@ If you are using Groovy DSL, then use fallowing
 [source, groovy]
 ----
 dependencies {
-  annotationProcessor 'org.hibernate.orm:hibernate-jpamodelgen:6.1.0.Final'
+  annotationProcessor 'org.hibernate.orm:hibernate-jpamodelgen:6.1.2.Final'
   annotationProcessor 'com.mammb:jpa-fluent-modelgen:0.9.0'
   implementation 'com.mammb:jpa-fluent-query:0.9.0'
 }
@@ -34,7 +34,7 @@ In Maven, use the following
   <dependency>
     <groupId>org.hibernate</groupId>
     <artifactId>hibernate-jpamodelgen</artifactId>
-    <version>6.1.0.Final</version>
+    <version>6.1.2.Final</version>
     <optional>true</optional>
   </dependency>
   <dependency>

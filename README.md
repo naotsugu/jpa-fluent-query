@@ -18,7 +18,7 @@ If you use Gradle Kotlin DSL, define annotation processors and `jpa-fluent-query
 
 ```kotlin
 dependencies {
-  annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen:6.1.0.Final")
+  annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen:6.1.2.Final")
   annotationProcessor("com.mammb:jpa-fluent-modelgen:0.9.0")
   implementation("com.mammb:jpa-fluent-query:0.9.0")
 }
