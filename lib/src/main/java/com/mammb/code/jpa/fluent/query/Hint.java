@@ -51,7 +51,7 @@ public interface Hint {
      * @return the hint element
      */
     static Hint loadOf(EntityGraph<?> entityGraph) {
-        return Hint.of("javax.persistence.loadgraph", entityGraph);
+        return Hint.of("jakarta.persistence.loadgraph", entityGraph);
     }
 
 
@@ -61,7 +61,7 @@ public interface Hint {
      * @return the hint element
      */
     static Hint fetchOf(EntityGraph<?> entityGraph) {
-        return Hint.of("javax.persistence.fetchgraph", entityGraph);
+        return Hint.of("jakarta.persistence.fetchgraph", entityGraph);
     }
 
 
