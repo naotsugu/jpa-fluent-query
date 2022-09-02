@@ -8,8 +8,8 @@ If you use Gradle Kotlin DSL, define annotation processors and `jpa-fluent-query
 ----
 dependencies {
   annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen:6.1.2.Final") // <1>
-  annotationProcessor("com.mammb:jpa-fluent-modelgen:0.9.0") // <2>
-  implementation("com.mammb:jpa-fluent-query:0.9.0") // <3>
+  annotationProcessor("com.mammb:jpa-fluent-modelgen:0.10.0") // <2>
+  implementation("com.mammb:jpa-fluent-query:0.10.0") // <3>
 }
 ----
 <1> jpa static metamodel generator. In this example we will use hibernate-jpamodelgen, but other model processors can be used.
@@ -22,8 +22,8 @@ If you are using Groovy DSL, then use fallowing
 ----
 dependencies {
   annotationProcessor 'org.hibernate.orm:hibernate-jpamodelgen:6.1.2.Final'
-  annotationProcessor 'com.mammb:jpa-fluent-modelgen:0.9.0'
-  implementation 'com.mammb:jpa-fluent-query:0.9.0'
+  annotationProcessor 'com.mammb:jpa-fluent-modelgen:0.10.0'
+  implementation 'com.mammb:jpa-fluent-query:0.10.0'
 }
 ----
 
@@ -40,13 +40,13 @@ In Maven, use the following
   <dependency>
     <groupId>com.mammb</groupId>
     <artifactId>jpa-fluent-modelgen</artifactId>
-    <version>0.9.0</version>
+    <version>0.10.0</version>
     <optional>true</optional>
   </dependency>
   <dependency>
     <groupId>com.mammb</groupId>
     <artifactId>jpa-fluent-query</artifactId>
-    <version>0.9.0</version>
+    <version>0.10.0</version>
   </dependency>
 ----
 

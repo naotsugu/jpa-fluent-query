@@ -17,9 +17,9 @@ dependencies {
     implementation("org.springframework:spring-orm")
     implementation("org.hibernate.orm:hibernate-core")
     runtimeOnly("com.h2database:h2")
-    annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen:6.1.0.Final")
-    annotationProcessor("com.mammb:jpa-fluent-modelgen:0.9.0")
-    implementation("com.mammb:jpa-fluent-query:0.9.0")
+    annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen:6.1.2.Final")
+    annotationProcessor("com.mammb:jpa-fluent-modelgen:0.10.0")
+    implementation("com.mammb:jpa-fluent-query:0.10.0")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
